@@ -12,9 +12,6 @@
 	<link rel="stylesheet" href="<?= STA ?>/css/xadmin.css">
 	<script type="text/javascript" src="<?= STA ?>/lib/layui/layui.js" charset="utf-8"></script>
 	<script type="text/javascript" src="<?= STA ?>/js/xadmin.js"></script>
-	<script type="text/javascript" src="<?= STA ?>/js/jquery-1.11.2.min.js"></script>
-	<script type="text/javascript" src="<?= STA ?>/js/jquery.validate.js"></script>
-	<script type="text/javascript" src="<?= STA ?>/js/upload/jquery_form.js"></script>
 </head>
 <body>
 <div class="x-nav">
