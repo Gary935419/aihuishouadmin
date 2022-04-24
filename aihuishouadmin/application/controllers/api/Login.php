@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /**
  * **********************************************************************
  * サブシステム名  ： TASK
- * 機能名         ：注册/登录
+ * 機能名         ：登录
  * 作成者        ： Gary
  * **********************************************************************
  */
@@ -14,25 +14,24 @@ class Login extends CI_Controller
 	{
 		parent::__construct();
 		// 加载数据库类
-		$this->load->model('Member_model', 'member');
+		$this->load->model('Mini_model', 'mini');
 	}
 
 	/**
-	 * 注册/登录
+	 * 商家登录
 	 */
-	public function register()
+	public function register_merchants()
 	{
 		if (!isset($_POST['account']) || empty($_POST['account'])) {
-			$this->back_json(201, '请输入员工账号！');
+			$this->back_json(201, '请输入账号！');
 		}
 		if (!isset($_POST['password']) || empty($_POST['password'])) {
-			$this->back_json(201, '请输入员工密码！');
+			$this->back_json(201, '请输入密码！');
 		}
-		$Member = $this->member->getMember($_POST['account'], $_POST['password']);
+		$Member = $this->mini->getmerchants($_POST['account'], $_POST['password']);
 		if (empty($Member)) {
 			$this->back_json(201, '抱歉!账号或密码错误!');
 		}
-		$uid = $Member['id'];
 		//验证loginCode是否传递
 		if (!isset($_POST['loginCode']) || empty($_POST['loginCode'])) {
 			$this->back_json(201, '未传递loginCode');
@@ -53,11 +52,7 @@ class Login extends CI_Controller
 		//获得昵称
 		$nickname = $_POST['nickname'];
 		//获得图像
-		$avatarurl = $_POST['avatarurl'];
-		//获得性别
-		$gender = $_POST['gender'];
-		$account = $_POST['account'];
-		$password = $_POST['password'];
+		$avater = $_POST['avatarurl'];
 		// 取得登录凭证
 		$resultnew = $this->get_code2Session($this->appid, $this->secret, $loginCode);
 
@@ -67,43 +62,70 @@ class Login extends CI_Controller
 			$this->back_json(205, '数据错误', array());
 		}
 		//用户是否注册判断
-		$member_info_one = $this->member->getMemberInfo($openid);
+		$member_info_one = $this->mini->getmerchantsInfo($openid);
+		/**登录操作*/
+		$token = $this->_get_token($member_info_one['meid']);
+		$this->mini->merchants_edit($member_info_one['meid'],$token,$avater,$nickname,$openid);
+		$member_info = $this->mini->getmerchantsInfo($openid);
+		$member_info['session_key'] = $resultnew['session_key'];
+		$this->back_json(200, '操作成功', $member_info);
+	}
+
+	/**
+	 * 用户登录
+	 */
+	public function register_member()
+	{
+		//验证loginCode是否传递
+		if (!isset($_POST['loginCode']) || empty($_POST['loginCode'])) {
+			$this->back_json(201, '未传递loginCode');
+		}
+		//验证nickname是否传递
+		if (!isset($_POST['nickname']) || empty($_POST['nickname'])) {
+			$this->back_json(201, '未传递nickname');
+		}
+		//验证avatarurl是否传递
+		if (!isset($_POST['avatarurl']) || empty($_POST['avatarurl'])) {
+			$this->back_json(201, '未传递avatarurl');
+		}
+		if (empty($_POST['avatarurl']) || $_POST['nickname'] == "微信用户"){
+			$this->back_json(201, '数据错误请重新授权！');
+		}
+		// 取得信息
+		$loginCode = $_POST['loginCode'];
+		//获得昵称
+		$nickname = $_POST['nickname'];
+		//获得图像
+		$avatarurl = $_POST['avatarurl'];
+
+		// 取得登录凭证
+		$resultnew = $this->get_code2Session($this->appid, $this->secret, $loginCode);
+
+		//openid设置2
+		$openid = $resultnew['openid'];
+		if (empty($resultnew['openid'])){
+			$this->back_json(205, '数据错误',array());
+		}
+		//用户是否注册判断
+		$member_info_one = $this->mini->getMemberInfo($openid);
 		//验证会员
 		if (empty($member_info_one)) {
-			if (empty($_POST['sharemid'])) {
-				$member_id = "";
-				$badd_time = "";
-			} else {
-				$member_id = $_POST['sharemid'];
-				$badd_time = time();
-			}
-			//获得城市
-			$cityname = "中国";
-			/**注册操作*/
-			$gid = 0;
 			$avater = $avatarurl;
-			$sex = $gender;
-			$token = $this->_get_token($member_info_one['mid']);
+			$token = $this->_get_token(666);
 			$add_time = time();
 			$wallet = 0;
 			$status = 1;
-			$integral = 0;
-			$state = 2;
-			$is_agent = 2;
-			$idnumber = $this->GetRandStr(6);
 			// 注册操作
-			$this->member->register($uid, $account, $password, $member_id, $badd_time, $is_agent, $cityname, $gid, $avater, $nickname, $sex, $openid, $token, $add_time, $wallet, $status, $integral, $state, $idnumber);
-
-			$member_newinfo = $this->member->getMemberInfo($openid);
+			$this->mini->register($wallet,$status,$token,$openid,$nickname,$avater,$add_time);
+			$member_newinfo = $this->mini->getMemberInfo($openid);
 			$member_newinfo['session_key'] = $resultnew['session_key'];
-			$this->back_json(200, '操作成功', $member_newinfo);
-
+			$this->back_json(200, '操作成功',$member_newinfo);
 		} else {
 			/**登录操作*/
 			$token = $this->_get_token($member_info_one['mid']);
-			$this->member->member_edit($member_info_one['mid'], $token);
-			$member_info_one_new = $this->member->getmemberById($member_info_one['mid']);
-			$this->back_json(200, '操作成功', $member_info_one_new);
+			$this->mini->member_edit($member_info_one['mid'], $token);
+			$member_info_one = $this->mini->getMemberInfo($openid);
+			$this->back_json(200, '操作成功',$member_info_one);
 		}
 	}
 
