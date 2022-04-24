@@ -60,13 +60,167 @@
 						<li>
 							<a onclick="changeSrc('<?= RUN . '/users/users_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
-								<cite>账号管理</cite>
+								<cite>用户账号管理</cite>
 							</a>
 						</li>
 						<li>
 							<a onclick="changeSrc('<?= RUN . '/role/role_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
 								<cite>角色管理</cite>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;">
+						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
+						<cite>商家管理</cite>
+						<i class="iconfont nav_right">&#xe697;</i></a>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/merchants/merchants_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>商家账号管理</cite>
+							</a>
+						</li>
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/lable/lable_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>商家标签管理</cite>
+							</a>
+						</li>
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/merchants/withdrawal_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>商家提现管理</cite>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;">
+						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
+						<cite>骑手管理</cite>
+						<i class="iconfont nav_right">&#xe697;</i></a>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/qishou/qishou_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>骑手账号管理</cite>
+							</a>
+						</li>
+					</ul>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/proclass/proclass1_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>骑手订单查看</cite>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;">
+						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
+						<cite>用户管理</cite>
+						<i class="iconfont nav_right">&#xe697;</i></a>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/member/member_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>用户账号管理</cite>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;">
+						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
+						<cite>商品分类管理</cite>
+						<i class="iconfont nav_right">&#xe697;</i></a>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/proclass/proclass1_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>一级分类管理</cite>
+							</a>
+						</li>
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/proclass/proclass2_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>二级分类管理</cite>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;">
+						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
+						<cite>信息管理</cite>
+						<i class="iconfont nav_right">&#xe697;</i></a>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/proclass/proclass1_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>广告图片管理</cite>
+							</a>
+						</li>
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/news/news_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>新闻管理</cite>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;">
+						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
+						<cite>优惠卷管理</cite>
+						<i class="iconfont nav_right">&#xe697;</i></a>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/promote/promote_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>优惠卷设定</cite>
+							</a>
+						</li>
+					</ul>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/promote/couple_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>赠送商品管理</cite>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;">
+						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
+						<cite>订单管理</cite>
+						<i class="iconfont nav_right">&#xe697;</i></a>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/orders/orders1_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>预约订单查看</cite>
+							</a>
+						</li>
+					</ul>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/orders/orders2_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>完成订单查看</cite>
+							</a>
+						</li>
+					</ul>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/orders/orders3_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>取消订单查看</cite>
 							</a>
 						</li>
 					</ul>

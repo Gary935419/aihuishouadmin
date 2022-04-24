@@ -55,6 +55,7 @@ class Role extends CI_Controller
         $rname = isset($_POST["rname"]) ? $_POST["rname"] : '';
         $rdetails = isset($_POST["rdetails"]) ? $_POST["rdetails"] : '';
 		$menu = isset($_POST["menu"]) ? $_POST["menu"] : '';
+
         $add_time = time();
         if (empty($rname) || empty($rdetails)) {
             echo json_encode(array('error' => false, 'msg' => "操作失败"));
@@ -103,14 +104,7 @@ class Role extends CI_Controller
         $data['rname'] = $role_info['rname'];
         $data['rdetails'] = $role_info['rdetails'];
         $data['rid'] = $rid;
-		$data['role_status1'] = empty($this->role->getroleByIdRtom($rid,1))?0:1;
-		$data['role_status2'] = empty($this->role->getroleByIdRtom($rid,2))?0:1;
-		$data['role_status3'] = empty($this->role->getroleByIdRtom($rid,3))?0:1;
-		$data['role_status4'] = empty($this->role->getroleByIdRtom($rid,4))?0:1;
-		$data['role_status5'] = empty($this->role->getroleByIdRtom($rid,5))?0:1;
-		$data['role_status6'] = empty($this->role->getroleByIdRtom($rid,6))?0:1;
-		$data['role_status7'] = empty($this->role->getroleByIdRtom($rid,7))?0:1;
-		$data['role_status8'] = empty($this->role->getroleByIdRtom($rid,8))?0:1;
+
         $this->display("role/role_edit", $data);
     }
     /**
