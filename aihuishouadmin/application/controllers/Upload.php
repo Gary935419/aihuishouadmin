@@ -41,7 +41,7 @@ class Upload extends CI_Controller
 		if (file_exists("./static/uploads/".$fileName)) {
 			$src="/static/uploads/".$fileName;
 		}
-		echo json_encode(array('code' => 200,'src' => "https://ryksa.dltqwy.com".$src, 'msg' => "上传成功"));
+		echo json_encode(array('code' => 200,'src' => "https://ahs.dltqwy.com".$src, 'msg' => "上传成功"));
 		return;
 	}
 	/**
@@ -57,7 +57,7 @@ class Upload extends CI_Controller
 		if (file_exists("./static/uploads/".$fileName)) {
 			$src="/static/uploads/".$fileName;
 		}
-		echo json_encode(array('code' => 200,'src' => "https://ryksa.dltqwy.com".$src, 'msg' => "上传成功"));
+		echo json_encode(array('code' => 200,'src' => "https://ahs.dltqwy.com".$src, 'msg' => "上传成功"));
 		return;
 	}
 	/**
@@ -72,7 +72,7 @@ class Upload extends CI_Controller
 			$src="/static/uploads/".$fileName;
 		}
 		$data = array();
-		$data['src'] = "https://ryksa.dltqwy.com".$src;
+		$data['src'] = "https://ahs.dltqwy.com".$src;
 		echo json_encode(array('code' => 0,'msg' => "上传成功", 'data' => $data));
 		return;
 	}
@@ -88,7 +88,7 @@ class Upload extends CI_Controller
 			$fileName = $_swap.".".substr(strrchr($_FILES['file']['name'][$i], '.'), 1);
 			move_uploaded_file($_FILES['file']["tmp_name"][$i], "./static/upload/".$fileName);
 			if (file_exists("./static/upload/".$fileName)) {
-				$src[]="https://ryksa.dltqwy.com"."/static/upload/".$fileName;
+				$src[]="https://ahs.dltqwy.com"."/static/upload/".$fileName;
 			}
 		}
 		$data = array();
@@ -117,7 +117,7 @@ class Upload extends CI_Controller
 			$new_file = $new_file.$picname;
 			if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $base64_image_content)))){
 				$src = "/static/uploads/".$fileName.$picname;
-				return "https://ryksa.dltqwy.com".$src;
+				return "https://ahs.dltqwy.com".$src;
 			}else{
 				return false;
 			}
