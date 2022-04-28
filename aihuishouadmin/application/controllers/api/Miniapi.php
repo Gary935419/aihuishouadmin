@@ -308,4 +308,21 @@ class Miniapi extends CI_Controller
 
 		$this->back_json(200, '操作成功', $data);
 	}
+
+	/**
+	 * 个人中心
+	 */
+	public function memberinfo(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权登录！');
+		}
+		$token = $_POST['token'];
+		$member = $this->mini->getMemberInfotoken($token);
+		if (empty($member)){
+			$this->back_json(205, '请您先去授权登录！');
+		}
+		$data['member'] = $member;
+		$this->back_json(200, '操作成功', $data);
+	}
 }
