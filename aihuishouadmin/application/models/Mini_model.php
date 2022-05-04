@@ -213,4 +213,102 @@ class Mini_model extends CI_Model
 		$sql = "INSERT INTO `member` (wallet,status,token,openid,nickname,avater,add_time) VALUES ($wallet,$status,$token,$openid,$nickname,$avater,$add_time)";
 		return $this->db->query($sql);
 	}
+	public function getordersstate($mid,$ostate)
+	{
+		$mid = $this->db->escape($mid);
+		$ostate = $this->db->escape($ostate);
+		$sqlw = " where ostate = " . $ostate;
+		$sqlw .= " and mid = " . $mid;
+		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return $number;
+	}
+	public function getordersstatecanyu($mid)
+	{
+		$mid = $this->db->escape($mid);
+		$sqlw = " where mid = " . $mid;
+		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return $number;
+	}
+	public function getordersstateshangpin($mid)
+	{
+		$sqlw = " where 1=1 and ostate = 2 ";
+		if (!empty($mid)) {
+			$mid = $this->db->escape($mid);
+			$sqlw .= " and (m.mid = " . $mid . ")";
+		}
+		$sql = "SELECT m.* FROM `orders` m " . $sqlw . " order by m.addtime desc ";
+		return $this->db->query($sql)->result_array();
+	}
+	public function getordersstateshangpin1($oid)
+	{
+		$oid = $this->db->escape($oid);
+		$sqlw = " where oid = " . $oid;
+		$sql = "SELECT count(1) as number FROM `orders_goods` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return $number;
+	}
+	public function getordersstatejine($mid)
+	{
+		$mid = $this->db->escape($mid);
+		$sqlw = " where ostate = 2 ";
+		$sqlw .= " and mid = " . $mid;
+		$sql = "SELECT sum(sum_price) as number FROM `orders` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return $number;
+	}
+	public function memberinfo_edit($mid,$sex,$truename,$email,$mobile,$birthday)
+	{
+		$mid = $this->db->escape($mid);
+		$sex = $this->db->escape($sex);
+		$truename = $this->db->escape($truename);
+		$email = $this->db->escape($email);
+		$mobile = $this->db->escape($mobile);
+		$birthday = $this->db->escape($birthday);
+		$sql = "UPDATE `member` SET sex=$sex,truename=$truename,email=$email,mobile=$mobile,birthday=$birthday WHERE mid = $mid";
+		return $this->db->query($sql);
+	}
+
+	public function getorderlist($mid,$pg,$ostate)
+	{
+		$mid = $this->db->escape($mid);
+		$start = ($pg - 1) * 10;
+		$stop = 10;
+		if ($ostate == 999){
+			$sql = "SELECT * FROM `orders` where mid = $mid order by addtime desc LIMIT $start, $stop";
+		}elseif ($ostate == 1){
+			$sql = "SELECT * FROM `orders` where mid = $mid and ostate = 0 order by addtime desc LIMIT $start, $stop";
+		}elseif ($ostate == 2){
+			$sql = "SELECT * FROM `orders` where mid = $mid and ostate = 1 order by addtime desc LIMIT $start, $stop";
+		}elseif ($ostate == 3){
+			$sql = "SELECT * FROM `orders` where mid = $mid and ostate = 2 order by addtime desc LIMIT $start, $stop";
+		}elseif ($ostate == 4){
+			$sql = "SELECT * FROM `orders` where mid = $mid and ostate = 3 order by addtime desc LIMIT $start, $stop";
+		}else{
+			$sql = "SELECT * FROM `orders` where mid = $mid order by addtime desc LIMIT $start, $stop";
+		}
+		return $this->db->query($sql)->result_array();
+	}
+
+	public function getorderdetails($oid)
+	{
+		$oid = $this->db->escape($oid);
+		$sql = "SELECT * FROM `orders_goods` where oid = $oid";
+		return $this->db->query($sql)->result_array();
+	}
+
+	public function orderostate_edit($mid,$oid)
+	{
+		$mid = $this->db->escape($mid);
+		$oid = $this->db->escape($oid);
+		$sql = "UPDATE `orders` SET ostate = 3 WHERE mid = $mid and oid = $oid";
+		return $this->db->query($sql);
+	}
+
+	public function getbannerAll()
+	{
+		$sql = "SELECT * FROM `banners` order by addtime desc";
+		return $this->db->query($sql)->result_array();
+	}
 }
