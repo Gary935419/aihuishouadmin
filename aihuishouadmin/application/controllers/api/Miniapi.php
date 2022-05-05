@@ -362,17 +362,11 @@ class Miniapi extends CI_Controller
 		if (!isset($_POST['token']) || empty($_POST['token'])) {
 			$this->back_json(205, '请您先去授权登录！');
 		}
-		$token = $_POST['token'];
-		$member = $this->mini->getMemberInfotoken($token);
-		if (empty($member)){
-			$this->back_json(205, '请您先去授权登录！');
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$merchantsinfo = $this->mini->getmerchantsInfomeid($token);
+		if (empty($merchantsinfo)) {
+			$this->back_json(206, '请您先去授权商家登录！');
 		}
-
-		if (!isset($_POST['meid']) || empty($_POST['meid'])) {
-			$this->back_json(206, '缺少商家id！');
-		}
-		$meid = isset($_POST["meid"]) ? $_POST["meid"] : '';
-		$merchantsinfo = $this->mini->getmerchantsInfomeid($meid);
 		$data['merchants'] = $merchantsinfo;
 		$this->back_json(200, '操作成功', $data);
 	}
@@ -455,6 +449,29 @@ class Miniapi extends CI_Controller
 		}
 		//回收金额
 		$data['shujusum']['sum9'] = empty($this->mini->getordersstatejine($member['mid']))?0:$this->mini->getordersstatejine($member['mid']);
+		$this->back_json(200, '操作成功', $data);
+	}
+
+	public function infoshujuxinxi_merchants(){
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权登录！');
+		}
+		$token = $_POST['token'];
+		$member = $this->mini->getMerchantsInfotoken($token);
+		if (empty($member)){
+			$this->back_json(205, '请您先去授权登录！');
+		}
+
+		$meid = $member['meid'];
+
+		//回收次数
+		$data['shujusum']['sum1'] = empty($this->mini->getordersstatecishu($meid,2))?0:$this->mini->getordersstatecishu($meid,2);
+		//回收金额
+		$data['shujusum']['sum2'] = empty($this->mini->getordersstatejine_merchants($meid))?0:$this->mini->getordersstatejine_merchants($meid);
+		//赚取金额
+		$data['shujusum']['sum3'] = empty($this->mini->getordersstatejine_merchants($meid))?0:$this->mini->getordersstatejine_merchants($meid);
+		//提现金额
+		$data['shujusum']['sum4'] = empty($this->mini->getordersstatetixian_merchants($meid))?0:$this->mini->getordersstatetixian_merchants($meid);
 		$this->back_json(200, '操作成功', $data);
 	}
 
@@ -569,6 +586,17 @@ class Miniapi extends CI_Controller
 	{
 		$list = $this->mini->getbannerAll();
 		$data["list"] = $list;
+		$listnotice = $this->mini->getnoticeAllnew();
+		$noticemsg = "";
+		if (empty($listnotice)){
+			$noticemsg = "暂无公告信息~~~";
+		}else{
+			foreach ($listnotice as $k=>$v){
+				$num = $k+1;
+				$noticemsg = $noticemsg.$num.".".$v['n_msg'];
+			}
+		}
+		$data["noticemsg"] = $noticemsg;
 		$this->back_json(200, '操作成功', $data);
 	}
 	public function merchants_list(){
@@ -583,11 +611,32 @@ class Miniapi extends CI_Controller
 		}
 		$testinfo = empty($_POST['testinfo'])?'':$_POST['testinfo'];
 		$page = $_POST['page'];
+
+		if (!isset($_POST['a_id']) || empty($_POST['a_id'])) {
+			$this->back_json(202, '数据错误！');
+		}
+		$a_id = empty($_POST['a_id'])?'':$_POST['a_id'];
+		$member_address_detail = $this->mini->member_address_detail($member['mid'],$a_id);
+		//经度
+		$longitude = $member_address_detail['longitude'];
+		//纬度
+		$latitude = $member_address_detail['latitude'];
+
 		$orderlist = $this->mini->getmerchantslist($page,$testinfo);
 		foreach ($orderlist as $k=>$v){
 			$my_str_arr = '('.$v['laid'].')';
 			$orderlist[$k]['lablearr'] = $this->mini->getmerchantslistlable($my_str_arr);
+			$distance = $this->getDistance($latitude,$longitude,$v['latitude'],$v['longitude']);
+			$orderlist[$k]['distancesum'] = $distance;
+			if ($distance<1000){
+				$orderlist[$k]['distance'] = $distance."米";
+			}
+			if ($distance>=1000){
+				$orderlist[$k]['distance'] = round($distance/1000)."千米";
+			}
 		}
+		$sort = array_column($orderlist, 'distancesum');
+		array_multisort($sort, SORT_ASC, $orderlist);
 		$data['list'] = $orderlist;
 		$this->back_json(200, '操作成功', $data);
 	}
@@ -604,11 +653,32 @@ class Miniapi extends CI_Controller
 		}
 		$testinfo = empty($_POST['testinfo'])?'':$_POST['testinfo'];
 		$page = $_POST['page'];
+
+		if (!isset($_POST['a_id']) || empty($_POST['a_id'])) {
+			$this->back_json(202, '数据错误！');
+		}
+		$a_id = empty($_POST['a_id'])?'':$_POST['a_id'];
+		$member_address_detail = $this->mini->member_address_detail($member['mid'],$a_id);
+		//经度
+		$longitude = $member_address_detail['longitude'];
+		//纬度
+		$latitude = $member_address_detail['latitude'];
+
 		$orderlist = $this->mini->getmerchantslistseach($page,$testinfo);
 		foreach ($orderlist as $k=>$v){
 			$my_str_arr = '('.$v['laid'].')';
 			$orderlist[$k]['lablearr'] = $this->mini->getmerchantslistlable($my_str_arr);
+			$distance = $this->getDistance($latitude,$longitude,$v['latitude'],$v['longitude']);
+			$orderlist[$k]['distancesum'] = $distance;
+			if ($distance<1000){
+				$orderlist[$k]['distance'] = $distance."米";
+			}
+			if ($distance>=1000){
+				$orderlist[$k]['distance'] = round($distance/1000)."千米";
+			}
 		}
+		$sort = array_column($orderlist, 'distancesum');
+		array_multisort($sort, SORT_ASC, $orderlist);
 		$data['list'] = $orderlist;
 		$this->back_json(200, '操作成功', $data);
 	}
@@ -785,5 +855,45 @@ class Miniapi extends CI_Controller
 		$this->mini->order_save($order_status,$ostate,$addtime,$sum_price,$note,$delivery_date,$delivery_time,$uname,$utel,$muser,$maddress,$mid,$meid,$otype);
 
 		$this->back_json(200, '操作成功');
+	}
+	/**
+	 * 计算两个经纬度距离
+	 */
+	public function getDistance($lat1, $lng1, $lat2, $lng2){
+		$earthRadius = 6367000;
+		$lat1 = ($lat1 * pi() ) / 180;
+		$lng1 = ($lng1 * pi() ) / 180;
+		$lat2 = ($lat2 * pi() ) / 180;
+		$lng2 = ($lng2 * pi() ) / 180;
+		$calcLongitude = $lng2 - $lng1;
+		$calcLatitude = $lat2 - $lat1;
+		$stepOne = pow(sin($calcLatitude / 2), 2) + cos($lat1) * cos($lat2) * pow(sin($calcLongitude / 2), 2);
+		$stepTwo = 2 * asin(min(1, sqrt($stepOne)));
+		$calculatedDistance = $earthRadius * $stepTwo;
+		return round($calculatedDistance);
+	}
+	public function merchants_modify(){
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权登录！');
+		}
+		$token = $_POST['token'];
+		$member = $this->mini->getMerchantsInfotoken($token);
+		if (empty($member)){
+			$this->back_json(205, '请您先去授权登录！');
+		}
+
+		$meid = $member['meid'];
+
+		$is_business = isset($_POST["is_business"]) ? $_POST["is_business"] : '';
+		$meaddress = isset($_POST["meaddress"]) ? $_POST["meaddress"] : '';
+		$latitude = isset($_POST["latitude"]) ? $_POST["latitude"] : '';
+		$longitude = isset($_POST["longitude"]) ? $_POST["longitude"] : '';
+		$contactname = isset($_POST["contactname"]) ? $_POST["contactname"] : '';
+		$metel = isset($_POST["metel"]) ? $_POST["metel"] : '';
+		$mename = isset($_POST["mename"]) ? $_POST["mename"] : '';
+		$meimg = isset($_POST["meimg"]) ? $_POST["meimg"] : '';
+
+		$this->mini->merchants_editnew($meid,$is_business,$meaddress,$latitude,$longitude,$contactname,$metel,$mename,$meimg);
+		$this->back_json(200, '更新成功');
 	}
 }

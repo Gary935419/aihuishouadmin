@@ -16,10 +16,10 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `member` where token = $token ";
 		return $this->db->query($sql)->row_array();
 	}
-	public function getmerchantsInfomeid($meid)
+	public function getmerchantsInfomeid($token)
 	{
-		$meid = $this->db->escape($meid);
-		$sql = "SELECT * FROM `merchants` where meid = $meid ";
+		$token = $this->db->escape($token);
+		$sql = "SELECT * FROM `merchants` where token = $token ";
 		return $this->db->query($sql)->row_array();
 	}
 	public function getaddressInfoaid($a_id)
@@ -247,6 +247,17 @@ class Mini_model extends CI_Model
 		$sql = "INSERT INTO `member` (wallet,status,token,openid,nickname,avater,add_time) VALUES ($wallet,$status,$token,$openid,$nickname,$avater,$add_time)";
 		return $this->db->query($sql);
 	}
+	public function getordersstatecishu($meid,$ostate)
+	{
+		$meid = $this->db->escape($meid);
+		$ostate = $this->db->escape($ostate);
+		$sqlw = " where ostate = " . $ostate;
+		$sqlw .= " and meid = " . $meid;
+		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return $number;
+	}
+
 	public function getordersstate($mid,$ostate)
 	{
 		$mid = $this->db->escape($mid);
@@ -289,6 +300,24 @@ class Mini_model extends CI_Model
 		$sqlw = " where ostate = 2 ";
 		$sqlw .= " and mid = " . $mid;
 		$sql = "SELECT sum(sum_price) as number FROM `orders` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return $number;
+	}
+	public function getordersstatejine_merchants($meid)
+	{
+		$meid = $this->db->escape($meid);
+		$sqlw = " where ostate = 2 ";
+		$sqlw .= " and meid = " . $meid;
+		$sql = "SELECT sum(sum_price) as number FROM `orders` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return $number;
+	}
+	public function getordersstatetixian_merchants($meid)
+	{
+		$meid = $this->db->escape($meid);
+		$sqlw = " where state = 1 ";
+		$sqlw .= " and meid = " . $meid;
+		$sql = "SELECT sum(money) as number FROM `withdrawal` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
 		return $number;
 	}
@@ -339,7 +368,11 @@ class Mini_model extends CI_Model
 		$sql = "UPDATE `orders` SET ostate = 3 WHERE mid = $mid and oid = $oid";
 		return $this->db->query($sql);
 	}
-
+	public function getnoticeAllnew()
+	{
+		$sql = "SELECT * FROM `notice` order by n_addtime desc";
+		return $this->db->query($sql)->result_array();
+	}
 	public function getbannerAll()
 	{
 		$sql = "SELECT * FROM `banners` order by addtime desc";
@@ -421,5 +454,20 @@ class Mini_model extends CI_Model
 		$this->db->query($sql);
 		$oid=$this->db->insert_id();
 		return $oid;
+	}
+
+	public function merchants_editnew($meid,$is_business,$meaddress,$latitude,$longitude,$contactname,$metel,$mename,$meimg)
+	{
+		$meid = $this->db->escape($meid);
+		$is_business = $this->db->escape($is_business);
+		$meaddress = $this->db->escape($meaddress);
+		$latitude = $this->db->escape($latitude);
+		$longitude = $this->db->escape($longitude);
+		$contactname = $this->db->escape($contactname);
+		$metel = $this->db->escape($metel);
+		$mename = $this->db->escape($mename);
+		$meimg = $this->db->escape($meimg);
+		$sql = "UPDATE `merchants` SET is_business=$is_business,meaddress=$meaddress,latitude=$latitude,longitude=$longitude,contactname=$contactname,metel=$metel,mename=$mename,meimg=$meimg WHERE meid = $meid";
+		return $this->db->query($sql);
 	}
 }

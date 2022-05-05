@@ -28,10 +28,11 @@ class Login extends CI_Controller
 		if (!isset($_POST['password']) || empty($_POST['password'])) {
 			$this->back_json(201, '请输入密码！');
 		}
-		$Member = $this->mini->getmerchants($_POST['account'], $_POST['password']);
+		$Member = $this->mini->getmerchants($_POST['account'], md5($_POST['password']));
 		if (empty($Member)) {
 			$this->back_json(201, '抱歉!账号或密码错误!');
 		}
+		$meid = $Member['meid'];
 		//验证loginCode是否传递
 		if (!isset($_POST['loginCode']) || empty($_POST['loginCode'])) {
 			$this->back_json(201, '未传递loginCode');
@@ -61,11 +62,9 @@ class Login extends CI_Controller
 		if (empty($resultnew['openid'])) {
 			$this->back_json(205, '数据错误', array());
 		}
-		//用户是否注册判断
-		$member_info_one = $this->mini->getmerchantsInfo($openid);
 		/**登录操作*/
-		$token = $this->_get_token($member_info_one['meid']);
-		$this->mini->merchants_edit($member_info_one['meid'],$token,$avater,$nickname,$openid);
+		$token = $this->_get_token($meid);
+		$this->mini->merchants_edit($meid,$token,$avater,$nickname,$openid);
 		$member_info = $this->mini->getmerchantsInfo($openid);
 		$member_info['session_key'] = $resultnew['session_key'];
 		$this->back_json(200, '操作成功', $member_info);
