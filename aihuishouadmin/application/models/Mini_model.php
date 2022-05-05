@@ -16,6 +16,24 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `member` where token = $token ";
 		return $this->db->query($sql)->row_array();
 	}
+	public function getmerchantsInfomeid($meid)
+	{
+		$meid = $this->db->escape($meid);
+		$sql = "SELECT * FROM `merchants` where meid = $meid ";
+		return $this->db->query($sql)->row_array();
+	}
+	public function getaddressInfoaid($a_id)
+	{
+		$a_id = $this->db->escape($a_id);
+		$sql = "SELECT * FROM `address` where a_id = $a_id ";
+		return $this->db->query($sql)->row_array();
+	}
+	public function getaddressInfoaidmoren($mid)
+	{
+		$mid = $this->db->escape($mid);
+		$sql = "SELECT * FROM `address` where mid = $mid and status=1";
+		return $this->db->query($sql)->row_array();
+	}
 	//根据token查看详情
 	public function getMerchantsInfotoken($token)
 	{
@@ -47,10 +65,26 @@ class Mini_model extends CI_Model
 	{
 		$sqlw = " where 1=1 ";
 
-		$start = ($pg - 1) * 20;
-		$stop = 20;
+		$start = ($pg - 1) * 200;
+		$stop = 200;
 
-		$sql = "SELECT m.* FROM `class_one` m " . $sqlw . " order by m.co_addtime desc LIMIT $start, $stop";
+		$sql = "SELECT m.* FROM `class_one` m " . $sqlw . " LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+	public function getclassonetypeAll($pg)
+	{
+		$sqlw = " where 1=1 and co_state=1 or co_state=2 ";
+
+		$start = ($pg - 1) * 200;
+		$stop = 200;
+
+		$sql = "SELECT * FROM `class_one` " . $sqlw . " LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+	public function getclasstwotypeAll($co_id)
+	{
+		$sqlw = " where 1=1 and co_id = $co_id";
+		$sql = "SELECT * FROM `class_two` " . $sqlw;
 		return $this->db->query($sql)->result_array();
 	}
 	public function getclasstwoAll($pg,$co_id)
@@ -123,8 +157,8 @@ class Mini_model extends CI_Model
 			$sqlw .= " and (m.mid = " . $mid . ")";
 		}
 
-		$start = ($pg - 1) * 20;
-		$stop = 20;
+		$start = ($pg - 1) * 200;
+		$stop = 200;
 
 		$sql = "SELECT m.* FROM `address` m " . $sqlw . " order by m.addtime desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
@@ -310,5 +344,82 @@ class Mini_model extends CI_Model
 	{
 		$sql = "SELECT * FROM `banners` order by addtime desc";
 		return $this->db->query($sql)->result_array();
+	}
+	public function member_address_status_save($mid)
+	{
+		$mid = $this->db->escape($mid);
+		$sql = "UPDATE `address` SET status=0 WHERE mid = $mid";
+		return $this->db->query($sql);
+	}
+
+	public function getmerchantslist($pg,$testinfo)
+	{
+		$sqlw = " and 1=1 ";
+		if (!empty($testinfo)) {
+			$sqlw .= " and ( mename like '%" . $testinfo . "%' ) ";
+		}
+		$start = ($pg - 1) * 10;
+		$stop = 10;
+		$sql = "SELECT * FROM `merchants` where is_business = 1 and merchants_state = 0 " . $sqlw . " order by add_time desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+	public function getmerchantslistseach($pg,$testinfo)
+	{
+		$sqlw = " and 1=1 ";
+		if (!empty($testinfo)) {
+			$sqlw .= " and ( mename like '%" . $testinfo . "%' ) ";
+		}
+		$start = ($pg - 1) * 1000;
+		$stop = 1000;
+		$sql = "SELECT * FROM `merchants` where is_business = 1 and merchants_state = 0 " . $sqlw . " order by add_time desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+	public function getmerchantslistlable($laidarr)
+	{
+		$sql = "SELECT * FROM `lable` where laid IN $laidarr";
+		return $this->db->query($sql)->result_array();
+	}
+	public function getmerchantslistclasstwo($str)
+	{
+		$sql = "SELECT * FROM `class_two` where ct_id IN $str";
+		return $this->db->query($sql)->result_array();
+	}
+
+	public function order_save($order_status,$ostate,$addtime,$sum_price,$note,$delivery_date,$delivery_time,$uname,$utel,$muser,$maddress,$mid,$meid,$otype)
+	{
+		$ostate = $this->db->escape($ostate);
+		$addtime = $this->db->escape($addtime);
+		$sum_price = $this->db->escape($sum_price);
+		$note = $this->db->escape($note);
+		$delivery_date = $this->db->escape($delivery_date);
+		$delivery_time = $this->db->escape($delivery_time);
+		$uname = $this->db->escape($uname);
+		$utel = $this->db->escape($utel);
+		$muser = $this->db->escape($muser);
+		$maddress = $this->db->escape($maddress);
+		$mid = $this->db->escape($mid);
+		$meid = $this->db->escape($meid);
+		$otype = $this->db->escape($otype);
+		$order_status = $this->db->escape($order_status);
+		$sql = "INSERT INTO `orders` (order_status,ostate,addtime,sum_price,note,delivery_date,delivery_time,uname,utel,muser,maddress,mid,meid,otype) VALUES ($order_status,$ostate,$addtime,$sum_price,$note,$delivery_date,$delivery_time,$uname,$utel,$muser,$maddress,$mid,$meid,$otype)";
+		$this->db->query($sql);
+		$oid=$this->db->insert_id();
+		return $oid;
+	}
+
+	public function order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight)
+	{
+		$oid = $this->db->escape($oid);
+		$ct_name = $this->db->escape($ct_name);
+		$ct_id = $this->db->escape($ct_id);
+		$ct_img = $this->db->escape($ct_img);
+		$ct_price = $this->db->escape($ct_price);
+		$og_price = $this->db->escape($og_price);
+		$weight = $this->db->escape($weight);
+
+		$sql = "INSERT INTO `orders_goods` (oid,ct_name,ct_id,ct_img,ct_price,og_price,weight) VALUES ($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight)";
+		$this->db->query($sql);
+		$oid=$this->db->insert_id();
+		return $oid;
 	}
 }
