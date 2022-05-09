@@ -201,7 +201,7 @@ class Miniapi extends CI_Controller
 		}
 
 		$page = isset($_POST["page"]) ? $_POST["page"] : 1;
-		$list = $this->mini->getmemberaddressAll($page);
+		$list = $this->mini->getmemberaddressAll($page,$member['mid']);
 		foreach ($list as $k=>$v){
 			$list[$k]['addtime'] = date("Y-m-d",$v['addtime']);
 		}
@@ -360,7 +360,7 @@ class Miniapi extends CI_Controller
 	public function merchantsinfo(){
 		//验证loginCode是否传递
 		if (!isset($_POST['token']) || empty($_POST['token'])) {
-			$this->back_json(205, '请您先去授权登录！');
+			$this->back_json(205, '请您先去授权商家登录！');
 		}
 		$token = isset($_POST["token"]) ? $_POST["token"] : '';
 		$merchantsinfo = $this->mini->getmerchantsInfomeid($token);
@@ -454,12 +454,12 @@ class Miniapi extends CI_Controller
 
 	public function infoshujuxinxi_merchants(){
 		if (!isset($_POST['token']) || empty($_POST['token'])) {
-			$this->back_json(205, '请您先去授权登录！');
+			$this->back_json(205, '请您先去授权商家登录！');
 		}
 		$token = $_POST['token'];
 		$member = $this->mini->getMerchantsInfotoken($token);
 		if (empty($member)){
-			$this->back_json(205, '请您先去授权登录！');
+			$this->back_json(205, '请您先去授权商家登录！');
 		}
 
 		$meid = $member['meid'];
@@ -491,6 +491,50 @@ class Miniapi extends CI_Controller
 		$money = empty($_POST['money'])?'':$_POST['money'];
 		$data['member'] = $member;
 		$this->back_json(200, '直接提现到微信零钱程序正在开发中~~~', $data);
+	}
+
+	public function withdrawal_merchants(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$merchantsinfo = $this->mini->getmerchantsInfomeid($token);
+		if (empty($merchantsinfo)) {
+			$this->back_json(206, '请您先去授权商家登录！');
+		}
+		if (!isset($_POST['money']) || empty($_POST['money'])) {
+			$this->back_json(202, '请输入提现金额！');
+		}
+		$money = empty($_POST['money'])?'':$_POST['money'];
+
+		if (!isset($_POST['bankcard']) || empty($_POST['bankcard'])) {
+			$this->back_json(202, '请输入银行卡号！');
+		}
+		$bankcard = empty($_POST['bankcard'])?'':$_POST['bankcard'];
+
+		if (!isset($_POST['username']) || empty($_POST['username'])) {
+			$this->back_json(202, '请输入账户名！');
+		}
+		$username = empty($_POST['username'])?'':$_POST['username'];
+
+		if (!isset($_POST['bankname']) || empty($_POST['bankname'])) {
+			$this->back_json(202, '请输入银行名！');
+		}
+		$bankname = empty($_POST['bankname'])?'':$_POST['bankname'];
+
+		if ($money>$merchantsinfo['me_wallet']){
+			$this->back_json(202, '请输入金额已经超出账户余额！');
+		}
+
+		$state = 0;
+		$addtime = time();
+		$meid = $merchantsinfo['meid'];
+		$this->mini->order_withdrawal_save($meid,$addtime,$state,$bankname,$username,$bankcard,$money);
+		$me_wallet = floatval($merchantsinfo['me_wallet']) - floatval($money);
+		$this->mini->merchants_edit_me_wallet($meid,$me_wallet);
+
+		$this->back_json(200, '操作成功');
 	}
 
 	public function memberinfo_modify(){
@@ -539,6 +583,61 @@ class Miniapi extends CI_Controller
 			}elseif ($v['ostate']==3){
 				$orderlist[$k]['ostate'] = "已取消";
 			}
+		}
+		$data['list'] = $orderlist;
+		$this->back_json(200, '操作成功', $data);
+	}
+
+	public function withdrawal_list(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$token = $_POST['token'];
+		$member = $this->mini->getMerchantsInfotoken($token);
+		if (empty($member)){
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+
+		$meid = $member['meid'];
+
+		$page = $_POST['page'];
+		$orderlist = $this->mini->merchantslist($meid,$page);
+
+		foreach ($orderlist as $k=>$v){
+			$orderlist[$k]['addtime'] = date('Y-m-d H:i',$v['addtime']);
+			if ($v['state']==0){
+				$orderlist[$k]['state'] = "申请中";
+			}elseif ($v['state']==1){
+				$orderlist[$k]['state'] = "已处理";
+			}elseif ($v['state']==2){
+				$orderlist[$k]['state'] = "已驳回";
+			}
+		}
+		$data['list'] = $orderlist;
+		$this->back_json(200, '操作成功', $data);
+	}
+
+	public function merchants_order_list(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$token = $_POST['token'];
+		$member = $this->mini->getMerchantsInfotoken($token);
+		if (empty($member)){
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$meid = $member['meid'];
+		$page = $_POST['page'];
+		$datenew = empty($_POST['date'])?'':$_POST['date'];
+		$orderlist = $this->mini->merchantsorderlist($meid,$page,$datenew);
+		foreach ($orderlist as $k=>$v){
+			$orderlist[$k]['addtime'] = date('Y-m-d H:i',$v['addtime']);
+			$uname=$v['uname'];
+			$utel=$v['utel'];
+			$memberinfoaddress = $this->mini->getMerchantsInfotorder($uname,$utel);
+			$orderlist[$k]['address'] = empty($memberinfoaddress['address'])?'':$memberinfoaddress['address'];
 		}
 		$data['list'] = $orderlist;
 		$this->back_json(200, '操作成功', $data);

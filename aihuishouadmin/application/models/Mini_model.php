@@ -41,6 +41,13 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `merchants` where token = $token ";
 		return $this->db->query($sql)->row_array();
 	}
+	public function getMerchantsInfotorder($uname,$utel)
+	{
+		$uname = $this->db->escape($uname);
+		$utel = $this->db->escape($utel);
+		$sql = "SELECT * FROM `address` where mobile=$utel and name=$uname ";
+		return $this->db->query($sql)->row_array();
+	}
 	public function getnewsAll($pg)
 	{
 		$sqlw = " where 1=1 ";
@@ -148,10 +155,9 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql)->result_array();
 	}
 
-	public function getmemberaddressAll($pg)
+	public function getmemberaddressAll($pg,$mid)
 	{
 		$sqlw = " where 1=1 ";
-
 		if (!empty($mid)) {
 			$mid = $this->db->escape($mid);
 			$sqlw .= " and (m.mid = " . $mid . ")";
@@ -469,5 +475,52 @@ class Mini_model extends CI_Model
 		$meimg = $this->db->escape($meimg);
 		$sql = "UPDATE `merchants` SET is_business=$is_business,meaddress=$meaddress,latitude=$latitude,longitude=$longitude,contactname=$contactname,metel=$metel,mename=$mename,meimg=$meimg WHERE meid = $meid";
 		return $this->db->query($sql);
+	}
+
+	public function order_withdrawal_save($meid,$addtime,$state,$bankname,$username,$bankcard,$money)
+	{
+		$meid = $this->db->escape($meid);
+		$addtime = $this->db->escape($addtime);
+		$state = $this->db->escape($state);
+		$bankname = $this->db->escape($bankname);
+		$username = $this->db->escape($username);
+		$bankcard = $this->db->escape($bankcard);
+		$money = $this->db->escape($money);
+
+		$sql = "INSERT INTO `withdrawal` (meid,addtime,state,bankname,username,bankcard,money) VALUES ($meid,$addtime,$state,$bankname,$username,$bankcard,$money)";
+		$this->db->query($sql);
+		$oid=$this->db->insert_id();
+		return $oid;
+	}
+
+	public function merchants_edit_me_wallet($meid,$me_wallet)
+	{
+		$meid = $this->db->escape($meid);
+		$me_wallet = $this->db->escape($me_wallet);
+		$sql = "UPDATE `merchants` SET me_wallet=$me_wallet WHERE meid = $meid";
+		return $this->db->query($sql);
+	}
+
+	public function merchantslist($meid,$pg)
+	{
+		$meid = $this->db->escape($meid);
+		$start = ($pg - 1) * 10;
+		$stop = 10;
+		$sql = "SELECT * FROM `withdrawal` where meid = $meid order by addtime desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
+	public function merchantsorderlist($meid,$pg,$datenew)
+	{
+		$sqlw = " and 1=1 ";
+		if (!empty($datenew)) {
+			$datenew = $this->db->escape($datenew);
+			$sqlw .= " and delivery_date =" . $datenew;
+		}
+		$meid = $this->db->escape($meid);
+		$start = ($pg - 1) * 10;
+		$stop = 10;
+		$sql = "SELECT * FROM `orders` where meid = $meid ".$sqlw." order by addtime desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
 	}
 }
