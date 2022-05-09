@@ -141,4 +141,116 @@ class News extends CI_Controller
 			echo json_encode(array('error' => false, 'msg' => "操作失败"));
 		}
 	}
+	
+		/**-----------------------------------banner图片管理----------------------------*/
+	/**
+	 * banner图片列表页
+	 */
+	public function banners_list()
+	{
+		$user_name = isset($_GET['user_name']) ? $_GET['user_name'] : '';
+		$page = isset($_GET["page"]) ? $_GET["page"] : 1;
+		$allpage = $this->news->getBannersAllPage($user_name);
+		$page = $allpage > $page ? $page : $allpage;
+		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
+		$data["page"] = $page;
+		$data["allpage"] = $allpage;
+		$data["list"] = $this->news->getBannersAll($page, $user_name);
+
+		$data["user_name1"] = $user_name;
+		$this->display("news/banners_list", $data);
+	}
+
+	/**
+	 * banner图片删除
+	 */
+	public function banners_delete()
+	{
+		$id = isset($_POST['id']) ? $_POST['id'] : 0;
+		if ($this->news->banners_delete($id)) {
+			echo json_encode(array('success' => true, 'msg' => "删除成功"));
+		} else {
+			echo json_encode(array('success' => false, 'msg' => "删除失败"));
+		}
+	}
+
+
+	/**
+	 * banner图片添加页
+	 */
+	public function banners_add()
+	{
+		$data = array();
+		$ridlist = $this->news->getRole();
+		$data['ridlist'] = $ridlist;
+		$this->display("news/banners_add", $data);
+
+	}
+
+	/**
+	 * banner图片添加页
+	 */
+	public function banners_save()
+	{
+		if (empty($_SESSION['user_name'])) {
+			echo json_encode(array('error' => false, 'msg' => "无法添加数据"));
+			return;
+		}
+
+		$bannername = isset($_POST["bannername"]) ? $_POST["bannername"] : '';
+		$bannersimg = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
+		$addtime = time();
+
+		$user_info = $this->news->getbannersname($bannername);
+		if (!empty($user_info)) {
+			echo json_encode(array('error' => true, 'msg' => "该信息已经存在。"));
+			return;
+		}
+
+		$result = $this->news->banners_save($bannername,$bannersimg,$addtime);
+		if ($result) {
+			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
+		} else {
+			echo json_encode(array('error' => false, 'msg' => "操作失败"));
+		}
+	}
+
+	/**
+	 * banner图片修改显示
+	 */
+	public function banners_edit()
+	{
+		$uid = isset($_GET['id']) ? $_GET['id'] : 0;
+		$data = array();
+		$ridlist = $this->news->getRole();
+		$data['ridlist'] = $ridlist;
+
+		$member_info = $this->news->getBannerslist($uid);
+		$data['id'] = $uid;
+		$data['bannername'] = $member_info['bannername'];
+		$data['bannersimg'] = $member_info['bannerimg'];
+
+		$this->display("news/banners_edit", $data);
+	}
+
+	/**
+	 * banner图片修改提交
+	 */
+	public function banners_save_edit()
+	{
+		if (empty($_SESSION['user_name'])) {
+			echo json_encode(array('error' => false, 'msg' => "无法修改数据"));
+			return;
+		}
+		$uid = isset($_POST["uid"]) ? $_POST["uid"] : '';
+		$bannername = isset($_POST["bannername"]) ? $_POST["bannername"] : '';
+		$bannersimg = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
+
+		$result = $this->news->banners_save_edit($uid, $bannername, $bannersimg);
+		if ($result) {
+			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
+		} else {
+			echo json_encode(array('error' => false, 'msg' => "操作失败"));
+		}
+	}
 }

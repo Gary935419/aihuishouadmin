@@ -198,7 +198,7 @@ class Proclass extends CI_Controller
 		$coid = isset($_POST["coid"]) ? $_POST["coid"] : '';
 		$name = isset($_POST["name"]) ? $_POST["name"] : '';
 		$state = isset($_POST["state"]) ? $_POST["state"] : '';
-		$pic = isset($_POST["pic"]) ? $_POST["pic"] : '';
+		$pic = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 		$price = isset($_POST["price"]) ? $_POST["price"] : '';
 		$time = time();
 
@@ -233,7 +233,7 @@ class Proclass extends CI_Controller
 		$data['coid'] = $member_info['co_id'];
 		$data['name'] = $member_info['ct_name'];
 		$data['state'] = $member_info['ct_state'];
-		$data['pic'] = $member_info['ct_img'];
+		$data['gimg'] = $member_info['ct_img'];
 		$data['price'] = $member_info['ct_price'];
 		$data['class1'] = $this->proclass->getproclass1s();
 		$this->display("proclass/proclass2_edit", $data);
@@ -251,7 +251,7 @@ class Proclass extends CI_Controller
 		$uid = isset($_POST["uid"]) ? $_POST["uid"] : '';
 		$name = isset($_POST["name"]) ? $_POST["name"] : '';
 		$state = isset($_POST["state"]) ? $_POST["state"] : '';
-		$pic = isset($_POST["pic"]) ? $_POST["pic"] : '';
+		$pic = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 		$price = isset($_POST["price"]) ? $_POST["price"] : '';
 		$coid = isset($_POST["coid"]) ? $_POST["coid"] : '';
 		$name1 = isset($_POST["name1"]) ? $_POST["name1"] : '';
