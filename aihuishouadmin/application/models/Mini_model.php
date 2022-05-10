@@ -22,6 +22,12 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `merchants` where token = $token ";
 		return $this->db->query($sql)->row_array();
 	}
+	public function getmerchantsInfomeidnew($meid)
+	{
+		$meid = $this->db->escape($meid);
+		$sql = "SELECT * FROM `merchants` where meid = $meid ";
+		return $this->db->query($sql)->row_array();
+	}
 	public function getaddressInfoaid($a_id)
 	{
 		$a_id = $this->db->escape($a_id);
@@ -141,32 +147,28 @@ class Mini_model extends CI_Model
 
 	public function getordersmerchantsAll($pg,$meid)
 	{
+		$meid = $this->db->escape($meid);
 		$sqlw = " where 1=1 ";
-
-		if (!empty($meid)) {
-			$meid = $this->db->escape($meid);
-			$sqlw .= " and (m.meid = " . $meid . ")";
-		}
+		$sqlw .= " and meid = " . $meid;
 
 		$start = ($pg - 1) * 20;
 		$stop = 20;
 
-		$sql = "SELECT m.* FROM `orders` m " . $sqlw . " order by m.addtime desc LIMIT $start, $stop";
+		$sql = "SELECT * FROM `orders`" . $sqlw . " order by addtime desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
 
 	public function getmemberaddressAll($pg,$mid)
 	{
+		$mid = $this->db->escape($mid);
 		$sqlw = " where 1=1 ";
-		if (!empty($mid)) {
-			$mid = $this->db->escape($mid);
-			$sqlw .= " and (m.mid = " . $mid . ")";
-		}
+		$sqlw .= " and mid = " . $mid;
 
 		$start = ($pg - 1) * 200;
 		$stop = 200;
 
-		$sql = "SELECT m.* FROM `address` m " . $sqlw . " order by m.addtime desc LIMIT $start, $stop";
+		$sql = "SELECT * FROM `address`" . $sqlw . " order by addtime desc LIMIT $start, $stop";
+
 		return $this->db->query($sql)->result_array();
 	}
 
@@ -521,6 +523,53 @@ class Mini_model extends CI_Model
 		$start = ($pg - 1) * 10;
 		$stop = 10;
 		$sql = "SELECT * FROM `orders` where meid = $meid ".$sqlw." order by addtime desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+	public function merchantsordergoodslist($pg,$oid)
+	{
+		$sqlw = " 1=1 ";
+		if (!empty($oid)) {
+			$oid = $this->db->escape($oid);
+			$sqlw .= " and oid =" . $oid;
+		}
+		$start = ($pg - 1) * 1000;
+		$stop = 1000;
+		$sql = "SELECT * FROM `orders_goods` where  ".$sqlw." order by ogid desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
+	public function getordergoodsinfo($ogid)
+	{
+		$ogid = $this->db->escape($ogid);
+		$sql = "SELECT * FROM `orders_goods` where ogid = $ogid ";
+		return $this->db->query($sql)->row_array();
+	}
+
+	public function ordergoodsupdate($ogid,$weight,$og_price)
+	{
+		$ogid = $this->db->escape($ogid);
+		$weight = $this->db->escape($weight);
+		$og_price = $this->db->escape($og_price);
+		$sql = "UPDATE `orders_goods` SET weight=$weight,og_price=$og_price WHERE ogid = $ogid";
+		return $this->db->query($sql);
+	}
+
+	public function ordergoodsupdatesum($oid,$sum_price)
+	{
+		$oid = $this->db->escape($oid);
+		$sum_price = $this->db->escape($sum_price);;
+		$sql = "UPDATE `orders` SET sum_price=$sum_price WHERE oid = $oid";
+		return $this->db->query($sql);
+	}
+
+	public function merchantsordergoodslistnew($oid)
+	{
+		$sqlw = " 1=1 ";
+		if (!empty($oid)) {
+			$oid = $this->db->escape($oid);
+			$sqlw .= " and oid =" . $oid;
+		}
+		$sql = "SELECT * FROM `orders_goods` where  ".$sqlw." order by ogid desc ";
 		return $this->db->query($sql)->result_array();
 	}
 }
