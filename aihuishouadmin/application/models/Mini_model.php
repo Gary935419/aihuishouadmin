@@ -28,6 +28,13 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `merchants` where meid = $meid ";
 		return $this->db->query($sql)->row_array();
 	}
+
+	public function getsettingone()
+	{
+		$sql = "SELECT * FROM `seting` where sid = 1 ";
+		return $this->db->query($sql)->row_array();
+	}
+
 	public function getaddressInfoaid($a_id)
 	{
 		$a_id = $this->db->escape($a_id);
@@ -258,9 +265,11 @@ class Mini_model extends CI_Model
 	public function getordersstatecishu($meid,$ostate)
 	{
 		$meid = $this->db->escape($meid);
-		$ostate = $this->db->escape($ostate);
-		$sqlw = " where ostate = " . $ostate;
-		$sqlw .= " and meid = " . $meid;
+//		$ostate = $this->db->escape($ostate);
+//		$sqlw = " where ostate = " . $ostate;
+//		$sqlw .= " and meid = " . $meid;
+
+		$sqlw = " where meid = " . $meid;
 		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
 		return $number;
@@ -314,8 +323,8 @@ class Mini_model extends CI_Model
 	public function getordersstatejine_merchants($meid)
 	{
 		$meid = $this->db->escape($meid);
-		$sqlw = " where ostate = 2 ";
-		$sqlw .= " and meid = " . $meid;
+//		$sqlw = " where ostate = 2 ";
+		$sqlw = " where meid = " . $meid;
 		$sql = "SELECT sum(sum_price) as number FROM `orders` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
 		return $number;
@@ -571,5 +580,12 @@ class Mini_model extends CI_Model
 		}
 		$sql = "SELECT * FROM `orders_goods` where  ".$sqlw." order by ogid desc ";
 		return $this->db->query($sql)->result_array();
+	}
+	public function getordergoodsone($ct_id,$oid)
+	{
+		$ct_id = $this->db->escape($ct_id);
+		$oid = $this->db->escape($oid);
+		$sql = "SELECT * FROM `orders_goods` where ct_id = $ct_id and oid = $oid";
+		return $this->db->query($sql)->row_array();
 	}
 }
