@@ -60,40 +60,40 @@ class Proclass extends CI_Controller
 		$data['ridlist'] = $ridlist;
 		$this->display("proclass/proclass1_add", $data);
 	}
-	
-		/**
-     * 商家添加页
-     */
-    public function proclass1_save()
-    {
-        if (empty($_SESSION['user_name'])) {
-            echo json_encode(array('error' => false, 'msg' => "无法添加数据"));
-            return;
-        }
 
-        $name = isset($_POST["name"]) ? $_POST["name"] : '';
+	/**
+	 * 商家添加页
+	 */
+	public function proclass1_save()
+	{
+		if (empty($_SESSION['user_name'])) {
+			echo json_encode(array('error' => false, 'msg' => "无法添加数据"));
+			return;
+		}
+
+		$name = isset($_POST["name"]) ? $_POST["name"] : '';
 		$user_info = $this->proclass->getprocalss1name($name);
 
-        if (!empty($user_info)) {
-            echo json_encode(array('error' => true, 'msg' => "该分类已经存在。"));
-            return;
-        }
+		if (!empty($user_info)) {
+			echo json_encode(array('error' => true, 'msg' => "该分类已经存在。"));
+			return;
+		}
 		$state = isset($_POST["state"]) ? $_POST["state"] : 3;
 		$pic = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 		$time = time();
 
-        $result = $this->proclass->proclass1_save($name,$state,$pic,$time);
-        if ($result) {
-            echo json_encode(array('success' => true, 'msg' => "操作成功。"));
-        } else {
-            echo json_encode(array('error' => false, 'msg' => "操作失败"));
-        }
-    }
+		$result = $this->proclass->proclass1_save($name,$state,$pic,$time);
+		if ($result) {
+			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
+		} else {
+			echo json_encode(array('error' => false, 'msg' => "操作失败"));
+		}
+	}
 
 
 	//---------------------------一级edit更新-------------------------------------
-	
-	 /**
+
+	/**
 	 *标签修改显示
 	 */
 	public function proclass1_edit()

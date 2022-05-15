@@ -160,7 +160,7 @@
 						<i class="iconfont nav_right">&#xe697;</i></a>
 					<ul class="sub-menu">
 						<li>
-							<a onclick="changeSrc('<?= RUN . '/proclass/proclass1_list' ?>')">
+							<a onclick="changeSrc('<?= RUN . '/news/banners_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
 								<cite>广告图片管理</cite>
 							</a>

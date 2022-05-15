@@ -50,7 +50,7 @@ class News extends CI_Controller
 		}
 	}
 
-	
+
 	/**
 	 * 信息添加页
 	 */
@@ -62,37 +62,37 @@ class News extends CI_Controller
 		$this->display("news/news_add", $data);
 
 	}
-	
-		/**
-     * 信息添加页
-     */
-    public function news_save()
-    {
-        if (empty($_SESSION['user_name'])) {
-            echo json_encode(array('error' => false, 'msg' => "无法添加数据"));
-            return;
-        }
 
-        $ntitle = isset($_POST["ntitle"]) ? $_POST["ntitle"] : '';
+	/**
+	 * 信息添加页
+	 */
+	public function news_save()
+	{
+		if (empty($_SESSION['user_name'])) {
+			echo json_encode(array('error' => false, 'msg' => "无法添加数据"));
+			return;
+		}
+
+		$ntitle = isset($_POST["ntitle"]) ? $_POST["ntitle"] : '';
 		$listimg = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 		$contents = isset($_POST["gcontent"]) ? $_POST["gcontent"] : '';
 		$addtime = time();
 
-        $user_info = $this->news->getnewsname($ntitle);
-        if (!empty($user_info)) {
-            echo json_encode(array('error' => true, 'msg' => "该信息已经存在。"));
-            return;
-        }
+		$user_info = $this->news->getnewsname($ntitle);
+		if (!empty($user_info)) {
+			echo json_encode(array('error' => true, 'msg' => "该信息已经存在。"));
+			return;
+		}
 
 		$result = $this->news->news_save($ntitle,$listimg,$contents,$addtime);
-        if ($result) {
-            echo json_encode(array('success' => true, 'msg' => "操作成功。"));
-        } else {
-            echo json_encode(array('error' => false, 'msg' => "操作失败"));
-        }
-    }
-	
-		/**
+		if ($result) {
+			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
+		} else {
+			echo json_encode(array('error' => false, 'msg' => "操作失败"));
+		}
+	}
+
+	/**
 	 * 信息修改显示
 	 */
 	public function news_edit()
@@ -141,8 +141,11 @@ class News extends CI_Controller
 			echo json_encode(array('error' => false, 'msg' => "操作失败"));
 		}
 	}
-	
-		/**-----------------------------------banner图片管理----------------------------*/
+
+
+
+
+	/**-----------------------------------banner图片管理----------------------------*/
 	/**
 	 * banner图片列表页
 	 */
@@ -253,4 +256,5 @@ class News extends CI_Controller
 			echo json_encode(array('error' => false, 'msg' => "操作失败"));
 		}
 	}
+
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html class="x-admin-sm">
+
 <head>
 	<meta charset="UTF-8">
 	<title>我的管理后台-爱回收</title>
@@ -21,62 +22,28 @@
 		<form method="post" class="layui-form" action="" name="basic_validate" id="tab">
 			<div class="layui-form-item">
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
-					<span class="x-red">*</span>所属一级分类：
+					<span class="x-red">*</span>banner图片名
 				</label>
 				<div class="layui-input-inline" style="width: 300px;">
-					<select name="coid" id="coid" lay-verify="rid">
-						<?php foreach ($class1 as $num => $once): ?>
-							<option value="<?=$once['co_id'];?>"><?=$once['co_name'];?></option>
-						<?php endforeach; ?>
-					</select>
+					<input type="text" id="bannername" name="bannername" lay-verify="bannername"
+						   autocomplete="off" value="<?php echo $bannername ?>" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
-					<span class="x-red">*</span>二级分类名：
-				</label>
-				<div class="layui-input-inline" style="width: 300px;">
-					<input type="text" id="name" name="name" lay-verify="ltitle"
-						   autocomplete="off" class="layui-input">
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label for="L_pass" class="layui-form-label" style="width: 30%;">
-					<span class="x-red">*</span>分类状态：
-				</label>
-				<div class="layui-input-inline layui-show-xs-block">
-					<div style="width: 300px" class="layui-input-inline layui-show-xs-block">
-						<select name="state" id="state" lay-verify="rid">
-							<option value="1">热门</option>
-							<option value="2">已开通</option>
-							<option value="3" selected>暂未开通</option>
-						</select>
-					</div>
-				</div>
-			</div>
-			<div class="layui-form-item">
-				<label for="L_pass" class="layui-form-label" style="width: 30%;">
-					<span class="x-red">*</span>图标
+					<span class="x-red">*</span>图片
 				</label>
 				<div class="layui-input-inline" style="width: 300px;">
 					<button type="button" class="layui-btn" id="upload1">上传图片</button>
 					<div class="layui-upload-list">
-						<input type="hidden" name="gimg" id="gimg" lay-verify="gimg" autocomplete="off"
+						<input type="hidden" name="gimg" value="<?php echo $bannersimg ?>" id="gimg" lay-verify="gimg" autocomplete="off"
 							   class="layui-input">
-						<img class="layui-upload-img" style="width: 100px;height: 100px;display: none;" id="gimgimg" name="gimgimg">
+						<img class="layui-upload-img" src="<?php echo $bannersimg ?>" style="width: 200px;height: 100px;" id="gimgimg" name="gimgimg">
 						<p id="demoText"></p>
 					</div>
 				</div>
 			</div>
-			<div class="layui-form-item">
-				<label for="L_pass" class="layui-form-label" style="width: 30%;">
-					<span class="x-red">*</span>回收费用（公斤）：
-				</label>
-				<div class="layui-input-inline" style="width: 300px;">
-					<input type="text" id="price" name="price" lay-verify="ltitle"
-						   autocomplete="off" class="layui-input">
-				</div>
-			</div>
+			<input type="hidden" name="uid" id="uid" value="<?php echo $id ?>">
 			<div class="layui-form-item">
 				<label for="L_repass" class="layui-form-label" style="width: 30%;">
 				</label>
@@ -87,10 +54,11 @@
 		</form>
 	</div>
 </div>
+
 <script>
 	layui.use('upload', function(){
 		var $ = layui.jquery
-				,upload = layui.upload;
+			,upload = layui.upload;
 
 		//普通图片上传
 		var uploadInst = upload.render({
@@ -151,47 +119,47 @@
 		$("#avaterimgp"+index).remove();
 	}
 </script>
-
 <script>
 	layui.use(['form', 'layer'],
-			function () {
-				var form = layui.form,
-						layer = layui.layer;
-				//自定义验证规则
-				form.verify({
-					ltitle: function (value) {
-						if ($('#ltitle').val() == "") {
-							return '请输入标签名。';
-						}
-					},
-				});
-
-				$("#tab").validate({
-					submitHandler: function (form) {
-						$.ajax({
-							cache: true,
-							type: "POST",
-							url: "<?= RUN . '/proclass/proclass2_save' ?>",
-							data: $('#tab').serialize(),//
-							async: false,
-							error: function (request) {
-								alert("error");
-							},
-							success: function (data) {
-								var data = eval("(" + data + ")");
-								if (data.success) {
-									layer.msg(data.msg);
-									setTimeout(function () {
-										cancel();
-									}, 2000);
-								} else {
-									layer.msg(data.msg);
-								}
-							}
-						});
+		function () {
+			var form = layui.form,
+				layer = layui.layer;
+			//自定义验证规则
+			form.verify({
+				bannername: function (value) {
+					if ($('#bannername').val() == "") {
+						return '请输入标签名。';
 					}
-				});
+				},
 			});
+
+			$("#tab").validate({
+
+				submitHandler: function (form) {
+					$.ajax({
+						cache: true,
+						type: "POST",
+						url: "<?= RUN . '/news/banners_save_edit' ?>",
+						data: $('#tab').serialize(),
+						async: false,
+						error: function (request) {
+							alert("error");
+						},
+						success: function (data) {
+							var data = eval("(" + data + ")");
+							if (data.success) {
+								layer.msg(data.msg);
+								setTimeout(function () {
+									cancel();
+								}, 2000);
+							} else {
+								layer.msg(data.msg);
+							}
+						}
+					});
+				}
+			});
+		});
 
 	function cancel() {
 		//关闭当前frame

@@ -18,7 +18,7 @@
 <div class="x-nav">
           <span class="layui-breadcrumb">
             <a>
-              <cite>订单管理</cite></a>
+              <cite>商品分类管理</cite></a>
           </span>
 </div>
 <div class="layui-fluid">
@@ -26,47 +26,46 @@
 		<div class="layui-col-md12">
 			<div class="layui-card">
 				<div class="layui-card-body ">
-					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/orders/orders1_list' ?>">
+					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/news/banners_list' ?>">
 						<div class="layui-inline layui-show-xs-block">
 							<input type="text" name="user_name" id="user_name" value="<?php echo $user_name1 ?>"
-								   placeholder="用户名" autocomplete="off" class="layui-input">
+								   placeholder="banner图名" autocomplete="off" class="layui-input">
 						</div>
 						<div class="layui-inline layui-show-xs-block">
 							<button class="layui-btn" lay-submit="" lay-filter="sreach"><i
-										class="layui-icon">&#xe615;</i></button>
+									class="layui-icon">&#xe615;</i></button>
 						</div>
 					</form>
 				</div>
+				<button class="layui-btn layui-card-header" style="float: right;margin-top: -40px;margin-right: 20px;"
+						onclick="xadmin.open('添加','<?= RUN . '/news/banners_add' ?>',900,500)"><i
+						class="layui-icon"></i>添加
+				</button>
 				<div class="layui-card-body ">
 					<table class="layui-table layui-form">
 						<thead>
 						<tr>
-							<th style="width: 5%">序号</th>
-							<th style="width: 10%">下单用户名</th>
-							<th style="width: 10%">用户手机号</th>
-							<th style="width: 20%">下单货物</th>
-							<th style="width: 10%">配送方式</th>
-							<th style="width: 10%">下单时间</th>
-							<th style="width: 10%">收货商家</th>
-							<th style="width: 10%">当前状态</th>
-							<th style="width: 15%">操作</th>
+							<th style="width: 10%">序号</th>
+							<th style="width: 20%">图片名称</th>
+							<th style="width: 40%">图片显示</th>
+							<th style="width: 30%">操作</th>
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
 							<?php foreach ($list as $num => $once): ?>
-								<tr id="p<?= $once['oid'] ?>" sid="<?= $once['oid'] ?>">
+								<tr id="p<?= $once['bid'] ?>" sid="<?= $once['bid'] ?>">
 									<td><?= $num + 1 ?></td>
-									<td><?= $once['uname'] ?></td>
-									<td><?= $once['utel'] ?></td>
-									<td><?= $once['goodsname'] ?></td>
-									<td><?php echo $once['otype']==0 ? "自己送货":"上门取货" ?></td>
-									<td><?= $once['delivery_time'] ?></td>
-									<td><?= $once['muser'] ?></td>
-									<td>已下单</td>
+									<td><?= $once['bannername'] ?></td>
+									<td>
+										<img class="layui-upload-img" src="<?php echo $once['bannerimg'] ?>" style="height: 50px;" >
+									</td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
-												onclick="xadmin.open('编辑','<?= RUN . '/orders/orders1_edit?id=' ?>'+<?= $once['oid'] ?>,900,700)">
-											<i class="layui-icon">&#xe642;</i>查看
+												onclick="xadmin.open('编辑','<?= RUN . '/news/banners_edit?id=' ?>'+<?= $once['bid'] ?>,900,500)">
+											<i class="layui-icon">&#xe642;</i>编辑
+										</button>
+										<button class="layui-btn layui-btn-danger"
+												onclick="proclass1_delete('<?= $once['bid'] ?>')"><i class="layui-icon">&#xe640;</i>删除
 										</button>
 									</td>
 								</tr>
@@ -91,38 +90,38 @@
 </div>
 </body>
 <script>
-	function qishou_delete(id) {
+	function proclass1_delete(id) {
 		layer.confirm('您是否确认删除？', {
-					title: '温馨提示',
-					btn: ['确认', '取消']
-					// 按钮
-				},
-				function (index) {
-					$.ajax({
-						type: "post",
-						data: {"id": id},
-						dataType: "json",
-						url: "<?= RUN . '/orders/orders_delete' ?>",
-						success: function (data) {
-							if (data.success) {
-								$("#p" + id).remove();
-								layer.alert(data.msg, {
-											title: '温馨提示',
-											icon: 6,
-											btn: ['确认']
-										},
-								);
-							} else {
-								layer.alert(data.msg, {
-											title: '温馨提示',
-											icon: 5,
-											btn: ['确认']
-										},
-								);
-							}
-						},
-					});
+				title: '温馨提示',
+				btn: ['确认', '取消']
+				// 按钮
+			},
+			function (index) {
+				$.ajax({
+					type: "post",
+					data: {"id": id},
+					dataType: "json",
+					url: "<?= RUN . '/news/banners_delete' ?>",
+					success: function (data) {
+						if (data.success) {
+							$("#p" + id).remove();
+							layer.alert(data.msg, {
+									title: '温馨提示',
+									icon: 6,
+									btn: ['确认']
+								},
+							);
+						} else {
+							layer.alert(data.msg, {
+									title: '温馨提示',
+									icon: 5,
+									btn: ['确认']
+								},
+							);
+						}
+					},
 				});
+			});
 	}
 </script>
 </html>

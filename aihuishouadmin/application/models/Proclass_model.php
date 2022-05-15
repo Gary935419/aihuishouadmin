@@ -3,12 +3,12 @@
 
 class Proclass_model extends CI_Model
 {
-    public function __construct()
-    {
-        parent::__construct();
-        $this->date = time();
-        $this->load->database();
-    }
+	public function __construct()
+	{
+		parent::__construct();
+		$this->date = time();
+		$this->load->database();
+	}
 
 	//----------------------------一级分类list列表-------------------------------------
 
@@ -37,45 +37,45 @@ class Proclass_model extends CI_Model
 		return $this->db->query($sql)->result_array();
 	}
 
-	    //标签delete
-    public function proclass1_delete($id)
-    {
-        $id = $this->db->escape($id);
+	//标签delete
+	public function proclass1_delete($id)
+	{
+		$id = $this->db->escape($id);
 		$sql = "DELETE FROM class_one WHERE co_id = $id";
-        return $this->db->query($sql);
-    }
+		return $this->db->query($sql);
+	}
 
 	//----------------------------一级分类add添加-------------------------------------
 
-	    //判断是否有重复信息
-    public function getprocalss1name($user_name)
-    {
-        $user_name = $this->db->escape($user_name);
-        $sql = "SELECT * FROM `class_one` where co_name = $user_name ";
-        return $this->db->query($sql)->row_array();
-    }
+	//判断是否有重复信息
+	public function getprocalss1name($user_name)
+	{
+		$user_name = $this->db->escape($user_name);
+		$sql = "SELECT * FROM `class_one` where co_name = $user_name ";
+		return $this->db->query($sql)->row_array();
+	}
 
-    //标签save
-    public function proclass1_save($name,$state,$pic,$time)
-    {
+	//标签save
+	public function proclass1_save($name,$state,$pic,$time)
+	{
 		$name = $this->db->escape($name);
 		$state = $this->db->escape($state);
 		$pic = $this->db->escape($pic);
 		$time = $this->db->escape($time);
 
-        $sql = "INSERT INTO `class_one` (co_name,co_state,co_img,co_addtime) VALUES ($name,$state,$pic,$time)";
-        return $this->db->query($sql);
-    }
+		$sql = "INSERT INTO `class_one` (co_name,co_state,co_img,co_addtime) VALUES ($name,$state,$pic,$time)";
+		return $this->db->query($sql);
+	}
 
 	//----------------------------一级edit更新-------------------------------------
 
-	    //根据id获取标签信息
-    public function getproclass1list($id)
-    {
-        $id = $this->db->escape($id);
-        $sql = "SELECT * FROM `class_one` where co_id=$id ";
-        return $this->db->query($sql)->row_array();
-    }
+	//根据id获取标签信息
+	public function getproclass1list($id)
+	{
+		$id = $this->db->escape($id);
+		$sql = "SELECT * FROM `class_one` where co_id=$id ";
+		return $this->db->query($sql)->row_array();
+	}
 
 	//标签更新
 	public function proclass1_save_edit($uid, $name,$state,$pic)
