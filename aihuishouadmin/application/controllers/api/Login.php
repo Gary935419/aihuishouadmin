@@ -114,8 +114,9 @@ class Login extends CI_Controller
 			$add_time = time();
 			$wallet = 0;
 			$status = 1;
+			$birthday = date('Y-m-d',$add_time);
 			// 注册操作
-			$this->mini->register($wallet,$status,$token,$openid,$nickname,$avater,$add_time);
+			$this->mini->register($birthday,$wallet,$status,$token,$openid,$nickname,$avater,$add_time);
 			$member_newinfo = $this->mini->getMemberInfo($openid);
 			$member_newinfo['session_key'] = $resultnew['session_key'];
 			$this->back_json(200, '操作成功',$member_newinfo);

@@ -367,6 +367,12 @@ class Miniapi extends CI_Controller
 		if (empty($member)){
 			$this->back_json(205, '请您先去授权登录！');
 		}
+		if (empty($member['email'])){
+			$member['email'] = "";
+		}
+		if (empty($member['mobile'])){
+			$member['mobile'] = "";
+		}
 		$sendyourself_arr = array();
 		$sendyourself_arr[0]['name']="自己送货";
 		$sendyourself_arr[0]['value']="0";
@@ -693,7 +699,7 @@ class Miniapi extends CI_Controller
 		}
 		$meid = $member['meid'];
 		$page = $_POST['page'];
-		$datenew = empty($_POST['date'])?'':$_POST['date'];
+		$datenew = empty($_POST['date'])?date('Y-m-d',time()):$_POST['date'];
 		$orderlist = $this->mini->merchantsorderlist($meid,$page,$datenew);
 		foreach ($orderlist as $k=>$v){
 			$orderlist[$k]['addtime'] = date('Y-m-d H:i',$v['addtime']);
@@ -701,6 +707,16 @@ class Miniapi extends CI_Controller
 			$utel=$v['utel'];
 			$memberinfoaddress = $this->mini->getMerchantsInfotorder($uname,$utel);
 			$orderlist[$k]['address'] = empty($memberinfoaddress['address'])?'':$memberinfoaddress['address'];
+
+			if ($v['ostate']==0){
+				$orderlist[$k]['ostate'] = "未回收";
+			}elseif ($v['ostate']==1){
+				$orderlist[$k]['ostate'] = "待回收";
+			}elseif ($v['ostate']==2){
+				$orderlist[$k]['ostate'] = "已回收";
+			}elseif ($v['ostate']==3){
+				$orderlist[$k]['ostate'] = "已取消";
+			}
 		}
 		$data['list'] = $orderlist;
 		$this->back_json(200, '操作成功', $data);
@@ -971,6 +987,26 @@ class Miniapi extends CI_Controller
 		$this->back_json(200, '操作成功');
 	}
 
+	public function opinion_insert(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权登录！');
+		}
+		$token = $_POST['token'];
+		$member = $this->mini->getMemberInfotoken($token);
+		if (empty($member)){
+			$this->back_json(205, '请您先去授权登录！');
+		}
+
+		if (!isset($_POST['note']) || empty($_POST['note'])) {
+			$this->back_json(202, '请填写反馈信息！');
+		}
+		$op_contents = empty($_POST['note'])?'':$_POST['note'];
+		$addtime = time();
+		$this->mini->opinion_goods_save($member['mid'],$op_contents,$addtime);
+		$this->back_json(200, '操作成功');
+	}
+
 	public function order_insert_go(){
 		//验证loginCode是否传递
 		if (!isset($_POST['token']) || empty($_POST['token'])) {
@@ -1140,8 +1176,33 @@ class Miniapi extends CI_Controller
 		$sum_price = 0;
 		foreach ($orderlist as $k=>$v){
 			$sum_price = $sum_price + $v['og_price'];
+			$omtype = 0;
+			$meid = $member['meid'];
+			$mename = $member['mename'];
+			$ct_id = $v['ct_id'];
+			$ct_name = $v['ct_name'];
+			$m_weight = $v['weight'];
+			$q_weight = 0;
+			$price = $v['ct_price'];
+			$addtime = time();
+			$datetime = date('Y-m-d',time());
+
+			$getorders_merchants = $this->mini->getorders_merchants($ct_id,$meid,$datetime);
+			if (empty($getorders_merchants)){
+				$this->mini->getorders_merchants_save($omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime);
+			}else{
+				$gm_weight = $getorders_merchants['m_weight'];
+				$m_weightnew = floatval($gm_weight) + floatval($m_weight);
+				$this->mini->getorders_merchants_edit($ct_id,$meid,$datetime,$m_weightnew);
+			}
 		}
 		$this->mini->ordergoodsupdatesum($oid,$sum_price);
+		$orderone = $this->mini->getorderone($oid);
+		$mid = $orderone['mid'];
+		$MemberInfomid = $this->mini->getMemberInfomid($mid);
+		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['wallet']);
+		$this->mini->member_edit_wallet($mid,$membernewmoney);
+
 		$this->back_json(200, '操作成功');
 	}
 
@@ -1189,6 +1250,62 @@ class Miniapi extends CI_Controller
 				$this->mini->order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight);
 			}
 		}
+		$this->back_json(200, '操作成功');
+	}
+	public function indexnewlist(){
+		$indexnewlist = $this->mini->getindexnewlist();
+		if (!empty($indexnewlist)){
+			foreach ($indexnewlist as $k=>$v){
+				$indexnewlist[$k]['addtime']=date('Y-m-d',$v['addtime']);
+			}
+			$data['indexnewlist'] = $indexnewlist;
+		}else{
+			$data['indexnewlist'] = array();
+		}
+		$this->back_json(200, '操作成功', $data);
+	}
+	public function goodsdetails(){
+
+		$nid = $_POST['nid'];
+		$goodsdetails = $this->mini->goodsdetails($nid);
+		$goodsdetails['addtime']=date('Y-m-d',$goodsdetails['addtime']);
+		$data['goodsdetails'] = $goodsdetails;
+		$this->back_json(200, '操作成功', $data);
+	}
+	public function get_set_info(){
+		$data['setarr'] = $this->mini->getsettinginfo();
+		$this->back_json(200, '操作成功',$data);
+	}
+	public function goodsdetailssetting(){
+		if (!isset($_POST['sid']) || empty($_POST['sid'])) {
+			$this->back_json(205, '数据错误sid！');
+		}
+		$setarr = $this->mini->getsettinginfo();
+		$goodsdetails = array();
+		if ($_POST['sid'] == 1){
+			$goodsdetails['contents'] = empty($setarr['aboutus'])?'':$setarr['aboutus'];
+		}elseif ($_POST['sid'] == 2){
+			$goodsdetails['contents'] = empty($setarr['recruiting'])?'':$setarr['recruiting'];
+		}
+		$data['goodsdetails'] = $goodsdetails;
+		$this->back_json(200, '操作成功',$data);
+	}
+
+	public function merchandise_fullflg_update(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$merchantsinfo = $this->mini->getmerchantsInfomeid($token);
+		if (empty($merchantsinfo)) {
+			$this->back_json(206, '请您先去授权商家登录！');
+		}
+
+		if ($merchantsinfo['full_flg'] == 1){
+			$this->back_json(206, '当前已经是满仓状态！请勿重复点击！');
+		}
+		$this->mini->merchandise_fullflg_update($merchantsinfo['meid']);
 		$this->back_json(200, '操作成功');
 	}
 }

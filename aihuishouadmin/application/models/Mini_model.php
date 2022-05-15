@@ -9,11 +9,22 @@ class Mini_model extends CI_Model
         $this->date = time();
         $this->load->database();
     }
+	public function getsettinginfo()
+	{
+		$sql = "SELECT * FROM `seting` where sid = 1 ";
+		return $this->db->query($sql)->row_array();
+	}
 	//根据token查看详情
 	public function getMemberInfotoken($token)
 	{
 		$token = $this->db->escape($token);
 		$sql = "SELECT * FROM `member` where token = $token ";
+		return $this->db->query($sql)->row_array();
+	}
+	public function getMemberInfomid($mid)
+	{
+		$mid = $this->db->escape($mid);
+		$sql = "SELECT * FROM `member` where mid = $mid ";
 		return $this->db->query($sql)->row_array();
 	}
 	public function getmerchantsInfomeid($token)
@@ -250,8 +261,16 @@ class Mini_model extends CI_Model
 		$sql = "UPDATE `member` SET token=$token WHERE mid = $mid";
 		return $this->db->query($sql);
 	}
-	public function register($wallet,$status,$token,$openid,$nickname,$avater,$add_time)
+	public function member_edit_wallet($mid,$wallet)
 	{
+		$mid = $this->db->escape($mid);
+		$wallet = $this->db->escape($wallet);
+		$sql = "UPDATE `member` SET wallet=$wallet WHERE mid = $mid";
+		return $this->db->query($sql);
+	}
+	public function register($birthday,$wallet,$status,$token,$openid,$nickname,$avater,$add_time)
+	{
+		$birthday = $this->db->escape($birthday);
 		$wallet = $this->db->escape($wallet);
 		$status = $this->db->escape($status);
 		$token = $this->db->escape($token);
@@ -259,7 +278,7 @@ class Mini_model extends CI_Model
 		$nickname = $this->db->escape($nickname);
 		$avater = $this->db->escape($avater);
 		$add_time = $this->db->escape($add_time);
-		$sql = "INSERT INTO `member` (getpro,wallet,status,token,openid,nickname,avater,add_time) VALUES (0,$wallet,$status,$token,$openid,$nickname,$avater,$add_time)";
+		$sql = "INSERT INTO `member` (birthday,sex,getpro,wallet,status,token,openid,nickname,avater,add_time) VALUES ($birthday,0,0,$wallet,$status,$token,$openid,$nickname,$avater,$add_time)";
 		return $this->db->query($sql);
 	}
 	public function getordersstatecishu($meid,$ostate)
@@ -295,7 +314,8 @@ class Mini_model extends CI_Model
 	}
 	public function getordersstateshangpin($mid)
 	{
-		$sqlw = " where 1=1 and ostate = 2 ";
+//		$sqlw = " where 1=1 and ostate = 2 ";
+		$sqlw = " where 1=1 ";
 		if (!empty($mid)) {
 			$mid = $this->db->escape($mid);
 			$sqlw .= " and (m.mid = " . $mid . ")";
@@ -314,7 +334,8 @@ class Mini_model extends CI_Model
 	public function getordersstatejine($mid)
 	{
 		$mid = $this->db->escape($mid);
-		$sqlw = " where ostate = 2 ";
+		$sqlw = " where 2 = 2 ";
+//		$sqlw = " where ostate = 2 ";
 		$sqlw .= " and mid = " . $mid;
 		$sql = "SELECT sum(sum_price) as number FROM `orders` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
@@ -526,7 +547,7 @@ class Mini_model extends CI_Model
 		$sqlw = " and 1=1 ";
 		if (!empty($datenew)) {
 			$datenew = $this->db->escape($datenew);
-			$sqlw .= " and delivery_date =" . $datenew;
+			$sqlw .= " and delivery_date = " . $datenew;
 		}
 		$meid = $this->db->escape($meid);
 		$start = ($pg - 1) * 10;
@@ -567,7 +588,7 @@ class Mini_model extends CI_Model
 	{
 		$oid = $this->db->escape($oid);
 		$sum_price = $this->db->escape($sum_price);;
-		$sql = "UPDATE `orders` SET sum_price=$sum_price WHERE oid = $oid";
+		$sql = "UPDATE `orders` SET sum_price=$sum_price,ostate=2 WHERE oid = $oid";
 		return $this->db->query($sql);
 	}
 
@@ -587,5 +608,77 @@ class Mini_model extends CI_Model
 		$oid = $this->db->escape($oid);
 		$sql = "SELECT * FROM `orders_goods` where ct_id = $ct_id and oid = $oid";
 		return $this->db->query($sql)->row_array();
+	}
+	public function getindexnewlist()
+	{
+		$sqlw = " where 1=1";
+		$sql = "SELECT * FROM `news` " . $sqlw . " order by addtime desc";
+		return $this->db->query($sql)->result_array();
+	}
+	public function goodsdetails($gid)
+	{
+		$gid = $this->db->escape($gid);
+		$sql = "SELECT * FROM `news` where nid=$gid ";
+		return $this->db->query($sql)->row_array();
+	}
+	public function getorderone($oid)
+	{
+		$oid = $this->db->escape($oid);
+		$sql = "SELECT * FROM `orders` where oid = $oid";
+		return $this->db->query($sql)->row_array();
+	}
+	public function getorders_merchants($ct_id,$meid,$datetime)
+	{
+		$ct_id = $this->db->escape($ct_id);
+		$meid = $this->db->escape($meid);
+		$datetime = $this->db->escape($datetime);
+		$sql = "SELECT * FROM `orders_merchants` where ct_id = $ct_id and meid = $meid and datetime = $datetime";
+		return $this->db->query($sql)->row_array();
+	}
+
+	public function getorders_merchants_save($omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime)
+	{
+		$omtype = $this->db->escape($omtype);
+		$meid = $this->db->escape($meid);
+		$mename = $this->db->escape($mename);
+		$ct_id = $this->db->escape($ct_id);
+		$ct_name = $this->db->escape($ct_name);
+		$m_weight = $this->db->escape($m_weight);
+		$q_weight = $this->db->escape($q_weight);
+		$price = $this->db->escape($price);
+		$addtime = $this->db->escape($addtime);
+		$datetime = $this->db->escape($datetime);
+
+		$sql = "INSERT INTO `orders_merchants` (omtype,meid,mename,ct_id,ct_name,m_weight,q_weight,price,addtime,datetime) VALUES ($omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime)";
+		$this->db->query($sql);
+		$omid=$this->db->insert_id();
+		return $omid;
+	}
+	public function getorders_merchants_edit($ct_id,$meid,$datetime,$m_weightnew)
+	{
+		$ct_id = $this->db->escape($ct_id);
+		$meid = $this->db->escape($meid);
+		$datetime = $this->db->escape($datetime);
+		$m_weightnew = $this->db->escape($m_weightnew);
+		$sql = "UPDATE `orders_merchants` SET m_weight=$m_weightnew WHERE ct_id = $ct_id and meid = $meid and datetime = $datetime";
+		return $this->db->query($sql);
+	}
+
+	public function opinion_goods_save($mid,$op_contents,$addtime)
+	{
+		$mid = $this->db->escape($mid);
+		$op_contents = $this->db->escape($op_contents);
+		$addtime = $this->db->escape($addtime);
+		$sql = "INSERT INTO `opinion` (mid,op_contents,addtime) VALUES ($mid,$op_contents,$addtime)";
+		$this->db->query($sql);
+		$opid=$this->db->insert_id();
+		return $opid;
+	}
+
+	public function merchandise_fullflg_update($meid)
+	{
+		$meid = $this->db->escape($meid);
+		$sql = "UPDATE `merchants` SET full_flg=1 WHERE meid = $meid";
+		return $this->db->query($sql);
 	}
 }
