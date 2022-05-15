@@ -231,6 +231,13 @@ class Miniapi extends CI_Controller
 		}
 
 		$mid = $member['mid'];
+
+		if (!isset($_POST['name']) || empty($_POST['name'])) {
+			$this->back_json(205, '请您填写联系人姓名！');
+		}
+		if (!isset($_POST['mobile']) || empty($_POST['mobile'])) {
+			$this->back_json(205, '请您填写联系人电话！');
+		}
 		$longitude = isset($_POST["longitude"]) ? $_POST["longitude"] : '';
 		$latitude = isset($_POST["latitude"]) ? $_POST["latitude"] : '';
 		$province = isset($_POST["province"]) ? $_POST["province"] : '';
@@ -360,6 +367,20 @@ class Miniapi extends CI_Controller
 		if (empty($member)){
 			$this->back_json(205, '请您先去授权登录！');
 		}
+		$sendyourself_arr = array();
+		$sendyourself_arr[0]['name']="自己送货";
+		$sendyourself_arr[0]['value']="0";
+		$sendyourself_arr[0]['checked']="true";
+
+		if ($member['getpro'] == 1){
+			$sendyourself_arr = array();
+			$sendyourself_arr[0]['name']="自己送货";
+			$sendyourself_arr[0]['value']="0";
+			$sendyourself_arr[0]['checked']="true";
+			$sendyourself_arr[1]['name']="上门取货";
+			$sendyourself_arr[1]['value']="1";
+		}
+		$data['sendyourself_arr'] = $sendyourself_arr;
 		$data['member'] = $member;
 		$this->back_json(200, '操作成功', $data);
 	}
@@ -400,7 +421,7 @@ class Miniapi extends CI_Controller
 		$sendyourself_arr[0]['value']="0";
 		$sendyourself_arr[0]['checked']="true";
 
-		if ($getsettingone['sendyourself'] == 1){
+		if ($member['getpro'] == 1){
 			$sendyourself_arr = array();
 			$sendyourself_arr[0]['name']="自己送货";
 			$sendyourself_arr[0]['value']="0";

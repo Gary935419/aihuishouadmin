@@ -259,7 +259,7 @@ class Mini_model extends CI_Model
 		$nickname = $this->db->escape($nickname);
 		$avater = $this->db->escape($avater);
 		$add_time = $this->db->escape($add_time);
-		$sql = "INSERT INTO `member` (wallet,status,token,openid,nickname,avater,add_time) VALUES ($wallet,$status,$token,$openid,$nickname,$avater,$add_time)";
+		$sql = "INSERT INTO `member` (getpro,wallet,status,token,openid,nickname,avater,add_time) VALUES (0,$wallet,$status,$token,$openid,$nickname,$avater,$add_time)";
 		return $this->db->query($sql);
 	}
 	public function getordersstatecishu($meid,$ostate)
