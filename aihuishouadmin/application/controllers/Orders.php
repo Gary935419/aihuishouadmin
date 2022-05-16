@@ -22,16 +22,19 @@ class Orders extends CI_Controller
 	/**
 	 * 订单列表页
 	 */
-	public function orders1_list()
+	public function orders_list()
 	{
 		$user_name = isset($_GET['user_name']) ? $_GET['user_name'] : '';
+		$ostate = isset($_GET['ostate']) ? $_GET['ostate'] : '0';
+		$start = isset($_GET['start']) ? strtotime($_GET['start']) : strtotime(date('Y-m-d'));
+		$end = isset($_GET['end']) ? strtotime($_GET['end']) : "";
 		$page = isset($_GET["page"]) ? $_GET["page"] : 1;
-		$allpage = $this->orders->getOrdersAllPage($user_name,0);
+		$allpage = $this->orders->getOrdersAllPage($user_name,$ostate,$start,$end);
 		$page = $allpage > $page ? $page : $allpage;
 		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
 		$data["page"] = $page;
 		$data["allpage"] = $allpage;
-		$data["list"] = $this->orders->getOrdersAll($page, $user_name,0);
+		$data["list"] = $this->orders->getOrdersAll($page, $user_name,$ostate,$start,$end);
 
 		//获取用户卖的所有货物
 		foreach ($data["list"] as $num => $once) {
@@ -45,107 +48,118 @@ class Orders extends CI_Controller
 			$data["list"][$num]['goodsname']=$goods;
 		}
 
-		$data["user_name1"] = $user_name;
-		$this->display("orders/orders1_list", $data);
-	}
-
-	public function orders2_list()
-	{
-		$user_name = isset($_GET['user_name']) ? $_GET['user_name'] : '';
-		$page = isset($_GET["page"]) ? $_GET["page"] : 1;
-		$allpage = $this->orders->getOrdersAllPage($user_name,2);
-		$page = $allpage > $page ? $page : $allpage;
-		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
-		$data["page"] = $page;
-		$data["allpage"] = $allpage;
-		$data["list"] = $this->orders->getOrdersAll($page, $user_name,2);
-
-		//获取用户卖的所有货物
-		foreach ($data["list"] as $num => $once) {
-			$oid=$once['oid'];
-			$goodsarr[]=null;
-			$goodsarr = $this->orders->getOrdersgoods($oid);
-			foreach ($goodsarr as $num1 => $once1) {
-				$goodsarr[$num1]=$once1['ct_name']."(".$once1['weight'].")";
-			}
-			$goods = implode($goodsarr," / ");
-			$data["list"][$num]['goodsname']=$goods;
+		$data["start"] = date("Y-m-d",$start);
+		if($end) {
+			$data["end"] = date("Y-m-d", $end);
+		}else{
+			$data["end"] =$end;
 		}
-
+		$data["ostate"] = $ostate;
 		$data["user_name1"] = $user_name;
-		$this->display("orders/orders2_list", $data);
-	}
-
-	public function orders3_list()
-	{
-		$user_name = isset($_GET['user_name']) ? $_GET['user_name'] : '';
-		$page = isset($_GET["page"]) ? $_GET["page"] : 1;
-		$allpage = $this->orders->getOrdersAllPage($user_name,3);
-		$page = $allpage > $page ? $page : $allpage;
-		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
-		$data["page"] = $page;
-		$data["allpage"] = $allpage;
-		$data["list"] = $this->orders->getOrdersAll($page, $user_name,3);
-
-		//获取用户卖的所有货物
-		foreach ($data["list"] as $num => $once) {
-			$oid=$once['oid'];
-			$goodsarr[]=null;
-			$goodsarr = $this->orders->getOrdersgoods($oid);
-			foreach ($goodsarr as $num1 => $once1) {
-				$goodsarr[$num1]=$once1['ct_name']."(".$once1['weight'].")";
-			}
-			$goods = implode($goodsarr," / ");
-			$data["list"][$num]['goodsname']=$goods;
-		}
-
-		$data["user_name1"] = $user_name;
-		$this->display("orders/orders3_list", $data);
+		$this->display("orders/order_list", $data);
 	}
 
 
+
+	/**-----------------------------------订单详情管理-----------------------------------------------------*/
 	/**
-	 * 订单修改显示
+	 * 订单列表页
 	 */
-	public function orders1_edit()
+	public function order_edit()
 	{
 		$uid = isset($_GET['id']) ? $_GET['id'] : 0;
-		$data = array();
-		$ridlist = $this->orders->getRole();
-		$data['ridlist'] = $ridlist;
+		$name = $this->orders->getmerchants($uid);
 		$data["list"] = $this->orders->getorderslist($uid);
-
-		$this->display("orders/orders1_edit", $data);
+		$data["name"] =$name[0]['muser'];
+		$this->display("orders/order_edit", $data);
 	}
 
-	/**
-	 * 订单修改提交
-	 */
-	public function orders_save_edit()
-	{
-		if (empty($_SESSION['user_name'])) {
-			echo json_encode(array('error' => false, 'msg' => "无法修改数据"));
-			return;
-		}
-		$uid = isset($_POST["uid"]) ? $_POST["uid"] : '';
-		$ntitle = isset($_POST["ntitle"]) ? $_POST["ntitle"] : '';
-		$ntitle1 = isset($_POST["ntitle1"]) ? $_POST["ntitle1"] : '';
-		$gimg = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
-		$gcontent = isset($_POST["gcontent"]) ? $_POST["gcontent"] : '';
 
-		if($ntitle<>$ntitle1){
-			$user_info = $this->orders->getordersname($ntitle);
-			if (!empty($user_info)) {
-				echo json_encode(array('error' => true, 'msg' => "该订单已经存在。"));
-				return;
+	/**-----------------------------------商家统计管理-----------------------------------------------------*/
+	/**
+	 * 订单列表页
+	 */
+	public function ordermerchants_list()
+	{
+		//获取所有商家信息
+		$meid = isset($_GET['meid']) ? $_GET['meid'] : 0;
+		$start = isset($_GET['start']) ? strtotime($_GET['start']) : strtotime(date('Y-m-d'));
+		$end = isset($_GET['end']) ? strtotime($_GET['end']) : "";
+		$page = isset($_GET["page"]) ? $_GET["page"] : 1;
+		$data["merchantslist"] = $this->orders->getmerchantsname();
+
+		$allpage = $this->orders->getMerchantsOrderAllPage($meid, $start, $end);
+		$page = $allpage > $page ? $page : $allpage;
+		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
+		$data["page"] = $page;
+		$data["allpage"] = $allpage;
+		$data["list"] = $this->orders->getMerchantsOrdersAll($page, $meid, $start, $end);
+
+		$data["start"] = date("Y-m-d",$start);
+		if($end) {
+			$data["end"] = date("Y-m-d", $end);
+		}else{
+			$data["end"] =$end;
+		}
+		$data["meid"] =$meid;
+		$this->display("orders/ordermerchants_list", $data);
+	}
+
+
+	/**-----------------------------------司机统计管理-----------------------------------------------------*/
+	/**
+	 * 订单列表页
+	 */
+	public function orderqishou_list()
+	{
+		//获取所有商家信息
+		$qsid = isset($_GET['qsid']) ? $_GET['qsid'] : 0;
+		$start = isset($_GET['start']) ? strtotime($_GET['start']) : strtotime(date('Y-m-d'));
+		$end = isset($_GET['end']) ? strtotime($_GET['end']) : "";
+		$page = isset($_GET["page"]) ? $_GET["page"] : 1;
+		$data["qishoulist"] = $this->orders->getqishouname();
+
+		$allpage = $this->orders->getQishouOrderAllPage($qsid, $start, $end);
+		$page = $allpage > $page ? $page : $allpage;
+		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
+		$data["page"] = $page;
+		$data["allpage"] = $allpage;
+		$data["list"] = $this->orders->getQishouOrdersAll($page, $qsid, $start, $end);
+
+		$data["start"] = date("Y-m-d",$start);
+		if($end) {
+			$data["end"] = date("Y-m-d", $end);
+		}else{
+			$data["end"] =$end;
+		}
+		$data["qsid"] =$qsid;
+		$this->display("orders/orderqishou_list", $data);
+	}
+
+	/**-----------------------------------司机入库管理-----------------------------------------------------*/
+	/**
+	 * 订单列表页
+	 */
+
+	public function orderqishou_edit()
+	{
+		//$id = isset($_POST['id']) ? $_POST['id'] : 0;
+		$id='123456';
+		$arrm=$this->orders->getOrderMerchantsAll($id);
+		foreach ($arrm as $key => $value){
+			//获取商品分类
+			$ctid=$value['ct_id'];
+			if($stockid=$this->orders->getStockAll($ctid)){
+				$this->orders->stock_edit($stockid['id'],$value);
+			}else{
+				$this->orders->stock_add($stockid['id'],$value);
 			}
 		}
 
-		$result = $this->orders->orders_save_edit($uid, $ntitle, $gimg, $gcontent);
-		if ($result) {
-			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
+		if ($this->orders->orderqishou_edit($id)) {
+			echo json_encode(array('success' => true, 'msg' => "入库成功"));
 		} else {
-			echo json_encode(array('error' => false, 'msg' => "操作失败"));
+			echo json_encode(array('success' => false, 'msg' => "入库失败"));
 		}
 	}
 }

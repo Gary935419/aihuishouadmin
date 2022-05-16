@@ -43,8 +43,18 @@ class Member_model extends CI_Model
 	{
 		$id = $this->db->escape($id);
 		$status = $this->db->escape($status);
-		
+
 		$sql = "UPDATE `member` SET status = $status WHERE mid = $id";
+		return $this->db->query($sql);
+	}
+
+	//开通上门回收
+	public function member_getpro($id,$getpro)
+	{
+		$id = $this->db->escape($id);
+		$getpro = $this->db->escape($getpro);
+
+		$sql = "UPDATE `member` SET getpro = $getpro WHERE mid = $id";
 		return $this->db->query($sql);
 	}
 
@@ -54,9 +64,9 @@ class Member_model extends CI_Model
 		$sql = "SELECT * FROM `role` order by rid desc";
 		return $this->db->query($sql)->result_array();
 	}
-	
-	
-		//----------------------------未完成订单列表-------------------------------------
+
+
+	//----------------------------地址列表-------------------------------------
 
 	//获取订单页数
 	public function getAddressAllPage($user_name)
@@ -82,6 +92,56 @@ class Member_model extends CI_Model
 		$stop = 10;
 		$sql = "SELECT * FROM `address` " . $sqlw . " order by a_id desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
+	}
+
+
+	//----------------------------个人订单列表-------------------------------------
+
+	//获取订单页数
+	public function getUserOrderAllPage($uid,$start,$end)
+	{
+		$sqlw = " where mid=$uid";
+		if (!empty($start)) {
+			$sqlw .= " and addtime>=$start";
+		}
+		if (!empty($end)) {
+			$sqlw .= " and addtime<=$end";
+		}
+		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return ceil($number / 10) == 0 ? 1 : ceil($number / 10);
+	}
+
+	//获取订单信息
+	public function getUserOrderAll($pg,$uid,$start,$end)
+	{
+		$sqlw = " where mid=$uid";
+		if (!empty($start)) {
+			$sqlw .= " and addtime>=$start";
+		}
+		if (!empty($end)) {
+			$sqlw .= " and addtime<=$end";
+		}
+		$start = ($pg - 1) * 10;
+		$stop = 10;
+		$sql = "SELECT * FROM `orders` " . $sqlw . " order by oid desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
+	//获取订单产品信息
+	public function getUserOrderProAll($oid)
+	{
+		$sqlw = " where oid=$oid";
+		$sql = "SELECT * FROM `orders_goods` " . $sqlw . " order by ogid desc";
+		return $this->db->query($sql)->result_array();
+	}
+
+	//获取商家信息
+	public function getMerchantsname($mid)
+	{
+		$sqlw = " where meid=$mid";
+		$sql = "SELECT mename FROM `merchants` " . $sqlw ;
+		return $this->db->query($sql)->row_array();
 	}
 }
 

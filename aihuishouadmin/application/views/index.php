@@ -110,14 +110,6 @@
 							</a>
 						</li>
 					</ul>
-					<ul class="sub-menu">
-						<li>
-							<a onclick="changeSrc('<?= RUN . '/proclass/proclass1_list' ?>')">
-								<i class="iconfont">&#xe6a7;</i>
-								<cite>骑手订单查看</cite>
-							</a>
-						</li>
-					</ul>
 				</li>
 				<li>
 					<a href="javascript:;">
@@ -202,25 +194,39 @@
 						<i class="iconfont nav_right">&#xe697;</i></a>
 					<ul class="sub-menu">
 						<li>
-							<a onclick="changeSrc('<?= RUN . '/orders/orders1_list' ?>')">
+							<a onclick="changeSrc('<?= RUN . '/orders/orders_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
-								<cite>预约订单查看</cite>
+								<cite>用户预约订单管理</cite>
 							</a>
 						</li>
 					</ul>
 					<ul class="sub-menu">
 						<li>
-							<a onclick="changeSrc('<?= RUN . '/orders/orders2_list' ?>')">
+							<a onclick="changeSrc('<?= RUN . '/orders/ordermerchants_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
-								<cite>完成订单查看</cite>
+								<cite>商家收货订单管理</cite>
 							</a>
 						</li>
 					</ul>
 					<ul class="sub-menu">
 						<li>
-							<a onclick="changeSrc('<?= RUN . '/orders/orders3_list' ?>')">
+							<a onclick="changeSrc('<?= RUN . '/orders/orderqishou_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
-								<cite>取消订单查看</cite>
+								<cite>司机取货订单管理</cite>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="javascript:;">
+						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
+						<cite>库存管理</cite>
+						<i class="iconfont nav_right">&#xe697;</i></a>
+					<ul class="sub-menu">
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/kucun/kucun_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>库存查看</cite>
 							</a>
 						</li>
 					</ul>
