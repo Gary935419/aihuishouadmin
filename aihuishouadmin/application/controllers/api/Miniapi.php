@@ -759,7 +759,7 @@ class Miniapi extends CI_Controller
 			$orderlist[$k]['meaddress'] = empty($memberinfoaddress['meaddress'])?'':$memberinfoaddress['meaddress'];
 			if ($v['omtype']==0){
 				$orderlist[$k]['omtype'] = "待回收";
-			}elseif ($v['ostate']==1){
+			}elseif ($v['omtype']==1){
 				$orderlist[$k]['omtype'] = "已回收";
 			}
 		}
@@ -1244,6 +1244,9 @@ class Miniapi extends CI_Controller
 		if (empty($orderlist)){
 			$this->back_json(205, '数据错误。');
 		}
+		if ($orderlist[0]['omtype'] == 1){
+			$this->back_json(222, '当前订单已经处理了。');
+		}
 		foreach ($orderlist as $k=>$v){
 			$omtype = 1;
 			$q_weight = $weight;
@@ -1259,7 +1262,7 @@ class Miniapi extends CI_Controller
 			$meid = $v['meid'];
 			$mename = $v['mename'];
 
-			$this->mini->getorders_merchants_save($qsid,$qstype,$desc,$addtime,$number,$meid,$mename,$ordernumber);
+			$this->mini->getorders_merchants_save_new($qsid,$qstype,$desc,$addtime,$number,$meid,$mename,$ordernumber);
 
 			$sum_price = floatval($weight) * floatval($v['price']);
 

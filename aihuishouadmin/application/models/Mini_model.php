@@ -687,8 +687,8 @@ class Mini_model extends CI_Model
 		$omtype = $this->db->escape($omtype);
 		$q_weight = $this->db->escape($q_weight);
 		$qs_id = $this->db->escape($qs_id);
-		$orders_merchants = $this->db->escape($ordernumber);
-		$sql = "UPDATE `orders_merchants` SET omtype=$omtype,q_weight=$q_weight,qs_id=$qs_id,orders_merchants=$orders_merchants WHERE omid = $omid";
+		$ordernumber = $this->db->escape($ordernumber);
+		$sql = "UPDATE `orders_merchants` SET omtype=$omtype,q_weight=$q_weight,qs_id=$qs_id,ordernumber=$ordernumber WHERE omid = $omid";
 		return $this->db->query($sql);
 	}
 
@@ -767,6 +767,24 @@ class Mini_model extends CI_Model
 		$omid=$this->db->insert_id();
 		return $omid;
 	}
+
+	public function getorders_merchants_save_new($qsid,$qstype,$desc,$addtime,$number,$meid,$mename,$ordernumber)
+	{
+		$qsid = $this->db->escape($qsid);
+		$qstype = $this->db->escape($qstype);
+		$desc = $this->db->escape($desc);
+		$addtime = $this->db->escape($addtime);
+		$number = $this->db->escape($number);
+		$meid = $this->db->escape($meid);
+		$mename = $this->db->escape($mename);
+		$ordernumber = $this->db->escape($ordernumber);
+
+		$sql = "INSERT INTO `orders_qishou` (qsid,qstype,remarks,addtime,grade,meid,mename,ordernumber) VALUES ($qsid,$qstype,$desc,$addtime,$number,$meid,$mename,$ordernumber)";
+		$this->db->query($sql);
+		$id=$this->db->insert_id();
+		return $id;
+	}
+
 	public function getorders_merchants_edit($ct_id,$meid,$datetime,$m_weightnew)
 	{
 		$ct_id = $this->db->escape($ct_id);
