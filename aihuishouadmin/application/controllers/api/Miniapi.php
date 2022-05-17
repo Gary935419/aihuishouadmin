@@ -404,7 +404,19 @@ class Miniapi extends CI_Controller
 		$data['merchants'] = $merchantsinfo;
 		$this->back_json(200, '操作成功', $data);
 	}
-
+	public function qishouinfo(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权司机登录！');
+		}
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$merchantsinfo = $this->mini->getqishouInfomeid($token);
+		if (empty($merchantsinfo)) {
+			$this->back_json(206, '请您先去授权司机登录！');
+		}
+		$data['qishou'] = $merchantsinfo;
+		$this->back_json(200, '操作成功', $data);
+	}
 	public function merchantsinfonew(){
 		//验证loginCode是否传递
 		if (!isset($_POST['token']) || empty($_POST['token'])) {
@@ -716,6 +728,39 @@ class Miniapi extends CI_Controller
 				$orderlist[$k]['ostate'] = "已回收";
 			}elseif ($v['ostate']==3){
 				$orderlist[$k]['ostate'] = "已取消";
+			}
+		}
+		$data['list'] = $orderlist;
+		$this->back_json(200, '操作成功', $data);
+	}
+
+	public function qishou_order_list(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权司机登录！');
+		}
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$member = $this->mini->getqishouInfomeid($token);
+		if (empty($member)) {
+			$this->back_json(206, '请您先去授权司机登录！');
+		}
+		$page = $_POST['page'];
+		$datetime = empty($_POST['date'])?date('Y-m-d',time()):$_POST['date'];
+		$qs_meids = $member['qs_meids'];
+		$meids = explode(',',$qs_meids);
+		$orderlist = array();
+		foreach ($meids as $k=>$v){
+			$meid = $v;
+			$orderlistnew = $this->mini->qishouorderlist($meid,$datetime,$page);
+			$orderlist = array_merge($orderlist,$orderlistnew);
+		}
+		foreach ($orderlist as $k=>$v){
+			$memberinfoaddress = $this->mini->getMerchantsInfotmeid($v['meid']);
+			$orderlist[$k]['meaddress'] = empty($memberinfoaddress['meaddress'])?'':$memberinfoaddress['meaddress'];
+			if ($v['omtype']==0){
+				$orderlist[$k]['omtype'] = "待回收";
+			}elseif ($v['ostate']==1){
+				$orderlist[$k]['omtype'] = "已回收";
 			}
 		}
 		$data['list'] = $orderlist;
@@ -1158,6 +1203,73 @@ class Miniapi extends CI_Controller
 		$orderlist = $this->mini->merchantsordergoodslist($page,$oid);
 		$data['list'] = $orderlist;
 		$this->back_json(200, '操作成功', $data);
+	}
+
+	public function orders_goods_list_new_one(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权司机登录！');
+		}
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$merchantsinfo = $this->mini->getqishouInfomeid($token);
+		if (empty($merchantsinfo)) {
+			$this->back_json(206, '请您先去授权司机登录！');
+		}
+		if (!isset($_POST['omid']) || empty($_POST['omid'])) {
+			$this->back_json(205, '数据错误omid！');
+		}
+		$omid = empty($_POST['omid'])?'':$_POST['omid'];
+		$orderlist = $this->mini->merchantsordergoodslistnewonw(1,$omid);
+		$data['list'] = $orderlist;
+		$this->back_json(200, '操作成功', $data);
+	}
+
+	public function sum_orders_goods_update_qishou(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权司机登录！');
+		}
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$merchantsinfo = $this->mini->getqishouInfomeid($token);
+		if (empty($merchantsinfo)) {
+			$this->back_json(206, '请您先去授权司机登录！');
+		}
+		if (!isset($_POST['omid']) || empty($_POST['omid'])) {
+			$this->back_json(205, '数据错误omid！');
+		}
+		$weight = empty($_POST['weight'])?'':$_POST['weight'];
+		$omid = empty($_POST['omid'])?'':$_POST['omid'];
+		$desc = empty($_POST['desc'])?'':$_POST['desc'];
+		$orderlist = $this->mini->merchantsordergoodslistnew1($omid);
+		if (empty($orderlist)){
+			$this->back_json(205, '数据错误。');
+		}
+		foreach ($orderlist as $k=>$v){
+			$omtype = 1;
+			$q_weight = $weight;
+			$qs_id = $merchantsinfo['qs_id'];
+			$ordernumber = time();
+			$this->mini->merchantsordergoodslistnew2($omid,$omtype,$q_weight,$qs_id,$ordernumber);
+			$this->mini->qishounew_del($ordernumber);
+
+			$qsid = $qs_id;
+			$qstype = 1;
+			$addtime = time();
+			$number = 0;
+			$meid = $v['meid'];
+			$mename = $v['mename'];
+
+			$this->mini->getorders_merchants_save($qsid,$qstype,$desc,$addtime,$number,$meid,$mename,$ordernumber);
+
+			$sum_price = floatval($weight) * floatval($v['price']);
+
+		}
+
+		$MemberInfomid = $this->mini->getmerchantsInfomeidnew($meid);
+		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['me_wallet']);
+		$this->mini->member_edit_wallet_me($meid,$membernewmoney);
+
+		$this->back_json(200, '操作成功');
 	}
 
 	public function orders_goods_update(){

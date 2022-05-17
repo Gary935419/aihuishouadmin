@@ -33,6 +33,12 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `merchants` where token = $token ";
 		return $this->db->query($sql)->row_array();
 	}
+	public function getqishouInfomeid($token)
+	{
+		$token = $this->db->escape($token);
+		$sql = "SELECT * FROM `qishou` where qs_token = $token ";
+		return $this->db->query($sql)->row_array();
+	}
 	public function getmerchantsInfomeidnew($meid)
 	{
 		$meid = $this->db->escape($meid);
@@ -70,6 +76,12 @@ class Mini_model extends CI_Model
 		$uname = $this->db->escape($uname);
 		$utel = $this->db->escape($utel);
 		$sql = "SELECT * FROM `address` where mobile=$utel and name=$uname ";
+		return $this->db->query($sql)->row_array();
+	}
+	public function getMerchantsInfotmeid($meid)
+	{
+		$meid = $this->db->escape($meid);
+		$sql = "SELECT * FROM `merchants` where meid=$meid ";
 		return $this->db->query($sql)->row_array();
 	}
 	public function getnewsAll($pg)
@@ -215,6 +227,13 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql);
 	}
 
+	public function qishounew_del($ordernumber)
+	{
+		$ordernumber = $this->db->escape($ordernumber);
+		$sql = "DELETE FROM orders_qishou WHERE ordernumber = $ordernumber";
+		return $this->db->query($sql);
+	}
+
 	public function member_address_detail($mid,$a_id)
 	{
 		$mid = $this->db->escape($mid);
@@ -230,14 +249,25 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `merchants` where account = $account and password = $password";
 		return $this->db->query($sql)->row_array();
 	}
-
+	public function getqioshou($account,$password)
+	{
+		$account = $this->db->escape($account);
+		$password = $this->db->escape($password);
+		$sql = "SELECT * FROM `qishou` where qs_account = $account and qs_password = $password";
+		return $this->db->query($sql)->row_array();
+	}
 	public function getmerchantsInfo($openid)
 	{
 		$openid = $this->db->escape($openid);
 		$sql = "SELECT * FROM `merchants` where openid = $openid ";
 		return $this->db->query($sql)->row_array();
 	}
-
+	public function getqishouInfo($openid)
+	{
+		$openid = $this->db->escape($openid);
+		$sql = "SELECT * FROM `qishou` where qs_openid = $openid ";
+		return $this->db->query($sql)->row_array();
+	}
 	public function merchants_edit($meid,$token,$avater,$nickname,$openid)
 	{
 		$meid = $this->db->escape($meid);
@@ -246,6 +276,16 @@ class Mini_model extends CI_Model
 		$nickname = $this->db->escape($nickname);
 		$openid = $this->db->escape($openid);
 		$sql = "UPDATE `merchants` SET token=$token,avater=$avater,nickname=$nickname,openid=$openid WHERE meid = $meid";
+		return $this->db->query($sql);
+	}
+	public function qishou_edit($qs_id,$token,$avater,$nickname,$openid)
+	{
+		$qs_id = $this->db->escape($qs_id);
+		$token = $this->db->escape($token);
+		$avater = $this->db->escape($avater);
+		$nickname = $this->db->escape($nickname);
+		$openid = $this->db->escape($openid);
+		$sql = "UPDATE `qishou` SET qs_token=$token,qs_avater=$avater,qs_nickname=$nickname,qs_openid=$openid WHERE qs_id = $qs_id";
 		return $this->db->query($sql);
 	}
 	public function getMemberInfo($openid)
@@ -266,6 +306,13 @@ class Mini_model extends CI_Model
 		$mid = $this->db->escape($mid);
 		$wallet = $this->db->escape($wallet);
 		$sql = "UPDATE `member` SET wallet=$wallet WHERE mid = $mid";
+		return $this->db->query($sql);
+	}
+	public function member_edit_wallet_me($meid,$membernewmoney)
+	{
+		$meid = $this->db->escape($meid);
+		$membernewmoney = $this->db->escape($membernewmoney);
+		$sql = "UPDATE `merchants` SET me_wallet=$membernewmoney WHERE meid = $meid";
 		return $this->db->query($sql);
 	}
 	public function register($birthday,$wallet,$status,$token,$openid,$nickname,$avater,$add_time)
@@ -569,6 +616,21 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `orders` where meid = $meid ".$sqlw." order by addtime desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
+
+	public function qishouorderlist($meid,$datetime,$pg)
+	{
+		$sqlw = " and 1=1 ";
+		if (!empty($datetime)) {
+			$datetime = $this->db->escape($datetime);
+			$sqlw .= " and datetime = " . $datetime;
+		}
+		$meid = $this->db->escape($meid);
+		$start = ($pg - 1) * 1000;
+		$stop = 1000;
+		$sql = "SELECT * FROM `orders_merchants` where meid = $meid ".$sqlw." order by addtime desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
 	public function merchantsordergoodslist($pg,$oid)
 	{
 		$sqlw = " 1=1 ";
@@ -579,6 +641,19 @@ class Mini_model extends CI_Model
 		$start = ($pg - 1) * 1000;
 		$stop = 1000;
 		$sql = "SELECT * FROM `orders_goods` where  ".$sqlw." order by ogid desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
+	public function merchantsordergoodslistnewonw($pg,$omid)
+	{
+		$sqlw = " 1=1 ";
+		if (!empty($omid)) {
+			$omid = $this->db->escape($omid);
+			$sqlw .= " and omid =" . $omid;
+		}
+		$start = ($pg - 1) * 1000;
+		$stop = 1000;
+		$sql = "SELECT * FROM `orders_merchants` where  ".$sqlw." order by omid desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
 
@@ -606,7 +681,30 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql);
 	}
 
-	public function merchantsordergoodslistnew($oid)
+	public function merchantsordergoodslistnew2($omid,$omtype,$q_weight,$qs_id,$ordernumber)
+	{
+		$omid = $this->db->escape($omid);
+		$omtype = $this->db->escape($omtype);
+		$q_weight = $this->db->escape($q_weight);
+		$qs_id = $this->db->escape($qs_id);
+		$orders_merchants = $this->db->escape($ordernumber);
+		$sql = "UPDATE `orders_merchants` SET omtype=$omtype,q_weight=$q_weight,qs_id=$qs_id,orders_merchants=$orders_merchants WHERE omid = $omid";
+		return $this->db->query($sql);
+	}
+
+
+	public function merchantsordergoodslistnew1($omid)
+	{
+		$sqlw = " 1=1 ";
+		if (!empty($omid)) {
+			$omid = $this->db->escape($omid);
+			$sqlw .= " and omid =" . $omid;
+		}
+		$sql = "SELECT * FROM `orders_merchants` where  ".$sqlw." order by omid desc ";
+		return $this->db->query($sql)->result_array();
+	}
+
+	public function merchantsordergoodslistnew($omid)
 	{
 		$sqlw = " 1=1 ";
 		if (!empty($oid)) {
@@ -616,6 +714,7 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `orders_goods` where  ".$sqlw." order by ogid desc ";
 		return $this->db->query($sql)->result_array();
 	}
+
 	public function getordergoodsone($ct_id,$oid)
 	{
 		$ct_id = $this->db->escape($ct_id);

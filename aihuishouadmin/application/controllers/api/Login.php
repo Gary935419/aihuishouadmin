@@ -18,7 +18,7 @@ class Login extends CI_Controller
 	}
 
 	/**
-	 * 商家登录
+	 * 商家、司机登录
 	 */
 	public function register_merchants()
 	{
@@ -28,45 +28,96 @@ class Login extends CI_Controller
 		if (!isset($_POST['password']) || empty($_POST['password'])) {
 			$this->back_json(201, '请输入密码！');
 		}
-		$Member = $this->mini->getmerchants($_POST['account'], md5($_POST['password']));
-		if (empty($Member)) {
-			$this->back_json(201, '抱歉!账号或密码错误!');
-		}
-		$meid = $Member['meid'];
-		//验证loginCode是否传递
-		if (!isset($_POST['loginCode']) || empty($_POST['loginCode'])) {
-			$this->back_json(201, '未传递loginCode');
-		}
-		//验证nickname是否传递
-		if (!isset($_POST['nickname']) || empty($_POST['nickname'])) {
-			$this->back_json(201, '未传递nickname');
-		}
-		//验证avatarurl是否传递
-		if (!isset($_POST['avatarurl']) || empty($_POST['avatarurl'])) {
-			$this->back_json(201, '未传递avatarurl');
-		}
-		if (empty($_POST['avatarurl']) || $_POST['nickname'] == "微信用户") {
-			$this->back_json(201, '数据错误请重新授权！');
-		}
-		// 取得信息
-		$loginCode = $_POST['loginCode'];
-		//获得昵称
-		$nickname = $_POST['nickname'];
-		//获得图像
-		$avater = $_POST['avatarurl'];
-		// 取得登录凭证
-		$resultnew = $this->get_code2Session($this->appid, $this->secret, $loginCode);
+		if ($_POST['user_type'] == 1){
+			//司机
+			$Member = $this->mini->getqioshou($_POST['account'], md5($_POST['password']));
+			if (empty($Member)) {
+				$this->back_json(201, '抱歉!账号或密码错误!');
+			}
+			if ($Member['qs_state'] == 1){
+				$this->back_json(201, '抱歉!当前账号已经被停用!');
+			}
+			$qs_id = $Member['qs_id'];
+            //验证loginCode是否传递
+			if (!isset($_POST['loginCode']) || empty($_POST['loginCode'])) {
+				$this->back_json(201, '未传递loginCode');
+			}
+			//验证nickname是否传递
+			if (!isset($_POST['nickname']) || empty($_POST['nickname'])) {
+				$this->back_json(201, '未传递nickname');
+			}
+			//验证avatarurl是否传递
+			if (!isset($_POST['avatarurl']) || empty($_POST['avatarurl'])) {
+				$this->back_json(201, '未传递avatarurl');
+			}
+			if (empty($_POST['avatarurl']) || $_POST['nickname'] == "微信用户") {
+				$this->back_json(201, '数据错误请重新授权！');
+			}
+			// 取得信息
+			$loginCode = $_POST['loginCode'];
+			//获得昵称
+			$nickname = $_POST['nickname'];
+			//获得图像
+			$avater = $_POST['avatarurl'];
+			// 取得登录凭证
+			$resultnew = $this->get_code2Session($this->appid, $this->secret, $loginCode);
 
-		//openid设置2
-		$openid = $resultnew['openid'];
-		if (empty($resultnew['openid'])) {
-			$this->back_json(205, '数据错误', array());
+			//openid设置2
+			$openid = $resultnew['openid'];
+			if (empty($resultnew['openid'])) {
+				$this->back_json(205, '数据错误', array());
+			}
+			/**登录操作*/
+			$token = $this->_get_token($qs_id);
+			$this->mini->qishou_edit($qs_id,$token,$avater,$nickname,$openid);
+			$member_info = $this->mini->getqishouInfo($openid);
+			$member_info['session_key'] = $resultnew['session_key'];
+		}else{
+			//商家
+			$Member = $this->mini->getmerchants($_POST['account'], md5($_POST['password']));
+			if (empty($Member)) {
+				$this->back_json(201, '抱歉!账号或密码错误!');
+			}
+			if ($Member['merchants_state'] == 1){
+				$this->back_json(201, '抱歉!当前账号已经被停用!');
+			}
+			$meid = $Member['meid'];
+			//验证loginCode是否传递
+			if (!isset($_POST['loginCode']) || empty($_POST['loginCode'])) {
+				$this->back_json(201, '未传递loginCode');
+			}
+			//验证nickname是否传递
+			if (!isset($_POST['nickname']) || empty($_POST['nickname'])) {
+				$this->back_json(201, '未传递nickname');
+			}
+			//验证avatarurl是否传递
+			if (!isset($_POST['avatarurl']) || empty($_POST['avatarurl'])) {
+				$this->back_json(201, '未传递avatarurl');
+			}
+			if (empty($_POST['avatarurl']) || $_POST['nickname'] == "微信用户") {
+				$this->back_json(201, '数据错误请重新授权！');
+			}
+			// 取得信息
+			$loginCode = $_POST['loginCode'];
+			//获得昵称
+			$nickname = $_POST['nickname'];
+			//获得图像
+			$avater = $_POST['avatarurl'];
+			// 取得登录凭证
+			$resultnew = $this->get_code2Session($this->appid, $this->secret, $loginCode);
+
+			//openid设置2
+			$openid = $resultnew['openid'];
+			if (empty($resultnew['openid'])) {
+				$this->back_json(205, '数据错误', array());
+			}
+			/**登录操作*/
+			$token = $this->_get_token($meid);
+			$this->mini->merchants_edit($meid,$token,$avater,$nickname,$openid);
+			$member_info = $this->mini->getmerchantsInfo($openid);
+			$member_info['session_key'] = $resultnew['session_key'];
 		}
-		/**登录操作*/
-		$token = $this->_get_token($meid);
-		$this->mini->merchants_edit($meid,$token,$avater,$nickname,$openid);
-		$member_info = $this->mini->getmerchantsInfo($openid);
-		$member_info['session_key'] = $resultnew['session_key'];
+
 		$this->back_json(200, '操作成功', $member_info);
 	}
 
