@@ -722,6 +722,30 @@ class Miniapi extends CI_Controller
 		$this->back_json(200, '操作成功', $data);
 	}
 
+	public function merchants_order_list_goods(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$token = $_POST['token'];
+		$member = $this->mini->getMerchantsInfotoken($token);
+		if (empty($member)){
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$meid = $member['meid'];
+		$page = $_POST['page'];
+		$datenew = empty($_POST['date'])?date('Y-m-d',time()):$_POST['date'];
+		$orderlist = $this->mini->merchantsorderlistgoods($meid,$page,$datenew);
+		$price = 0;
+		foreach ($orderlist as $k=>$v){
+			$money = floatval($v['m_weight']) * floatval($v['price']);
+			$price = floatval($price) + floatval($money);
+		}
+		$data['price'] = $price;
+		$data['list'] = $orderlist;
+		$this->back_json(200, '操作成功', $data);
+	}
+
 	public function orders_details(){
 		//验证loginCode是否传递
 		if (!isset($_POST['token']) || empty($_POST['token'])) {
