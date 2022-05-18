@@ -341,6 +341,17 @@ class Mini_model extends CI_Model
 		return $number;
 	}
 
+	public function getordersstate123($meid,$delivery_date)
+	{
+		$meid = $this->db->escape($meid);
+		$delivery_date = $this->db->escape($delivery_date);
+		$sqlw = " where delivery_date = " . $delivery_date;
+		$sqlw .= " and meid = " . $meid;
+		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
+		$number = $this->db->query($sql)->row()->number;
+		return $number;
+	}
+
 	public function getordersstate($mid,$ostate)
 	{
 		$mid = $this->db->escape($mid);
@@ -630,7 +641,20 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `orders_merchants` where meid = $meid ".$sqlw." order by addtime desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
+	public function qishouorderlist1($meid,$datetime,$pg)
+	{
+		$sqlw = " and 1=1 ";
+		if (!empty($datetime)) {
+			$datetime = $this->db->escape($datetime);
+			$sqlw .= " and datetime = " . $datetime;
+		}
+		$meid = $this->db->escape($meid);
+		$start = ($pg - 1) * 1000;
+		$stop = 1000;
+		$sql = "SELECT * FROM `orders_merchants` where meid = $meid ".$sqlw." group by meid ";
 
+		return $this->db->query($sql)->result_array();
+	}
 	public function merchantsordergoodslist($pg,$oid)
 	{
 		$sqlw = " 1=1 ";
@@ -677,7 +701,7 @@ class Mini_model extends CI_Model
 	{
 		$oid = $this->db->escape($oid);
 		$sum_price = $this->db->escape($sum_price);;
-		$sql = "UPDATE `orders` SET sum_price=$sum_price,ostate=2 WHERE oid = $oid";
+		$sql = "UPDATE `orders` SET sum_price=$sum_price,ostate=1 WHERE oid = $oid";
 		return $this->db->query($sql);
 	}
 
@@ -704,7 +728,7 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql)->result_array();
 	}
 
-	public function merchantsordergoodslistnew($omid)
+	public function merchantsordergoodslistnew($oid)
 	{
 		$sqlw = " 1=1 ";
 		if (!empty($oid)) {
@@ -745,7 +769,7 @@ class Mini_model extends CI_Model
 		$ct_id = $this->db->escape($ct_id);
 		$meid = $this->db->escape($meid);
 		$datetime = $this->db->escape($datetime);
-		$sql = "SELECT * FROM `orders_merchants` where ct_id = $ct_id and meid = $meid and datetime = $datetime";
+		$sql = "SELECT * FROM `orders_merchants` where ct_id = $ct_id and omtype = 0 and meid = $meid and datetime = $datetime";
 		return $this->db->query($sql)->row_array();
 	}
 
@@ -810,6 +834,14 @@ class Mini_model extends CI_Model
 	{
 		$meid = $this->db->escape($meid);
 		$sql = "UPDATE `merchants` SET full_flg=1 WHERE meid = $meid";
+		return $this->db->query($sql);
+	}
+
+	public function goods_edit_order_me_ostate($meid,$datetime)
+	{
+		$meid = $this->db->escape($meid);
+		$datetime = $this->db->escape($datetime);
+		$sql = "UPDATE `orders` SET ostate=2 WHERE meid = $meid and $datetime = $datetime";
 		return $this->db->query($sql);
 	}
 }

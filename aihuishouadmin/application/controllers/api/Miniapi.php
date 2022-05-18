@@ -656,13 +656,13 @@ class Miniapi extends CI_Controller
 		foreach ($orderlist as $k=>$v){
 			$orderlist[$k]['addtime'] = date('Y-m-d H:i:s',$v['addtime']);
 			if ($v['ostate']==0){
-				$orderlist[$k]['ostate'] = "已预约";
+				$orderlist[$k]['ostatestr'] = "已预约";
 			}elseif ($v['ostate']==1){
-				$orderlist[$k]['ostate'] = "待回收";
+				$orderlist[$k]['ostatestr'] = "待回收";
 			}elseif ($v['ostate']==2){
-				$orderlist[$k]['ostate'] = "已完成";
+				$orderlist[$k]['ostatestr'] = "已完成";
 			}elseif ($v['ostate']==3){
-				$orderlist[$k]['ostate'] = "已取消";
+				$orderlist[$k]['ostatestr'] = "已取消";
 			}
 		}
 		$data['list'] = $orderlist;
@@ -721,11 +721,11 @@ class Miniapi extends CI_Controller
 			$orderlist[$k]['address'] = empty($memberinfoaddress['address'])?'':$memberinfoaddress['address'];
 
 			if ($v['ostate']==0){
-				$orderlist[$k]['ostate'] = "未回收";
+				$orderlist[$k]['ostate'] = "已预约";
 			}elseif ($v['ostate']==1){
 				$orderlist[$k]['ostate'] = "待回收";
 			}elseif ($v['ostate']==2){
-				$orderlist[$k]['ostate'] = "已回收";
+				$orderlist[$k]['ostate'] = "已完成";
 			}elseif ($v['ostate']==3){
 				$orderlist[$k]['ostate'] = "已取消";
 			}
@@ -756,6 +756,44 @@ class Miniapi extends CI_Controller
 		}
 		foreach ($orderlist as $k=>$v){
 			$memberinfoaddress = $this->mini->getMerchantsInfotmeid($v['meid']);
+			$orderlist[$k]['meaddress'] = empty($memberinfoaddress['meaddress'])?'':$memberinfoaddress['meaddress'];
+			if ($v['omtype']==0){
+				$orderlist[$k]['omtype'] = "待回收";
+			}elseif ($v['omtype']==1){
+				$orderlist[$k]['omtype'] = "已回收";
+			}
+		}
+		$data['list'] = $orderlist;
+		$this->back_json(200, '操作成功', $data);
+	}
+
+	public function qishou_order_list1(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权司机登录！');
+		}
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$member = $this->mini->getqishouInfomeid($token);
+		if (empty($member)) {
+			$this->back_json(206, '请您先去授权司机登录！');
+		}
+		$page = $_POST['page'];
+		$datetime = empty($_POST['date'])?date('Y-m-d',time()):$_POST['date'];
+		$qs_meids = $member['qs_meids'];
+		$meids = explode(',',$qs_meids);
+		$orderlist = array();
+
+		foreach ($meids as $k=>$v){
+			$meid = $v;
+			$orderlistnew = $this->mini->qishouorderlist1($meid,$datetime,$page);
+
+			$orderlist = array_merge($orderlist,$orderlistnew);
+		}
+		foreach ($orderlist as $k=>$v){
+			$memberinfoaddress = $this->mini->getMerchantsInfotmeid($v['meid']);
+			$orderlist[$k]['manchang'] = empty($memberinfoaddress['full_flg'])?"未满仓":"已满仓";
+			$orderlist[$k]['dingdanliang'] = $this->mini->getordersstate123($meid,$datetime);
+
 			$orderlist[$k]['meaddress'] = empty($memberinfoaddress['meaddress'])?'':$memberinfoaddress['meaddress'];
 			if ($v['omtype']==0){
 				$orderlist[$k]['omtype'] = "待回收";
@@ -1247,6 +1285,8 @@ class Miniapi extends CI_Controller
 		if ($orderlist[0]['omtype'] == 1){
 			$this->back_json(222, '当前订单已经处理了。');
 		}
+		$meid = $orderlist[0]['meid'];
+		$datetime = $orderlist[0]['datetime'];
 		foreach ($orderlist as $k=>$v){
 			$omtype = 1;
 			$q_weight = $weight;
@@ -1261,16 +1301,16 @@ class Miniapi extends CI_Controller
 			$number = 0;
 			$meid = $v['meid'];
 			$mename = $v['mename'];
-
 			$this->mini->getorders_merchants_save_new($qsid,$qstype,$desc,$addtime,$number,$meid,$mename,$ordernumber);
-
-			$sum_price = floatval($weight) * floatval($v['price']);
+//			$sum_price = floatval($weight) * floatval($v['price']);
 
 		}
 
-		$MemberInfomid = $this->mini->getmerchantsInfomeidnew($meid);
-		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['me_wallet']);
-		$this->mini->member_edit_wallet_me($meid,$membernewmoney);
+		$this->mini->goods_edit_order_me_ostate($meid,$datetime);
+
+//		$MemberInfomid = $this->mini->getmerchantsInfomeidnew($meid);
+//		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['me_wallet']);
+//		$this->mini->member_edit_wallet_me($meid,$membernewmoney);
 
 		$this->back_json(200, '操作成功');
 	}
@@ -1336,11 +1376,11 @@ class Miniapi extends CI_Controller
 			}
 		}
 		$this->mini->ordergoodsupdatesum($oid,$sum_price);
-		$orderone = $this->mini->getorderone($oid);
-		$mid = $orderone['mid'];
-		$MemberInfomid = $this->mini->getMemberInfomid($mid);
-		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['wallet']);
-		$this->mini->member_edit_wallet($mid,$membernewmoney);
+//		$orderone = $this->mini->getorderone($oid);
+//		$mid = $orderone['mid'];
+//		$MemberInfomid = $this->mini->getMemberInfomid($mid);
+//		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['wallet']);
+//		$this->mini->member_edit_wallet($mid,$membernewmoney);
 
 		$this->back_json(200, '操作成功');
 	}
