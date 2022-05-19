@@ -143,23 +143,35 @@ class Orders extends CI_Controller
 
 	public function orderqishou_edit()
 	{
-		//$id = isset($_POST['id']) ? $_POST['id'] : 0;
-		$id='123456';
+//获取所有商家信息
+		$qsid = isset($_GET['id']) ? $_GET['id'] : 0;
+		$data["list"] = $this->orders->getOrderMerchantsAll($qsid);
+		$this->display("orders/orderqishou_edit", $data);
+	}
+	/**-----------------------------------司机入库管理-----------------------------------------------------*/
+	/**
+	 * 订单列表页
+	 */
+
+	public function stcok_add()
+	{
+		$id = isset($_POST['id']) ? $_POST['id'] : 0;
 		$arrm=$this->orders->getOrderMerchantsAll($id);
 		foreach ($arrm as $key => $value){
 			//获取商品分类
 			$ctid=$value['ct_id'];
-			if($stockid=$this->orders->getStockAll($ctid)){
-				$this->orders->stock_edit($stockid['id'],$value);
+			if($this->orders->getStockAll($ctid)){
+				$this->orders->stock_edit($ctid,$value);
 			}else{
-				$this->orders->stock_add($stockid['id'],$value);
+				$this->orders->stock_add($ctid,$value);
 			}
 		}
-
 		if ($this->orders->orderqishou_edit($id)) {
 			echo json_encode(array('success' => true, 'msg' => "入库成功"));
 		} else {
 			echo json_encode(array('success' => false, 'msg' => "入库失败"));
 		}
 	}
+
+
 }

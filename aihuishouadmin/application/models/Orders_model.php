@@ -212,24 +212,23 @@ class Orders_model extends CI_Model
 		$id = $this->db->escape($stockid);
 		$list = $this->db->escape($value);
 		$stockaddnum=$list['q_weight'];
-		$sql = "UPDATE `stock` SET stocknum=stocknum+$stockaddnum,stockaddnum=$stockaddnum,stockover=stockover+$stockaddnum WHERE id = $id";
+		$sql = "UPDATE `stock` SET stocknum=stocknum+$stockaddnum,stockaddnum=$stockaddnum,stockover=stockover+$stockaddnum WHERE ct_id = $id";
 		return $this->db->query($sql);
 	}
 
 	//修改商品入库
 	public function stock_add($id,$value)
 	{
-		$id = $this->db->escape($id);
 		$list = $this->db->escape($value);
 		$ctid=$list['ct_id'];
 		$ctname=$list['ct_name'];
 		$stocknum=$list['q_weight'];
 		$stockaddnum=$list['q_weight'];
 		$stockoutnum=0;
-		$stockover=$stocknum;
-		$sql = "INSERT INTO `stock` (ct_id,ct_name,stocknum,stockaddnum,stockoutnum,stockover) VALUES ($ctid,$ctname,$stocknum,$stockaddnum,$stockoutnum,$stockover)";
+		$sql = "INSERT INTO `stock` (ct_id,ct_name,stocknum,stockaddnum,stockoutnum) VALUES ($ctid,$ctname,$stocknum,$stockaddnum,$stockoutnum)";
 		return $this->db->query($sql);
 	}
+
 
 }
 

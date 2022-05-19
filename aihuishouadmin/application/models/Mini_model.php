@@ -681,10 +681,34 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql)->result_array();
 	}
 
+	public function merchantsordergoodslistnewall($pg,$meid,$date)
+	{
+		$sqlw = " 1=1 and omtype=0";
+		if (!empty($meid)) {
+			$meid = $this->db->escape($meid);
+			$sqlw .= " and meid =" . $meid;
+		}
+		if (!empty($date)) {
+			$date = $this->db->escape($date);
+			$sqlw .= " and datetime =" . $date;
+		}
+		$start = ($pg - 1) * 1000;
+		$stop = 1000;
+		$sql = "SELECT * FROM `orders_merchants` where  ".$sqlw." order by omid desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
 	public function getordergoodsinfo($ogid)
 	{
 		$ogid = $this->db->escape($ogid);
 		$sql = "SELECT * FROM `orders_goods` where ogid = $ogid ";
+		return $this->db->query($sql)->row_array();
+	}
+
+	public function getordergoodsinfoqishou($omid)
+	{
+		$omid = $this->db->escape($omid);
+		$sql = "SELECT * FROM `orders_merchants` where omid = $omid ";
 		return $this->db->query($sql)->row_array();
 	}
 
@@ -697,6 +721,16 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql);
 	}
 
+	public function ordergoodsupdateqishou($omid,$weight,$qs_id,$ordernumber)
+	{
+		$omid = $this->db->escape($omid);
+		$weight = $this->db->escape($weight);
+		$qs_id = $this->db->escape($qs_id);
+		$ordernumber = $this->db->escape($ordernumber);
+		$sql = "UPDATE `orders_merchants` SET q_weight=$weight,qs_id=$qs_id,ordernumber=$ordernumber WHERE omid = $omid";
+		return $this->db->query($sql);
+	}
+
 	public function ordergoodsupdatesum($oid,$sum_price)
 	{
 		$oid = $this->db->escape($oid);
@@ -705,24 +739,27 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql);
 	}
 
-	public function merchantsordergoodslistnew2($omid,$omtype,$q_weight,$qs_id,$ordernumber)
+	public function merchantsordergoodslistnew2($omid,$omtype,$qs_id,$ordernumber)
 	{
 		$omid = $this->db->escape($omid);
 		$omtype = $this->db->escape($omtype);
-		$q_weight = $this->db->escape($q_weight);
 		$qs_id = $this->db->escape($qs_id);
 		$ordernumber = $this->db->escape($ordernumber);
-		$sql = "UPDATE `orders_merchants` SET omtype=$omtype,q_weight=$q_weight,qs_id=$qs_id,ordernumber=$ordernumber WHERE omid = $omid";
+		$sql = "UPDATE `orders_merchants` SET omtype=$omtype,qs_id=$qs_id,ordernumber=$ordernumber WHERE omid = $omid";
 		return $this->db->query($sql);
 	}
 
 
-	public function merchantsordergoodslistnew1($omid)
+	public function merchantsordergoodslistnew1($meid,$datetime)
 	{
-		$sqlw = " 1=1 ";
-		if (!empty($omid)) {
-			$omid = $this->db->escape($omid);
-			$sqlw .= " and omid =" . $omid;
+		$sqlw = " 1=1 and omtype=0 ";
+		if (!empty($meid)) {
+			$meid = $this->db->escape($meid);
+			$sqlw .= " and meid =" . $meid;
+		}
+		if (!empty($datetime)) {
+			$datetime = $this->db->escape($datetime);
+			$sqlw .= " and datetime =" . $datetime;
 		}
 		$sql = "SELECT * FROM `orders_merchants` where  ".$sqlw." order by omid desc ";
 		return $this->db->query($sql)->result_array();
@@ -792,18 +829,18 @@ class Mini_model extends CI_Model
 		return $omid;
 	}
 
-	public function getorders_merchants_save_new($qsid,$qstype,$desc,$addtime,$number,$meid,$mename,$ordernumber)
+	public function getorders_merchants_save_new($qsid,$qstype,$remarks,$addtime,$grade,$meid,$mename,$ordernumber)
 	{
 		$qsid = $this->db->escape($qsid);
 		$qstype = $this->db->escape($qstype);
-		$desc = $this->db->escape($desc);
+		$remarks = $this->db->escape($remarks);
 		$addtime = $this->db->escape($addtime);
-		$number = $this->db->escape($number);
+		$grade = $this->db->escape($grade);
 		$meid = $this->db->escape($meid);
 		$mename = $this->db->escape($mename);
 		$ordernumber = $this->db->escape($ordernumber);
 
-		$sql = "INSERT INTO `orders_qishou` (qsid,qstype,remarks,addtime,grade,meid,mename,ordernumber) VALUES ($qsid,$qstype,$desc,$addtime,$number,$meid,$mename,$ordernumber)";
+		$sql = "INSERT INTO `orders_qishou` (qsid,qstype,remarks,addtime,grade,meid,mename,ordernumber) VALUES ($qsid,$qstype,$remarks,$addtime,$grade,$meid,$mename,$ordernumber)";
 		$this->db->query($sql);
 		$id=$this->db->insert_id();
 		return $id;
