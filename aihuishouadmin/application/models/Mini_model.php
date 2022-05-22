@@ -33,6 +33,13 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `merchants` where token = $token ";
 		return $this->db->query($sql)->row_array();
 	}
+	public function getlevelInfo($lid)
+	{
+		$lid = $this->db->escape($lid);
+		$sql = "SELECT * FROM `level` where lid = $lid ";
+		return $this->db->query($sql)->row_array();
+	}
+
 	public function getqishouInfomeid($token)
 	{
 		$token = $this->db->escape($token);
@@ -312,7 +319,7 @@ class Mini_model extends CI_Model
 	{
 		$meid = $this->db->escape($meid);
 		$membernewmoney = $this->db->escape($membernewmoney);
-		$sql = "UPDATE `merchants` SET me_wallet=$membernewmoney WHERE meid = $meid";
+		$sql = "UPDATE `merchants` SET huishou_price=$membernewmoney WHERE meid = $meid";
 		return $this->db->query($sql);
 	}
 	public function register($birthday,$wallet,$status,$token,$openid,$nickname,$avater,$add_time)
@@ -345,9 +352,9 @@ class Mini_model extends CI_Model
 	{
 		$meid = $this->db->escape($meid);
 		$delivery_date = $this->db->escape($delivery_date);
-		$sqlw = " where delivery_date = " . $delivery_date;
+		$sqlw = " where datetime = " . $delivery_date;
 		$sqlw .= " and meid = " . $meid;
-		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
+		$sql = "SELECT count(1) as number FROM `orders_merchants` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
 		return $number;
 	}
@@ -402,8 +409,8 @@ class Mini_model extends CI_Model
 	public function getordersstatejine_merchants($meid)
 	{
 		$meid = $this->db->escape($meid);
-//		$sqlw = " where ostate = 2 ";
-		$sqlw = " where meid = " . $meid;
+		$sqlw = " where ostate = 2 ";
+		$sqlw .= " where meid = " . $meid;
 		$sql = "SELECT sum(sum_price) as number FROM `orders` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
 		return $number;
@@ -435,7 +442,8 @@ class Mini_model extends CI_Model
 		$start = ($pg - 1) * 10;
 		$stop = 10;
 		if ($ostate == 999){
-			$sql = "SELECT * FROM `orders` where mid = $mid order by addtime desc LIMIT $start, $stop";
+//			$sql = "SELECT * FROM `orders` where mid = $mid order by addtime desc LIMIT $start, $stop"
+				$sql = "SELECT * FROM `orders` where mid = $mid and ostate = 0 order by addtime desc LIMIT $start, $stop";
 		}elseif ($ostate == 1){
 			$sql = "SELECT * FROM `orders` where mid = $mid and ostate = 0 order by addtime desc LIMIT $start, $stop";
 		}elseif ($ostate == 2){
@@ -445,7 +453,8 @@ class Mini_model extends CI_Model
 		}elseif ($ostate == 4){
 			$sql = "SELECT * FROM `orders` where mid = $mid and ostate = 3 order by addtime desc LIMIT $start, $stop";
 		}else{
-			$sql = "SELECT * FROM `orders` where mid = $mid order by addtime desc LIMIT $start, $stop";
+//			$sql = "SELECT * FROM `orders` where mid = $mid order by addtime desc LIMIT $start, $stop";
+			$sql = "SELECT * FROM `orders` where mid = $mid and ostate = 0 order by addtime desc LIMIT $start, $stop";
 		}
 		return $this->db->query($sql)->result_array();
 	}
@@ -471,7 +480,12 @@ class Mini_model extends CI_Model
 	}
 	public function getbannerAll()
 	{
-		$sql = "SELECT * FROM `banners` order by addtime desc";
+		$sql = "SELECT * FROM `banners` WHERE type != 1 order by addtime desc";
+		return $this->db->query($sql)->result_array();
+	}
+	public function getbannerAll1()
+	{
+		$sql = "SELECT * FROM `banners` WHERE type = 1 order by addtime desc";
 		return $this->db->query($sql)->result_array();
 	}
 	public function member_address_status_save($mid)
@@ -492,6 +506,16 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `merchants` where is_business = 1 and merchants_state = 0 " . $sqlw . " order by add_time desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
+
+	public function getmerchantslistindex()
+	{
+		$pg = 1;
+		$start = ($pg - 1) * 2;
+		$stop = 2;
+		$sql = "SELECT * FROM `merchants` where is_business = 1 and merchants_state = 0 order by add_time desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
 	public function getmerchantslistseach($pg,$testinfo)
 	{
 		$sqlw = " and 1=1 ";
@@ -508,6 +532,13 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `lable` where laid IN $laidarr";
 		return $this->db->query($sql)->result_array();
 	}
+
+	public function getmerchantslistqishou($laidarr)
+	{
+		$sql = "SELECT * FROM `merchants` where meid IN $laidarr";
+		return $this->db->query($sql)->result_array();
+	}
+
 	public function getmerchantslistclasstwo($str)
 	{
 		$sql = "SELECT * FROM `class_two` where ct_id IN $str";
@@ -587,7 +618,7 @@ class Mini_model extends CI_Model
 	{
 		$meid = $this->db->escape($meid);
 		$me_wallet = $this->db->escape($me_wallet);
-		$sql = "UPDATE `merchants` SET me_wallet=$me_wallet WHERE meid = $meid";
+		$sql = "UPDATE `merchants` SET huishou_price=$me_wallet WHERE meid = $meid";
 		return $this->db->query($sql);
 	}
 
@@ -616,7 +647,7 @@ class Mini_model extends CI_Model
 
 	public function merchantsorderlist($meid,$pg,$datenew)
 	{
-		$sqlw = " and 1=1 ";
+		$sqlw = " and 1=1 and ostate<3 ";
 		if (!empty($datenew)) {
 			$datenew = $this->db->escape($datenew);
 			$sqlw .= " and delivery_date = " . $datenew;
@@ -641,16 +672,14 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `orders_merchants` where meid = $meid ".$sqlw." order by addtime desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
-	public function qishouorderlist1($meid,$datetime,$pg)
+	public function qishouorderlist1($meid,$datetime)
 	{
-		$sqlw = " and 1=1 ";
+		$sqlw = " and 1=1 and q_weight=0 ";
 		if (!empty($datetime)) {
 			$datetime = $this->db->escape($datetime);
 			$sqlw .= " and datetime = " . $datetime;
 		}
 		$meid = $this->db->escape($meid);
-		$start = ($pg - 1) * 1000;
-		$stop = 1000;
 		$sql = "SELECT * FROM `orders_merchants` where meid = $meid ".$sqlw." group by meid ";
 
 		return $this->db->query($sql)->result_array();
@@ -878,6 +907,8 @@ class Mini_model extends CI_Model
 	{
 		$meid = $this->db->escape($meid);
 		$datetime = $this->db->escape($datetime);
+		$sql1 = "UPDATE `merchants` SET full_flg=0 WHERE meid = $meid";
+		$this->db->query($sql1);
 		$sql = "UPDATE `orders` SET ostate=2 WHERE meid = $meid and $datetime = $datetime";
 		return $this->db->query($sql);
 	}

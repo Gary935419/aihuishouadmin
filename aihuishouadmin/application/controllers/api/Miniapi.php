@@ -401,6 +401,10 @@ class Miniapi extends CI_Controller
 		if (empty($merchantsinfo)) {
 			$this->back_json(206, '请您先去授权商家登录！');
 		}
+		$lid = $merchantsinfo['lid'];
+		$levelInfo = $this->mini->getlevelInfo($lid);
+		$merchantsinfo['level_name'] = empty($levelInfo['lname'])?'':$levelInfo['lname'];
+		$merchantsinfo['level_bili'] = empty($levelInfo['lcontents'])?0:$levelInfo['lcontents'];
 		$data['merchants'] = $merchantsinfo;
 		$this->back_json(200, '操作成功', $data);
 	}
@@ -544,13 +548,14 @@ class Miniapi extends CI_Controller
 		}
 
 		$meid = $member['meid'];
-
+		$lid = $member['lid'];
+		$levelInfo = $this->mini->getlevelInfo($lid);
 		//回收次数
 		$data['shujusum']['sum1'] = empty($this->mini->getordersstatecishu($meid,2))?0:$this->mini->getordersstatecishu($meid,2);
 		//回收金额
-		$data['shujusum']['sum2'] = empty($this->mini->getordersstatejine_merchants($meid))?0:$this->mini->getordersstatejine_merchants($meid);
+		$data['shujusum']['sum2'] = empty($member['huishou_price'])?0:$member['huishou_price'];
 		//赚取金额
-		$data['shujusum']['sum3'] = empty($this->mini->getordersstatejine_merchants($meid))?0:$this->mini->getordersstatejine_merchants($meid);
+		$data['shujusum']['sum3'] = empty($member['huishou_price'])?0:$member['huishou_price'] * $levelInfo['lcontents'] / 100;
 		//提现金额
 		$data['shujusum']['sum4'] = empty($this->mini->getordersstatetixian_merchants($meid))?0:$this->mini->getordersstatetixian_merchants($meid);
 		$this->back_json(200, '操作成功', $data);
@@ -584,10 +589,10 @@ class Miniapi extends CI_Controller
 		if (empty($merchantsinfo)) {
 			$this->back_json(206, '请您先去授权商家登录！');
 		}
-		if (!isset($_POST['money']) || empty($_POST['money'])) {
-			$this->back_json(202, '请输入提现金额！');
-		}
-		$money = empty($_POST['money'])?'':$_POST['money'];
+//		if (!isset($_POST['money']) || empty($_POST['money'])) {
+//			$this->back_json(202, '请输入提现金额！');
+//		}
+//		$money = empty($_POST['money'])?'':$_POST['money'];
 
 		if (!isset($_POST['bankcard']) || empty($_POST['bankcard'])) {
 			$this->back_json(202, '请输入银行卡号！');
@@ -604,16 +609,19 @@ class Miniapi extends CI_Controller
 		}
 		$bankname = empty($_POST['bankname'])?'':$_POST['bankname'];
 
-		if ($money>$merchantsinfo['me_wallet']){
-			$this->back_json(202, '请输入金额已经超出账户余额！');
-		}
+//		if ($money>$merchantsinfo['me_wallet']){
+//			$this->back_json(202, '请输入金额已经超出账户余额！');
+//		}
 
+		$lid = $merchantsinfo['lid'];
+		$levelInfo = $this->mini->getlevelInfo($lid);
+		$level_bili = empty($levelInfo['lcontents'])?0:$levelInfo['lcontents'];
+		$money = floatval($merchantsinfo['huishou_price']) * floatval($level_bili) / 100;
 		$state = 0;
 		$addtime = time();
 		$meid = $merchantsinfo['meid'];
 		$this->mini->order_withdrawal_save($meid,$addtime,$state,$bankname,$username,$bankcard,$money);
-		$me_wallet = floatval($merchantsinfo['me_wallet']) - floatval($money);
-		$this->mini->merchants_edit_me_wallet($meid,$me_wallet);
+		$this->mini->merchants_edit_me_wallet($meid,0);
 
 		$this->back_json(200, '操作成功');
 	}
@@ -785,30 +793,43 @@ class Miniapi extends CI_Controller
 		if (empty($member)) {
 			$this->back_json(206, '请您先去授权司机登录！');
 		}
-		$page = $_POST['page'];
 		$datetime = empty($_POST['date'])?date('Y-m-d',time()):$_POST['date'];
 		$qs_meids = $member['qs_meids'];
-		$meids = explode(',',$qs_meids);
-		$orderlist = array();
+		$my_str_arr = '('.$qs_meids.')';
+		$orderlist = $this->mini->getmerchantslistqishou($my_str_arr);
 
-		foreach ($meids as $k=>$v){
-			$meid = $v;
-			$orderlistnew = $this->mini->qishouorderlist1($meid,$datetime,$page);
-
-			$orderlist = array_merge($orderlist,$orderlistnew);
-		}
 		foreach ($orderlist as $k=>$v){
-			$memberinfoaddress = $this->mini->getMerchantsInfotmeid($v['meid']);
-			$orderlist[$k]['manchang'] = empty($memberinfoaddress['full_flg'])?"未满仓":"已满仓";
-			$orderlist[$k]['dingdanliang'] = $this->mini->getordersstate123($meid,$datetime);
-
-			$orderlist[$k]['meaddress'] = empty($memberinfoaddress['meaddress'])?'':$memberinfoaddress['meaddress'];
-			if ($v['omtype']==0){
-				$orderlist[$k]['omtype'] = "待回收";
-			}elseif ($v['omtype']==1){
-				$orderlist[$k]['omtype'] = "已回收";
+			$orderlist[$k]['manchang'] = empty($v['full_flg'])?"未满仓":"已满仓";
+			$orderlist[$k]['dingdanliang'] = $this->mini->getordersstate123($v['meid'],$datetime);
+			$orderlist[$k]['meaddress'] = empty($v['meaddress'])?'':$v['meaddress'];
+			$orderlistnew = $this->mini->qishouorderlist1($v['meid'],$datetime);
+			if (empty($orderlistnew)){
+				$orderlist[$k]['q_weight'] = 1;
+			}else{
+				$orderlist[$k]['q_weight'] = 0;
 			}
 		}
+
+//		$orderlist = array();
+//		foreach ($meids as $k=>$v){
+//			$meid = $v;
+//			$orderlistnew = $this->mini->qishouorderlist1($meid,$datetime,$page);
+//			$orderlist = array_merge($orderlist,$orderlistnew);
+//		}
+//		foreach ($orderlist as $k=>$v){
+//			$memberinfoaddress = $this->mini->getMerchantsInfotmeid($v['meid']);
+//			$orderlist[$k]['manchang'] = empty($memberinfoaddress['full_flg'])?"未满仓":"已满仓";
+//			$orderlist[$k]['dingdanliang'] = $this->mini->getordersstate123($meid,$datetime);
+//			$orderlist[$k]['meaddress'] = empty($memberinfoaddress['meaddress'])?'':$memberinfoaddress['meaddress'];
+//			if ($v['omtype']==0){
+//				$orderlist[$k]['omtype'] = "待回收";
+//			}elseif ($v['omtype']==1){
+//				$orderlist[$k]['omtype'] = "已回收";
+//			}
+//		}
+
+
+
 		$data['list'] = $orderlist;
 		$data['date'] = $datetime;
 		$this->back_json(200, '操作成功', $data);
@@ -881,6 +902,8 @@ class Miniapi extends CI_Controller
 	{
 		$list = $this->mini->getbannerAll();
 		$data["list"] = $list;
+		$list1 = $this->mini->getbannerAll1();
+		$data["list1"] = $list1;
 		$listnotice = $this->mini->getnoticeAllnew();
 		$noticemsg = "";
 		if (empty($listnotice)){
@@ -933,6 +956,12 @@ class Miniapi extends CI_Controller
 		$sort = array_column($orderlist, 'distancesum');
 		array_multisort($sort, SORT_ASC, $orderlist);
 		$data['list'] = $orderlist;
+		$this->back_json(200, '操作成功', $data);
+	}
+
+	public function merchants_list_index(){
+		$orderlist = $this->mini->getmerchantslistindex();
+		$data['list'] = empty($orderlist)?array():$orderlist;
 		$this->back_json(200, '操作成功', $data);
 	}
 
@@ -1316,7 +1345,7 @@ class Miniapi extends CI_Controller
 		if (empty($orderlist)){
 			$this->back_json(205, '数据错误。');
 		}
-
+		$sum_price = 0;
 		foreach ($orderlist as $k=>$v){
 			$omid = $v['omid'];
 			$omtype = 1;
@@ -1332,13 +1361,14 @@ class Miniapi extends CI_Controller
 			$grade = 0;
 			$mename = $v['mename'];
 			$this->mini->getorders_merchants_save_new($qsid,$qstype,$remarks,$addtime,$grade,$meid,$mename,$ordernumber);
+
+			$sum_price = floatval($sum_price) + floatval($v['m_weight']) * floatval($v['price']);
 		}
 
 		$this->mini->goods_edit_order_me_ostate($meid,$datetime);
-
-//		$MemberInfomid = $this->mini->getmerchantsInfomeidnew($meid);
-//		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['me_wallet']);
-//		$this->mini->member_edit_wallet_me($meid,$membernewmoney);
+		$MemberInfomid = $this->mini->getmerchantsInfomeidnew($meid);
+		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['huishou_price']);
+		$this->mini->member_edit_wallet_me($meid,$membernewmoney);
 
 		$this->back_json(200, '操作成功');
 	}
@@ -1353,8 +1383,11 @@ class Miniapi extends CI_Controller
 		if (empty($member)){
 			$this->back_json(205, '请您先去授权商家登录！');
 		}
+		if (!isset($_POST['weight']) || empty($_POST['weight'])) {
+			$this->back_json(205, '请录入重量信息。');
+		}
 		if (!is_numeric($_POST['weight'])){
-			$this->back_json(205, '重量格式错误,请录入数字。');
+			$this->back_json(205, '请录入数字信息。');
 		}
 		$weight = $_POST['weight'];
 		$ogid = $_POST['ogid'];
@@ -1375,8 +1408,11 @@ class Miniapi extends CI_Controller
 		if (empty($merchantsinfo)) {
 			$this->back_json(206, '请您先去授权司机登录！');
 		}
+		if (!isset($_POST['weight']) || empty($_POST['weight'])) {
+			$this->back_json(205, '请录入重量信息。');
+		}
 		if (!is_numeric($_POST['weight'])){
-			$this->back_json(205, '重量格式错误,请录入数字。');
+			$this->back_json(205, '请录入数字信息。');
 		}
 		$weight = $_POST['weight'];
 		$omid = $_POST['omid'];
