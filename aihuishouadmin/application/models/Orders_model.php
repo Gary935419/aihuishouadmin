@@ -89,7 +89,7 @@ class Orders_model extends CI_Model
 	{
 		$id = $this->db->escape($id);
 		$sql = "SELECT * FROM `orders` where oid=$id";
-		return $this->db->query($sql)->result_array();
+		return $this->db->query($sql)->row_array();
 	}
 
 

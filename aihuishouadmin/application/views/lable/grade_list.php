@@ -26,10 +26,10 @@
 		<div class="layui-col-md12">
 			<div class="layui-card">
 				<div class="layui-card-body ">
-					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/merchants/merchants_list' ?>">
+					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/news/hezuo_list' ?>">
 						<div class="layui-inline layui-show-xs-block">
 							<input type="text" name="user_name" id="user_name" value="<?php echo $user_name1 ?>"
-								   placeholder="账号" autocomplete="off" class="layui-input">
+								   placeholder="等级名" autocomplete="off" class="layui-input">
 						</div>
 						<div class="layui-inline layui-show-xs-block">
 							<button class="layui-btn" lay-submit="" lay-filter="sreach"><i
@@ -38,42 +38,32 @@
 					</form>
 				</div>
 				<button class="layui-btn layui-card-header" style="float: right;margin-top: -40px;margin-right: 20px;"
-						onclick="xadmin.open('添加','<?= RUN . '/merchants/merchants_add' ?>',900,600)"><i
+						onclick="xadmin.open('添加','<?= RUN . '/lable/grade_add' ?>',900,500)"><i
 							class="layui-icon"></i>添加
 				</button>
 				<div class="layui-card-body ">
 					<table class="layui-table layui-form">
 						<thead>
 						<tr>
-							<th style="width: 5%">序号</th>
-							<th style="width: 10%">商家名称</th>
-							<th style="width: 10%">等级</th>
-							<th style="width: 10%">联系人</th>
-							<th style="width: 10%">联系电话</th>
-							<th style="width: 15%">地址</th>
-							<th style="width: 10%">当前余额</th>
-							<th style="width: 10%">当前状态</th>
-							<th style="width: 20%">操作</th>
+							<th style="width: 10%">序号</th>
+							<th style="width: 30%">商家等级</th>
+							<th style="width: 30%">返点比例</th>
+							<th style="width: 30%">操作</th>
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
 							<?php foreach ($list as $num => $once): ?>
-								<tr id="p<?= $once['meid'] ?>" sid="<?= $once['meid'] ?>">
+								<tr id="p<?= $once['lid'] ?>" sid="<?= $once['lid'] ?>">
 									<td><?= $num + 1 ?></td>
-									<td><?= $once['mename'] ?></td>
 									<td><?= $once['lname'] ?></td>
-									<td><?= $once['contactname'] ?></td>
-									<td><?= $once['metel'] ?></td>
-									<td><?= $once['meaddress'] ?></td>
-									<td>0</td>
-									<td><?php if ($once['is_business'] == 0) { echo "营业中";}else{echo "不营业";}?></td>
+									<td><?= $once['lcontents'] ?></td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
-												onclick="xadmin.open('编辑','<?= RUN . '/merchants/merchants_edit?id=' ?>'+<?= $once['meid'] ?>,900,700)">
+												onclick="xadmin.open('编辑','<?= RUN . '/lable/grade_edit?id=' ?>'+<?= $once['lid'] ?>,900,500)">
 											<i class="layui-icon">&#xe642;</i>编辑
 										</button>
 										<button class="layui-btn layui-btn-danger"
-												onclick="merchants_delete('<?= $once['meid'] ?>')"><i class="layui-icon">&#xe640;</i>删除
+												onclick="grade_delete('<?= $once['lid'] ?>')"><i class="layui-icon">&#xe640;</i>删除
 										</button>
 									</td>
 								</tr>
@@ -98,7 +88,7 @@
 </div>
 </body>
 <script>
-	function merchants_delete(id) {
+	function grade_delete(id) {
 		layer.confirm('您是否确认删除？', {
 					title: '温馨提示',
 					btn: ['确认', '取消']
@@ -109,7 +99,7 @@
 						type: "post",
 						data: {"id": id},
 						dataType: "json",
-						url: "<?= RUN . '/merchants/merchants_delete' ?>",
+						url: "<?= RUN . '/lable/grade_delete' ?>",
 						success: function (data) {
 							if (data.success) {
 								$("#p" + id).remove();

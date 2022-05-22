@@ -33,7 +33,7 @@ class Merchants_model extends CI_Model
 		}
 		$start = ($pg - 1) * 10;
 		$stop = 10;
-		$sql = "SELECT * FROM `merchants` " . $sqlw . " order by meid desc LIMIT $start, $stop";
+		$sql = "SELECT * FROM `merchants` as a,`level` as b" . $sqlw . "and a.lid=b.lid order by meid desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
 	
@@ -289,5 +289,12 @@ class Merchants_model extends CI_Model
 		$state = $this->db->escape($state);
 		$sql = "UPDATE `withdrawal` SET state =  $state,updatetime=$time WHERE wid = $id";
 		return $this->db->query($sql);
+	}
+
+	//商家等级获取
+	public function getgradename()
+	{
+		$sql = "SELECT * FROM `level`";
+		return $this->db->query($sql)->result_array();
 	}
 }

@@ -44,6 +44,7 @@ class Merchants extends CI_Controller
 		$data = array();
 		$ridlist = $this->merchants->getRole();
 		$data['ridlist'] = $ridlist;
+		$data['level'] = $this->merchants->getgradename();
 		$this->display("merchants/merchants_add", $data);
 	}
 	
@@ -125,6 +126,7 @@ class Merchants extends CI_Controller
 		$data['meimg'] = $member_info['meimg'];
 		$data['merchantsid'] = $uid;
 
+		$data['level'] = $this->merchants->getgradename();
 		$data["lablelist"] = $this->merchants->getMerchantslables();
 		$this->display("merchants/merchants_edit", $data);
 	}

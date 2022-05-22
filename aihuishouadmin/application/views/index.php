@@ -90,6 +90,12 @@
 							</a>
 						</li>
 						<li>
+							<a onclick="changeSrc('<?= RUN . '/lable/grade_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>商家等级管理</cite>
+							</a>
+						</li>
+						<li>
 							<a onclick="changeSrc('<?= RUN . '/merchants/withdrawal_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
 								<cite>商家提现管理</cite>
@@ -163,6 +169,12 @@
 								<cite>新闻管理</cite>
 							</a>
 						</li>
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/news/hezuo_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>合作商家</cite>
+							</a>
+						</li>
 					</ul>
 				</li>
 				<li>
@@ -186,7 +198,7 @@
 							</a>
 						</li>
 					</ul>
-				</li>
+				</li>&nbsp;
 				<li>
 					<a href="javascript:;">
 						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
@@ -224,7 +236,7 @@
 						<i class="iconfont nav_right">&#xe697;</i></a>
 					<ul class="sub-menu">
 						<li>
-							<a onclick="changeSrc('<?= RUN . '/kucun/kucun_list' ?>')">
+							<a onclick="changeSrc('<?= RUN . '/stock/stock_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
 								<cite>库存查看</cite>
 							</a>

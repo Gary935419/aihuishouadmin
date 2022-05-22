@@ -108,7 +108,7 @@ class News_model extends CI_Model
 	//获取banner图片页数
 	public function getBannersAllPage($user_name)
 	{
-		$sqlw = " where 1=1 ";
+		$sqlw = " where type=0 ";
 		if (!empty($user_name)) {
 			$sqlw .= " and ( bannersname like '%" . $user_name . "%' ) ";
 		}
@@ -157,7 +157,7 @@ class News_model extends CI_Model
 		$bannersimg = $this->db->escape($bannersimg);
 		$addtime = $this->db->escape($addtime);
 
-		$sql = "INSERT INTO `banners` (bannername,bannerimg,addtime) VALUES ($bannername,$bannersimg,$addtime)";
+		$sql = "INSERT INTO `banners` (bannername,bannerimg,addtime,type) VALUES ($bannername,$bannersimg,$addtime,0)";
 		return $this->db->query($sql);
 	}
 
@@ -174,6 +174,87 @@ class News_model extends CI_Model
 
 	//banner图片users_save_edit
 	public function banners_save_edit($uid,$bannername,$bannersimg)
+	{
+		$uid = $this->db->escape($uid);
+		$bannername = $this->db->escape($bannername);
+		$bannersimg = $this->db->escape($bannersimg);
+
+		$sql = "UPDATE `banners` SET bannername=$bannername,bannerimg=$bannersimg WHERE bid = $uid";
+		return $this->db->query($sql);
+	}
+
+
+	//----------------------------合作企业列表-------------------------------------
+
+	//获取合作图片页数
+	public function getHezuoAllPage($user_name)
+	{
+		$sqlw = " where type=1 ";
+		if (!empty($user_name)) {
+			$sqlw .= " and ( bannersname like '%" . $user_name . "%' ) ";
+		}
+		$sql = "SELECT count(1) as number FROM `banners` " . $sqlw;
+
+		$number = $this->db->query($sql)->row()->number;
+		return ceil($number / 10) == 0 ? 1 : ceil($number / 10);
+	}
+
+	//获取合作图片信息
+	public function gethezuoAll($pg, $user_name)
+	{
+		$sqlw = " where type=1 ";
+		if (!empty($user_name)) {
+			$sqlw .= " and ( bannersname like '%" . $user_name . "%' ) ";
+		}
+		$start = ($pg - 1) * 10;
+		$stop = 10;
+		$sql = "SELECT * FROM `banners` " . $sqlw . " order by bid desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
+
+	//合作图片delete
+	public function hezuo_delete($id)
+	{
+		$id = $this->db->escape($id);
+		$sql = "DELETE FROM banners WHERE bid = $id";
+		return $this->db->query($sql);
+	}
+
+	//----------------------------添加信息------------------------------------
+
+	//判断合作图片是否重复
+	public function gethezuoname($user_name)
+	{
+		$user_name = $this->db->escape($user_name);
+		$sql = "SELECT * FROM `banners` where bannername = $user_name ";
+		return $this->db->query($sql)->row_array();
+	}
+
+	//合作图片save
+	public function hezuo_save($bannername,$bannersimg,$addtime)
+	{
+		$bannername = $this->db->escape($bannername);
+		$bannersimg = $this->db->escape($bannersimg);
+		$addtime = $this->db->escape($addtime);
+
+		$sql = "INSERT INTO `banners` (bannername,bannerimg,addtime,type) VALUES ($bannername,$bannersimg,$addtime,1)";
+		return $this->db->query($sql);
+	}
+
+
+	//----------------------------修改信息详情-------------------------------------
+
+	//根据id获取合作图片信息
+	public function gethezuolist($id)
+	{
+		$id = $this->db->escape($id);
+		$sql = "SELECT * FROM `banners` where bid=$id";
+		return $this->db->query($sql)->row_array();
+	}
+
+	//hezuo图片users_save_edit
+	public function hezuo_save_edit($uid,$bannername,$bannersimg)
 	{
 		$uid = $this->db->escape($uid);
 		$bannername = $this->db->escape($bannername);

@@ -81,10 +81,9 @@
 				<div class="layui-input-inline layui-show-xs-block">
 					<div style="width: 300px" class="layui-input-inline layui-show-xs-block">
 						<select name="lid" id="lid" lay-verify="lid">
-							<option value="1" <?php if($lid==1){echo 'selected="selected"';};?>>青铜会员</option>
-							<option value="2" <?php if($lid==2){echo 'selected="selected"';};?>>白银会员</option>
-							<option value="3" <?php if($lid==3){echo 'selected="selected"';};?>>黄金会员</option>
-							<option value="4" <?php if($lid==4){echo 'selected="selected"';};?>>钻石会员</option>
+							<?php foreach ($level as $num => $once){?>
+								<option value="<?=$once['lid'];?>" <?php if($lid==$once['lid']){echo 'selected="selected"';};?>><?=$once['lname'];?></option>
+							<?php } ?>
 						</select>
 					</div>
 				</div>

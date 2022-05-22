@@ -26,34 +26,36 @@
 		<div class="layui-col-md12">
 			<div class="layui-card">
 				<div class="layui-card-body ">
+					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/stock/stockorder_list' ?>">
+						<div class="layui-input-inline layui-show-xs-block">
+							<input class="layui-input" placeholder="开始日期" value="<?php echo $start; ?>" name="start" id="start">
+							<input type="hidden" id="id" name="id" value="<?php echo $ctid; ?>">
+						</div>
+						<div class="layui-inline layui-show-xs-block">
+							<button class="layui-btn" lay-submit="" lay-filter="sreach"><i
+										class="layui-icon">&#xe615;</i></button>
+						</div>
+					</form>
+				</div>
+				<div class="layui-card-body ">
 					<table class="layui-table layui-form">
 						<thead>
 						<tr>
 							<th style="width: 5%">序号</th>
-							<th style="width: 10%">下单时间</th>
-							<th style="width: 10%">商品分类</th>
-							<th style="width: 10%">回收量</th>
-							<th style="width: 10%">实际回收量</th>
-							<th style="width: 10%">误差</th>
-							<th style="width: 10%">结算费用</th>
-						</tr>
+							<th style="width: 20%">商品品类</th>
+							<th style="width: 20%">出库时间</th>
+							<th style="width: 20%">出库量</th>
+							<th style="width: 20%">剩余库存</th>
 						</thead>
 						<tbody>
-						<?php
-						if (isset($list) && !empty($list)) { ?>
-							<?php
-							$moneys=0;
-							foreach ($list as $num => $once):
-								//$moneys=$moneys+$once['og_price'];
-								?>
-								<tr id="p<?= $once['omid'] ?>" sid="<?= $once['omid'] ?>">
+						<?php if (isset($list) && !empty($list)) { ?>
+							<?php foreach ($list as $num => $once): ?>
+								<tr id="p<?= $once['id'] ?>" sid="<?= $once['id'] ?>">
 									<td><?= $num + 1 ?></td>
-									<td><?= $once['datetime']; ?></td>
 									<td><?= $once['ct_name'] ?></td>
-									<td><?= $once['m_weight'] ?></td>
-									<td><?= $once['q_weight'] ?></td>
-									<td><?= $once['m_weight']-$once['q_weight'] ?></td>
-									<td><?= $once['q_weight']*$once['price'] ?></td>
+									<td><?= $once['addtime']; ?></td>
+									<td><?= $once['stockoutnum'] ?></td>
+									<td><?= $once['stockover'] ?></td>
 								</tr>
 							<?php endforeach; ?>
 						<?php } else { ?>
@@ -64,9 +66,29 @@
 						</tbody>
 					</table>
 				</div>
+				<div class="layui-card-body ">
+					<div class="page">
+						<?= $pagehtml ?>
+					</div>
+				</div>
+
 			</div>
 		</div>
 	</div>
 </div>
 </body>
+<script>
+	layui.use(['laydate', 'form'],
+			function() {
+				var laydate = layui.laydate;
+				//执行一个laydate实例
+				laydate.render({
+					elem: '#start' //指定元素
+				});
+				//执行一个laydate实例
+				laydate.render({
+					elem: '#end' //指定元素
+				});
+			});
+</script>
 </html>

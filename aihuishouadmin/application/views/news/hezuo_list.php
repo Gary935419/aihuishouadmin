@@ -18,7 +18,7 @@
 <div class="x-nav">
           <span class="layui-breadcrumb">
             <a>
-              <cite>商家管理</cite></a>
+              <cite>商品分类管理</cite></a>
           </span>
 </div>
 <div class="layui-fluid">
@@ -26,54 +26,46 @@
 		<div class="layui-col-md12">
 			<div class="layui-card">
 				<div class="layui-card-body ">
-					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/merchants/merchants_list' ?>">
+					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/news/hezuo_list' ?>">
 						<div class="layui-inline layui-show-xs-block">
 							<input type="text" name="user_name" id="user_name" value="<?php echo $user_name1 ?>"
-								   placeholder="账号" autocomplete="off" class="layui-input">
+								   placeholder="图片名" autocomplete="off" class="layui-input">
 						</div>
 						<div class="layui-inline layui-show-xs-block">
 							<button class="layui-btn" lay-submit="" lay-filter="sreach"><i
-										class="layui-icon">&#xe615;</i></button>
+									class="layui-icon">&#xe615;</i></button>
 						</div>
 					</form>
 				</div>
 				<button class="layui-btn layui-card-header" style="float: right;margin-top: -40px;margin-right: 20px;"
-						onclick="xadmin.open('添加','<?= RUN . '/merchants/merchants_add' ?>',900,600)"><i
-							class="layui-icon"></i>添加
+						onclick="xadmin.open('添加','<?= RUN . '/news/hezuo_add' ?>',900,500)"><i
+						class="layui-icon"></i>添加
 				</button>
 				<div class="layui-card-body ">
 					<table class="layui-table layui-form">
 						<thead>
 						<tr>
-							<th style="width: 5%">序号</th>
-							<th style="width: 10%">商家名称</th>
-							<th style="width: 10%">等级</th>
-							<th style="width: 10%">联系人</th>
-							<th style="width: 10%">联系电话</th>
-							<th style="width: 15%">地址</th>
-							<th style="width: 10%">当前余额</th>
-							<th style="width: 10%">当前状态</th>
-							<th style="width: 20%">操作</th>
+							<th style="width: 10%">序号</th>
+							<th style="width: 20%">图片名称</th>
+							<th style="width: 40%">图片显示</th>
+							<th style="width: 30%">操作</th>
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
 							<?php foreach ($list as $num => $once): ?>
-								<tr id="p<?= $once['meid'] ?>" sid="<?= $once['meid'] ?>">
+								<tr id="p<?= $once['bid'] ?>" sid="<?= $once['bid'] ?>">
 									<td><?= $num + 1 ?></td>
-									<td><?= $once['mename'] ?></td>
-									<td><?= $once['lname'] ?></td>
-									<td><?= $once['contactname'] ?></td>
-									<td><?= $once['metel'] ?></td>
-									<td><?= $once['meaddress'] ?></td>
-									<td>0</td>
-									<td><?php if ($once['is_business'] == 0) { echo "营业中";}else{echo "不营业";}?></td>
+									<td><?= $once['bannername'] ?></td>
+									<td>
+										<img class="layui-upload-img" src="<?php echo $once['bannerimg'] ?>" style="height: 50px;" >
+									</td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
-												onclick="xadmin.open('编辑','<?= RUN . '/merchants/merchants_edit?id=' ?>'+<?= $once['meid'] ?>,900,700)">
+												onclick="xadmin.open('编辑','<?= RUN . '/news/hezuo_edit?id=' ?>'+<?= $once['bid'] ?>,900,500)">
 											<i class="layui-icon">&#xe642;</i>编辑
 										</button>
 										<button class="layui-btn layui-btn-danger"
-												onclick="merchants_delete('<?= $once['meid'] ?>')"><i class="layui-icon">&#xe640;</i>删除
+												onclick="proclass1_delete('<?= $once['bid'] ?>')"><i class="layui-icon">&#xe640;</i>删除
 										</button>
 									</td>
 								</tr>
@@ -98,38 +90,38 @@
 </div>
 </body>
 <script>
-	function merchants_delete(id) {
+	function proclass1_delete(id) {
 		layer.confirm('您是否确认删除？', {
-					title: '温馨提示',
-					btn: ['确认', '取消']
-					// 按钮
-				},
-				function (index) {
-					$.ajax({
-						type: "post",
-						data: {"id": id},
-						dataType: "json",
-						url: "<?= RUN . '/merchants/merchants_delete' ?>",
-						success: function (data) {
-							if (data.success) {
-								$("#p" + id).remove();
-								layer.alert(data.msg, {
-											title: '温馨提示',
-											icon: 6,
-											btn: ['确认']
-										},
-								);
-							} else {
-								layer.alert(data.msg, {
-											title: '温馨提示',
-											icon: 5,
-											btn: ['确认']
-										},
-								);
-							}
-						},
-					});
+				title: '温馨提示',
+				btn: ['确认', '取消']
+				// 按钮
+			},
+			function (index) {
+				$.ajax({
+					type: "post",
+					data: {"id": id},
+					dataType: "json",
+					url: "<?= RUN . '/news/hezuo_delete' ?>",
+					success: function (data) {
+						if (data.success) {
+							$("#p" + id).remove();
+							layer.alert(data.msg, {
+									title: '温馨提示',
+									icon: 6,
+									btn: ['确认']
+								},
+							);
+						} else {
+							layer.alert(data.msg, {
+									title: '温馨提示',
+									icon: 5,
+									btn: ['确认']
+								},
+							);
+						}
+					},
 				});
+			});
 	}
 </script>
 </html>

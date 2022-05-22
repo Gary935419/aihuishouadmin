@@ -70,7 +70,7 @@ class Orders extends CI_Controller
 		$uid = isset($_GET['id']) ? $_GET['id'] : 0;
 		$name = $this->orders->getmerchants($uid);
 		$data["list"] = $this->orders->getorderslist($uid);
-		$data["name"] =$name[0]['muser'];
+		$data["name"] =$name['muser'];
 		$this->display("orders/order_edit", $data);
 	}
 

@@ -71,10 +71,9 @@
                 <div class="layui-input-inline layui-show-xs-block">
                     <div style="width: 300px" class="layui-input-inline layui-show-xs-block">
                         <select name="lid" id="lid" lay-verify="lid">
-                                <option value="1">青铜会员</option>
-								<option value="2">白银会员</option>
-								<option value="3" selected="selected">黄金会员</option>
-								<option value="4">钻石会员</option>
+							<?php foreach ($level as $num => $once){?>
+                                <option value="<?=$once['lid'];?>"><?=$once['lname'];?></option>
+							<?php } ?>
                         </select>
                     </div>
                 </div>

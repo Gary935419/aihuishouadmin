@@ -67,14 +67,14 @@
 									<td><?= $once['mename'] ?></td>
 									<td>未满仓</td>
 									<td><?PHP if($once['qstype']==0){echo "未入库";}elseif($once['qstype']==1){echo "申请入库";}elseif($once['qstype']==2){echo "以入库";}; ?></td>
-									<td><?= $once['number'] ?></td>
-									<td><?= $once['desc'] ?></td>
-									<td><?= $once['addtime'] ?></td>
-									<td><a href="#" onclick="xadmin.open('编辑','<?= RUN . '/orders/orderqishou_edit?id=' ?>'+<?= $once['id'] ?>,900,700)">查看详情</td>
+									<td><?= $once['grade'] ?></td>
+									<td><?= $once['remarks'] ?></td>
+									<td><?= date('Y-m-d',$once['addtime']); ?></td>
+									<td><a href="#" onclick="xadmin.open('编辑','<?= RUN . '/orders/orderqishou_edit?id=' ?>'+<?= $once['ordernumber'] ?>,900,700)">查看详情</td>
 									<td>
 										<?php if($once['qstype']==1){?>
 										<button class="layui-btn layui-btn-danger"
-												onclick="orderqishou_edit('<?= $once['id'] ?>')"><i class="layui-icon">&#xe640;</i>入库
+												onclick="orderqishou_edit('<?= $once['ordernumber'] ?>')"><i class="layui-icon">&#xe640;</i>入库
 										</button>
 										<? }elseif($once['qstype']==0){echo '未申请入库';}elseif($once['qstype']==2){echo '入库完成';}?>
 									</td>
@@ -127,7 +127,7 @@
 							"id": id,
 						},
 						dataType: "json",
-						url: "<?= RUN . '/orders/orderqishou_edit' ?>",
+						url: "<?= RUN . '/orders/stcok_add' ?>",
 						success: function (data) {
 							if (data.success) {
 								//$("#p" + id).remove();
