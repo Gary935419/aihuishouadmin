@@ -145,11 +145,12 @@ class Lable_model extends CI_Model
 	}
 
 	//标签save
-	public function grade_save($lname,$lcontents)
+	public function grade_save($lname,$lcontents,$limg)
 	{
 		$lname = $this->db->escape($lname);
 		$lcontents = $this->db->escape($lcontents);
-		$sql = "INSERT INTO `level` (lname,lcontents) VALUES ($lname,$lcontents)";
+		$limg = $this->db->escape($limg);
+		$sql = "INSERT INTO `level` (lname,lcontents,limg) VALUES ($lname,$lcontents,limg)";
 		return $this->db->query($sql);
 	}
 
@@ -164,12 +165,13 @@ class Lable_model extends CI_Model
 	}
 
 	//标签更新
-	public function grade_save_edit($uid, $lname,$lcontents)
+	public function grade_save_edit($uid, $lname,$lcontents,$limg)
 	{
 		$uid = $this->db->escape($uid);
 		$lname = $this->db->escape($lname);
 		$lcontents = $this->db->escape($lcontents);
-		$sql = "UPDATE `level` SET lname=$lname,lcontents=$lcontents WHERE lid = $uid";
+		$limg = $this->db->escape($limg);
+		$sql = "UPDATE `level` SET lname=$lname,lcontents=$lcontents,limg=$limg WHERE lid = $uid";
 		return $this->db->query($sql);
 	}
 

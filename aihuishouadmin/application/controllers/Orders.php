@@ -65,13 +65,48 @@ class Orders extends CI_Controller
 	/**
 	 * 订单列表页
 	 */
-	public function order_edit()
+	public function order_show()
 	{
 		$uid = isset($_GET['id']) ? $_GET['id'] : 0;
 		$name = $this->orders->getmerchants($uid);
 		$data["list"] = $this->orders->getorderslist($uid);
 		$data["name"] =$name['muser'];
+		$this->display("orders/order_show", $data);
+	}
+
+	/**-----------------------------------订单修改-----------------------------------------------------*/
+	/**
+	 * 订单修改
+	 */
+
+	public function order_edit()
+	{
+		$uid = isset($_GET['id']) ? $_GET['id'] : 0;
+		$member_info = $this->orders->getordergoods($uid);
+		$data['id'] = $uid;
+		$data['name'] = $member_info['ct_name'];
+		$data['weight'] = $member_info['weight'];
+
 		$this->display("orders/order_edit", $data);
+	}
+
+	/**
+	 * banner图片修改提交
+	 */
+	public function order_save_edit()
+	{
+		if (empty($_SESSION['user_name'])) {
+			echo json_encode(array('error' => false, 'msg' => "无法修改数据"));
+			return;
+		}
+		$uid = isset($_POST["uid"]) ? $_POST["uid"] : '';
+		$weight = isset($_POST["weight"]) ? $_POST["weight"] : 0;
+		$result = $this->orders->order_save_edit($uid, $weight);
+		if ($result) {
+			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
+		} else {
+			echo json_encode(array('error' => false, 'msg' => "操作失败"));
+		}
 	}
 
 

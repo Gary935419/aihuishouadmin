@@ -21,7 +21,7 @@
 <!-- 顶部开始 -->
 <div class="container">
     <div class="logo">
-        <a href="<?= RUN . '/admin/index' ?>"> 我的管理后台-爱回收 </a>
+        <a href="<?= RUN . '/admin/index' ?>"> 我的管理后台-爱收帮 </a>
     </div>
 
     <div class="left_open">
@@ -180,13 +180,13 @@
 				<li>
 					<a href="javascript:;">
 						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
-						<cite>优惠卷管理</cite>
+						<cite>优惠券管理</cite>
 						<i class="iconfont nav_right">&#xe697;</i></a>
 					<ul class="sub-menu">
 						<li>
 							<a onclick="changeSrc('<?= RUN . '/promote/promote_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
-								<cite>优惠卷设定</cite>
+								<cite>优惠券设定</cite>
 							</a>
 						</li>
 					</ul>
@@ -198,7 +198,7 @@
 							</a>
 						</li>
 					</ul>
-				</li>&nbsp;
+				</li>
 				<li>
 					<a href="javascript:;">
 						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>

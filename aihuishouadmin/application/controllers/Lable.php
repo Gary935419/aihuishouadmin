@@ -185,13 +185,14 @@ class Lable extends CI_Controller
 
 		$lname = isset($_POST["lname"]) ? $_POST["lname"] : '';
 		$lcontents = isset($_POST["lcontents"]) ? $_POST["lcontents"] : '';
+		$limg = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 		$user_info = $this->lable->getgradeById($lname);
 
 		if (!empty($user_info)) {
 			echo json_encode(array('error' => true, 'msg' => "该标签已经存在。"));
 			return;
 		}
-		$result = $this->lable->grade_save($lname,$lcontents);
+		$result = $this->lable->grade_save($lname,$lcontents,$limg);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
 		} else {
@@ -214,6 +215,7 @@ class Lable extends CI_Controller
 		$data['lid'] = $member_info['lid'];
 		$data['lname'] = $member_info['lname'];
 		$data['lcontents'] = $member_info['lcontents'];
+		$data['limg'] = $member_info['limg'];
 		$this->display("lable/grade_edit", $data);
 	}
 
@@ -229,14 +231,9 @@ class Lable extends CI_Controller
 		$uid = isset($_POST["uid"]) ? $_POST["uid"] : '';
 		$lname = isset($_POST["lname"]) ? $_POST["lname"] : '';
 		$lcontents = isset($_POST["lcontents"]) ? $_POST["lcontents"] : 0;
-		$user_info = $this->lable->getgradeById($lname);
+		$limg = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 
-		if (!empty($user_info)) {
-			echo json_encode(array('error' => true, 'msg' => "该标签已经存在。"));
-			return;
-		}
-
-		$result = $this->lable->grade_save_edit($uid, $lname,$lcontents);
+		$result = $this->lable->grade_save_edit($uid, $lname,$lcontents,$limg);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
 		} else {

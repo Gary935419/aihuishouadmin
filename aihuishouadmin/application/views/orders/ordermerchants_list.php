@@ -61,7 +61,10 @@
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
-							<?php foreach ($list as $num => $once): ?>
+							<?php foreach ($list as $num => $once): 
+							$wucha=$once['q_weight']-$once['m_weight'];
+							$wcl=round($wucha/$once['m_weight']*100,2);
+							?>
 								<tr>
 									<td><?= $num + 1 ?></td>
 									<td><?= date('Y-m-d',$once['addtime']); ?></td>
@@ -69,8 +72,9 @@
 									<td><?php if($once['omtype']==0){echo '待回收';}else{echo '已回收';}; ?></td>
 									<td><?= $once['m_weight'] ?></td>
 									<td><?= $once['q_weight'] ?></td>
-									<td><?= $once['m_weight']-$once['q_weight'] ?></td>
-									<td><?PHP if($once['omtype']==0){echo "0";}else{echo $once['m_weight']/$once['q_weight'];} ?></td>
+									<td><?= $wucha ?></td>
+									<td><?= $wcl ?>%</td>
+
 									<td><?= $once['q_weight']*$once['price'] ?></td>
 								</tr>
 							<?php endforeach; ?>

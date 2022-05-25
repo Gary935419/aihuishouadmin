@@ -83,8 +83,8 @@
                     <span class="x-red">*</span>状态
                 </label>
                 <div class="layui-input-inline" style="width: 500px;">
-                    <input type="radio" name="merchants_state" lay-skin="primary" title="正常" value="1" checked>
-                    <input type="radio" name="merchants_state" lay-skin="primary" title="禁用" value="2">
+                    <input type="radio" name="merchants_state" lay-skin="primary" title="开通" value="0" checked>
+                    <input type="radio" name="merchants_state" lay-skin="primary" title="关闭" value="1">
                 </div>
             </div>
             <div class="layui-form-item">

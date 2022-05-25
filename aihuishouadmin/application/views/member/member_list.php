@@ -48,14 +48,15 @@
 						<thead>
 						<tr>
 							<th style="width: 5%">序号</th>
-							<th style="width: 10%">微信名</th>
-							<th style="width: 10%">用户姓名</th>
-							<th style="width: 10%">个人钱包</th>
-							<th style="width: 10%">注册时间</th>
-							<th style="width: 10%">当前状态</th>
-							<th style="width: 10%">开通上门取货</th>
-							<th style="width: 10%">查看订单</th>
-							<th style="width: 10%">查看地址</th>
+							<th style="width: 9%">微信名</th>
+							<th style="width: 9%">用户姓名</th>
+							<th style="width: 9%">用户电话</th>
+							<th style="width: 9%">个人钱包</th>
+							<th style="width: 9%">注册时间</th>
+							<th style="width: 9%">当前状态</th>
+							<th style="width: 9%">开通上门取货</th>
+							<th style="width: 9%">查看订单</th>
+							<th style="width: 9%">查看地址</th>
 							<th style="width: 15%">操作</th>
 						</thead>
 						<tbody>
@@ -65,6 +66,7 @@
 									<td><?= $num + 1 ?></td>
 									<td><?= $once['nickname'] ?></td>
 									<td><?= $once['truename'] ?></td>
+									<td><?= $once['mobile'] ?></td>
 									<td><?= $once['wallet'] ?></td>
 									<td><?php date("Y-m-d",$once['add_time']); ?></td>
 									<td><?php echo $once['status']==1?"正常":"禁用" ?></td>

@@ -70,11 +70,16 @@
 			</div>
 			<div class="layui-form-item">
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
-					<span class="x-red">*</span>回收费用（公斤）：
+					<span class="x-red">*</span>回收费用：
 				</label>
-				<div class="layui-input-inline" style="width: 300px;">
-					<input type="text" id="price" name="price" lay-verify="ltitle"
-						   autocomplete="off" class="layui-input">
+				<div class="layui-input-inline" style="width: 200px;">
+					<input type="text" id="price" name="price" lay-verify="ltitle" autocomplete="off" class="layui-input" >
+				</div>
+				<div class="layui-input-inline" style="width: 90px;">
+					<select name="danwei" id="danwei" lay-verify="danwei">
+						<option value="公斤">公斤</option>
+						<option value="个">个</option>
+					</select>
 				</div>
 			</div>
 			<div class="layui-form-item">

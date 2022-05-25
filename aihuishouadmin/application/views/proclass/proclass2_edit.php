@@ -73,9 +73,15 @@
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
 					<span class="x-red">*</span>回收费用（公斤）：
 				</label>
-				<div class="layui-input-inline" style="width: 300px;">
+				<div class="layui-input-inline" style="width: 200px;">
 					<input type="text" id="price" name="price" lay-verify="ltitle"
 						   value="<?php echo $price; ?>" autocomplete="off" class="layui-input">
+				</div>
+				<div class="layui-input-inline" style="width: 90px;">
+					<select name="danwei" id="danwei" lay-verify="danwei">
+						<option value="公斤" <?php if($danwei=='公斤'){echo 'selected';}?>>公斤</option>
+						<option value="个" <?php if($danwei=='个'){echo 'selected';}?>>个</option>
+					</select>
 				</div>
 			</div>
 			<input type="hidden" name="uid" id="uid" value="<?php echo $id ?>">

@@ -66,7 +66,7 @@
 									<td><?= $once['metel'] ?></td>
 									<td><?= $once['meaddress'] ?></td>
 									<td>0</td>
-									<td><?php if ($once['is_business'] == 0) { echo "营业中";}else{echo "不营业";}?></td>
+									<td><?php if ($once['merchants_state'] == 0) { echo "开通";}else{echo "关闭";}?></td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
 												onclick="xadmin.open('编辑','<?= RUN . '/merchants/merchants_edit?id=' ?>'+<?= $once['meid'] ?>,900,700)">

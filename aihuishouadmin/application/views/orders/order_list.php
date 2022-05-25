@@ -76,7 +76,7 @@
 									<td><?= $once['muser'] ?></td>
 									<td>已下单</td>
 									<td class="td-manage">
-										<a href="#" onclick="xadmin.open('编辑','<?= RUN . '/orders/order_edit?id=' ?>'+<?= $once['oid'] ?>,900,700)">查看订单</a>
+										<a href="#" onclick="xadmin.open('编辑','<?= RUN . '/orders/order_show?id=' ?>'+<?= $once['oid'] ?>)">查看订单</a>
 									</td>
 								</tr>
 							<?php endforeach; ?>

@@ -46,9 +46,10 @@
 						<thead>
 						<tr>
 							<th style="width: 10%">序号</th>
-							<th style="width: 30%">商家等级</th>
-							<th style="width: 30%">返点比例</th>
-							<th style="width: 30%">操作</th>
+							<th style="width: 20%">商家等级</th>
+							<th style="width: 20%">返点比例</th>
+							<th style="width: 20%">显示图片</th>
+							<th style="width: 20%">操作</th>
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
@@ -56,7 +57,8 @@
 								<tr id="p<?= $once['lid'] ?>" sid="<?= $once['lid'] ?>">
 									<td><?= $num + 1 ?></td>
 									<td><?= $once['lname'] ?></td>
-									<td><?= $once['lcontents'] ?></td>
+									<td><?= $once['lcontents'] ?>%</td>
+									<td><img class="layui-upload-img" src="<?php echo $once['limg'] ?>" style="height: 20px;" ></td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
 												onclick="xadmin.open('编辑','<?= RUN . '/lable/grade_edit?id=' ?>'+<?= $once['lid'] ?>,900,500)">

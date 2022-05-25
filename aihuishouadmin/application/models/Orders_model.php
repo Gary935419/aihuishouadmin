@@ -97,7 +97,7 @@ class Orders_model extends CI_Model
 	public function getorderslist($id)
 	{
 		$id = $this->db->escape($id);
-		$sql = "SELECT * FROM `orders_goods` where oid=$id";
+		$sql = "SELECT * FROM `orders_goods` as a,`class_two` as b where a.oid=$id and a.ct_id=b.ct_id";
 		return $this->db->query($sql)->result_array();
 	}
 
@@ -226,6 +226,23 @@ class Orders_model extends CI_Model
 		$stockaddnum=$list['q_weight'];
 		$stockoutnum=0;
 		$sql = "INSERT INTO `stock` (ct_id,ct_name,stocknum,stockaddnum,stockoutnum) VALUES ($ctid,$ctname,$stocknum,$stockaddnum,$stockoutnum)";
+		return $this->db->query($sql);
+	}
+
+	//获取订单详情
+	public function getordergoods($id)
+	{
+		$id = $this->db->escape($id);
+		$sql = "SELECT * FROM `orders_goods` where ogid=$id";
+		return $this->db->query($sql)->row_array();
+	}
+
+	//修改商品入库
+	public function order_save_edit($uid,$weight)
+	{
+		$uid = $this->db->escape($uid);
+		$weight = $this->db->escape($weight);
+		$sql = "UPDATE `orders_goods` SET weight=$weight WHERE ogid = $uid";
 		return $this->db->query($sql);
 	}
 
