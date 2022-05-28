@@ -275,6 +275,12 @@ class Mini_model extends CI_Model
 		$sql = "SELECT * FROM `qishou` where qs_openid = $openid ";
 		return $this->db->query($sql)->row_array();
 	}
+	public function getqishouInfoqsid($qs_id)
+	{
+		$qs_id = $this->db->escape($qs_id);
+		$sql = "SELECT * FROM `qishou` where qs_id = $qs_id ";
+		return $this->db->query($sql)->row_array();
+	}
 	public function merchants_edit($meid,$token,$avater,$nickname,$openid)
 	{
 		$meid = $this->db->escape($meid);

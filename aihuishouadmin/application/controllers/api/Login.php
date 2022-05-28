@@ -70,7 +70,7 @@ class Login extends CI_Controller
 			/**登录操作*/
 			$token = $this->_get_token($qs_id);
 			$this->mini->qishou_edit($qs_id,$token,$avater,$nickname,$openid);
-			$member_info = $this->mini->getqishouInfo($openid);
+			$member_info = $this->mini->getqishouInfoqsid($qs_id);
 			$member_info['session_key'] = $resultnew['session_key'];
 		}else{
 			//商家
@@ -114,7 +114,7 @@ class Login extends CI_Controller
 			/**登录操作*/
 			$token = $this->_get_token($meid);
 			$this->mini->merchants_edit($meid,$token,$avater,$nickname,$openid);
-			$member_info = $this->mini->getmerchantsInfo($openid);
+			$member_info = $this->mini->getmerchantsInfomeidnew($meid);
 			$member_info['session_key'] = $resultnew['session_key'];
 		}
 
