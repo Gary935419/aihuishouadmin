@@ -405,6 +405,7 @@ class Miniapi extends CI_Controller
 		$levelInfo = $this->mini->getlevelInfo($lid);
 		$merchantsinfo['level_name'] = empty($levelInfo['lname'])?'':$levelInfo['lname'];
 		$merchantsinfo['level_bili'] = empty($levelInfo['lcontents'])?0:$levelInfo['lcontents'];
+		$merchantsinfo['level_limg'] = empty($levelInfo['limg'])?0:$levelInfo['limg'];
 		$data['merchants'] = $merchantsinfo;
 		$this->back_json(200, '操作成功', $data);
 	}
@@ -946,6 +947,10 @@ class Miniapi extends CI_Controller
 			$orderlist[$k]['lablearr'] = $this->mini->getmerchantslistlable($my_str_arr);
 			$distance = $this->getDistance($latitude,$longitude,$v['latitude'],$v['longitude']);
 			$orderlist[$k]['distancesum'] = $distance;
+			$orderlist[$k]['isshow'] = 1;
+			if ($distance > 3000){
+				$orderlist[$k]['isshow'] = 0;
+			}
 			if ($distance<1000){
 				$orderlist[$k]['distance'] = $distance."米";
 			}
@@ -956,6 +961,7 @@ class Miniapi extends CI_Controller
 		$sort = array_column($orderlist, 'distancesum');
 		array_multisort($sort, SORT_ASC, $orderlist);
 		$data['list'] = $orderlist;
+		$data['openstatus'] = empty($orderlist[0]['isshow'])?0:1;
 		$this->back_json(200, '操作成功', $data);
 	}
 
@@ -1063,10 +1069,13 @@ class Miniapi extends CI_Controller
 		}
 		$delivery_date = empty($_POST['delivery_date'])?'':$_POST['delivery_date'];
 
-		$datecheck = strtotime($delivery_date . " 13:00:00");
+		$datecheck = strtotime($delivery_date . " 16:00:00");
 		$datechecknew = strtotime($delivery_date . $delivery_time);
 		if ($datechecknew >= $datecheck){
-			$this->back_json(202, '请重新选择预约下单时间！');
+			$this->back_json(202, '请重新选择预约下单时间，不可超过每天的下午四点。');
+		}
+		if ($datechecknew <= time()){
+			$this->back_json(202, '请选择大于当前时间的日期信息。');
 		}
 		if (!isset($_POST['uname']) || empty($_POST['uname'])) {
 			$this->back_json(202, '请选择联系人！');
@@ -1125,9 +1134,10 @@ class Miniapi extends CI_Controller
 				$ct_id = $v['ct_id'];
 				$ct_img = $v['ct_img'];
 				$ct_price = $v['ct_price'];
+				$ct_danwei = $v['ct_danwei'];
 				$og_price = 0;
 				$weight = 0;
-				$this->mini->order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight);
+				$this->mini->order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight,$ct_danwei);
 			}
 		}
 		$this->back_json(200, '操作成功');
@@ -1252,14 +1262,14 @@ class Miniapi extends CI_Controller
 
 		$meid = $member['meid'];
 
-		$is_business = isset($_POST["is_business"]) ? $_POST["is_business"] : '';
-		$meaddress = isset($_POST["meaddress"]) ? $_POST["meaddress"] : '';
-		$latitude = isset($_POST["latitude"]) ? $_POST["latitude"] : '';
-		$longitude = isset($_POST["longitude"]) ? $_POST["longitude"] : '';
-		$contactname = isset($_POST["contactname"]) ? $_POST["contactname"] : '';
-		$metel = isset($_POST["metel"]) ? $_POST["metel"] : '';
-		$mename = isset($_POST["mename"]) ? $_POST["mename"] : '';
-		$meimg = isset($_POST["meimg"]) ? $_POST["meimg"] : '';
+		$is_business = isset($_POST["is_business"]) && !empty($_POST["is_business"]) ? $_POST["is_business"] : $member['is_business'];
+		$meaddress = isset($_POST["meaddress"]) && !empty($_POST["meaddress"]) ? $_POST["meaddress"] : $member['meaddress'];
+		$latitude = isset($_POST["latitude"]) && !empty($_POST["latitude"]) ? $_POST["latitude"] : $member['latitude'];
+		$longitude = isset($_POST["longitude"]) && !empty($_POST["longitude"]) ? $_POST["longitude"] : $member['longitude'];
+		$contactname = isset($_POST["contactname"]) && !empty($_POST["contactname"]) ? $_POST["contactname"] : $member['contactname'];
+		$metel = isset($_POST["metel"]) && !empty($_POST["metel"]) ? $_POST["metel"] : $member['metel'];
+		$mename = isset($_POST["mename"]) && !empty($_POST["mename"]) ? $_POST["mename"] : $member['mename'];
+		$meimg = isset($_POST["meimg"]) && !empty($_POST["meimg"]) ? $_POST["meimg"] : $member['meimg'];
 
 		$this->mini->merchants_editnew($meid,$is_business,$meaddress,$latitude,$longitude,$contactname,$metel,$mename,$meimg);
 		$this->back_json(200, '更新成功');
@@ -1447,6 +1457,7 @@ class Miniapi extends CI_Controller
 			$mename = $member['mename'];
 			$ct_id = $v['ct_id'];
 			$ct_name = $v['ct_name'];
+			$ct_danwei = $v['ct_danwei'];
 			$m_weight = $v['weight'];
 			$q_weight = 0;
 			$price = $v['ct_price'];
@@ -1455,14 +1466,16 @@ class Miniapi extends CI_Controller
 
 			$getorders_merchants = $this->mini->getorders_merchants($ct_id,$meid,$datetime);
 			if (empty($getorders_merchants)){
-				$this->mini->getorders_merchants_save($omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime);
+				$this->mini->getorders_merchants_save($omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime,$ct_danwei);
 			}else{
 				$gm_weight = $getorders_merchants['m_weight'];
 				$m_weightnew = floatval($gm_weight) + floatval($m_weight);
 				$this->mini->getorders_merchants_edit($ct_id,$meid,$datetime,$m_weightnew);
 			}
 		}
-		$this->mini->ordergoodsupdatesum($oid,$sum_price);
+		$date1 = date('Y-m-d',time());
+		$date2 = date('H:i',time());
+		$this->mini->ordergoodsupdatesum($oid,$sum_price,$date1,$date2);
 //		$orderone = $this->mini->getorderone($oid);
 //		$mid = $orderone['mid'];
 //		$MemberInfomid = $this->mini->getMemberInfomid($mid);
@@ -1507,13 +1520,14 @@ class Miniapi extends CI_Controller
 				$ct_id = $v['ct_id'];
 				$ct_img = $v['ct_img'];
 				$ct_price = $v['ct_price'];
+				$ct_danwei = $v['ct_danwei'];
 				$ordergoodsone = $this->mini->getordergoodsone($ct_id,$oid);
 				if (!empty($ordergoodsone)){
 					continue;
 				}
 				$og_price = 0;
 				$weight = 0;
-				$this->mini->order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight);
+				$this->mini->order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight,$ct_danwei);
 			}
 		}
 		$this->back_json(200, '操作成功');

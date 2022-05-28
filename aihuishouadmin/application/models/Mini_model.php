@@ -133,13 +133,13 @@ class Mini_model extends CI_Model
 	}
 	public function getclasstwotypeAll($co_id)
 	{
-		$sqlw = " where 1=1 and co_id = $co_id";
+		$sqlw = " where 1=1 and ct_state<3 and co_id = $co_id";
 		$sql = "SELECT * FROM `class_two` " . $sqlw;
 		return $this->db->query($sql)->result_array();
 	}
 	public function getclasstwoAll($pg,$co_id)
 	{
-		$sqlw = " where 1=1 ";
+		$sqlw = " where 1=1 and ct_state<3 ";
 
 		if (!empty($co_id)) {
 			$co_id = $this->db->escape($co_id);
@@ -567,7 +567,7 @@ class Mini_model extends CI_Model
 		return $oid;
 	}
 
-	public function order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight)
+	public function order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight,$ct_danwei)
 	{
 		$oid = $this->db->escape($oid);
 		$ct_name = $this->db->escape($ct_name);
@@ -576,8 +576,8 @@ class Mini_model extends CI_Model
 		$ct_price = $this->db->escape($ct_price);
 		$og_price = $this->db->escape($og_price);
 		$weight = $this->db->escape($weight);
-
-		$sql = "INSERT INTO `orders_goods` (oid,ct_name,ct_id,ct_img,ct_price,og_price,weight) VALUES ($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight)";
+		$ct_danwei = $this->db->escape($ct_danwei);
+		$sql = "INSERT INTO `orders_goods` (oid,ct_name,ct_id,ct_img,ct_price,og_price,weight,ct_danwei) VALUES ($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight,$ct_danwei)";
 		$this->db->query($sql);
 		$oid=$this->db->insert_id();
 		return $oid;
@@ -760,11 +760,13 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql);
 	}
 
-	public function ordergoodsupdatesum($oid,$sum_price)
+	public function ordergoodsupdatesum($oid,$sum_price,$delivery_date,$delivery_time)
 	{
 		$oid = $this->db->escape($oid);
-		$sum_price = $this->db->escape($sum_price);;
-		$sql = "UPDATE `orders` SET sum_price=$sum_price,ostate=1 WHERE oid = $oid";
+		$sum_price = $this->db->escape($sum_price);
+		$delivery_date = $this->db->escape($delivery_date);
+		$delivery_time = $this->db->escape($delivery_time);
+		$sql = "UPDATE `orders` SET sum_price=$sum_price,delivery_date=$delivery_date,delivery_time=$delivery_time,ostate=1 WHERE oid = $oid";
 		return $this->db->query($sql);
 	}
 
@@ -839,7 +841,7 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql)->row_array();
 	}
 
-	public function getorders_merchants_save($omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime)
+	public function getorders_merchants_save($omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime,$ct_danwei)
 	{
 		$omtype = $this->db->escape($omtype);
 		$meid = $this->db->escape($meid);
@@ -851,8 +853,8 @@ class Mini_model extends CI_Model
 		$price = $this->db->escape($price);
 		$addtime = $this->db->escape($addtime);
 		$datetime = $this->db->escape($datetime);
-
-		$sql = "INSERT INTO `orders_merchants` (omtype,meid,mename,ct_id,ct_name,m_weight,q_weight,price,addtime,datetime) VALUES ($omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime)";
+		$ct_danwei = $this->db->escape($ct_danwei);
+		$sql = "INSERT INTO `orders_merchants` (ct_danwei,omtype,meid,mename,ct_id,ct_name,m_weight,q_weight,price,addtime,datetime) VALUES ($ct_danwei,$omtype,$meid,$mename,$ct_id,$ct_name,$m_weight,$q_weight,$price,$addtime,$datetime)";
 		$this->db->query($sql);
 		$omid=$this->db->insert_id();
 		return $omid;
