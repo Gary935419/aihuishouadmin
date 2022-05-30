@@ -34,11 +34,28 @@
 					<span class="x-red">*</span>商品重量：
 				</label>
 				<div class="layui-input-inline" style="width: 300px;">
-					<input class="layui-input" placeholder="开始日期"
-						   name="weight" id="weight" lay-verify="1" value="<?=$weight;?>">
+					<input class="layui-input"
+						   name="" id="" lay-verify="1" value="<?=$weight;?> <?=$danwei;?>" disabled>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label for="L_pass" class="layui-form-label" style="width: 30%;">
+					<span class="x-red">*</span>修改重量：
+				</label>
+				<div class="layui-input-inline" style="width: 90px;">
+            		<select name="addweight" id="addweight">
+						<option value="0">增加</option>
+                        <option value="1">减少</option>
+					</select>
+				</div>
+				<div class="layui-input-inline" style="width: 200px;">
+					<input class="layui-input"
+						   name="weight" id="weight" lay-verify="1" value="0" >
 				</div>
 			</div>
 			<input type="hidden" id="uid" name="uid" value="<?=$id;?>">
+			<input type="hidden" id="ctid" name="ctid" value="<?=$ctid;?>">
+			<input type="hidden" id="datetime" name="datetime" value="<?=$datetime;?>">
 			<div class="layui-form-item">
 				<label for="L_repass" class="layui-form-label" style="width: 30%;">
 				</label>

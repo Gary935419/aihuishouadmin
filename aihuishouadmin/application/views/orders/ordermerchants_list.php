@@ -50,7 +50,6 @@
 						<thead>
 						<tr>
 							<th style="width: 10%">序号</th>
-							<th style="width: 10%">下单时间</th>
 							<th style="width: 10%">商品分类</th>
 							<th style="width: 10%">当前状态</th>
 							<th style="width: 10%">回收量</th>
@@ -67,7 +66,6 @@
 							?>
 								<tr>
 									<td><?= $num + 1 ?></td>
-									<td><?= date('Y-m-d',$once['addtime']); ?></td>
 									<td><?= $once['ct_name'] ?></td>
 									<td><?php if($once['omtype']==0){echo '待回收';}else{echo '已回收';}; ?></td>
 									<td><?= $once['m_weight'] ?></td>

@@ -38,7 +38,7 @@
 					</form>
 				</div>
 				<button class="layui-btn layui-card-header" style="float: right;margin-top: -40px;margin-right: 20px;"
-						onclick="xadmin.open('添加','<?= RUN . '/proclass/proclass2_add' ?>',900,500)"><i
+						onclick="xadmin.open('添加','<?= RUN . '/proclass/proclass2_add' ?>')"><i
 							class="layui-icon"></i>添加
 				</button>
 				<div class="layui-card-body ">
@@ -63,7 +63,7 @@
 									<td><?php if($once['ct_state']==1){echo '热门';}elseif($once['ct_state']==2){echo '已开通';}else{echo '暂未开通';}; ?></td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
-												onclick="xadmin.open('编辑','<?= RUN . '/proclass/proclass2_edit?id=' ?>'+<?= $once['ct_id'] ?>,900,500)">
+												onclick="xadmin.open('编辑','<?= RUN . '/proclass/proclass2_edit?id=' ?>'+<?= $once['ct_id'] ?>)">
 											<i class="layui-icon">&#xe642;</i>编辑
 										</button>
 										<button class="layui-btn layui-btn-danger"

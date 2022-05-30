@@ -66,6 +66,7 @@
 						<img class="layui-upload-img" style="width: 100px;height: 100px;display: none;" id="gimgimg" name="gimgimg">
 						<p id="demoText"></p>
 					</div>
+										<span style=" color: #CC0000">*图片像素建议为：430px*300px </span>
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -82,6 +83,16 @@
 					</select>
 				</div>
 			</div>
+			<div class="layui-form-item">
+				<label for="L_pass" class="layui-form-label" style="width: 30%;">
+					<span class="x-red"></span>说明：
+				</label>
+				<div class="layui-input-inline" style="width: 300px;">
+                    <textarea placeholder="" id="title" name="title" class="layui-textarea"
+                              lay-verify="content"></textarea>
+                </div>
+			</div>
+
 			<div class="layui-form-item">
 				<label for="L_repass" class="layui-form-label" style="width: 30%;">
 				</label>

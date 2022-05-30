@@ -201,6 +201,7 @@ class Proclass extends CI_Controller
 		$pic = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 		$price = isset($_POST["price"]) ? $_POST["price"] : '';
 		$danwei = isset($_POST["danwei"]) ? $_POST["danwei"] : '';
+		$title = isset($_POST["title"]) ? $_POST["title"] : '';
 		$time = time();
 
 		$user_info = $this->proclass->getprocalss2name($name);
@@ -210,7 +211,7 @@ class Proclass extends CI_Controller
 			return;
 		}
 
-		$result = $this->proclass->proclass2_save($coid,$name,$state,$pic,$price,$time,$danwei);
+		$result = $this->proclass->proclass2_save($coid,$name,$state,$pic,$price,$time,$danwei,$title);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
 		} else {
@@ -237,6 +238,7 @@ class Proclass extends CI_Controller
 		$data['gimg'] = $member_info['ct_img'];
 		$data['price'] = $member_info['ct_price'];
 		$data['danwei'] = $member_info['ct_danwei'];
+		$data['title'] = $member_info['ct_title'];
 		$data['class1'] = $this->proclass->getproclass1s();
 		$this->display("proclass/proclass2_edit", $data);
 	}
@@ -258,6 +260,7 @@ class Proclass extends CI_Controller
 		$coid = isset($_POST["coid"]) ? $_POST["coid"] : '';
 		$name1 = isset($_POST["name1"]) ? $_POST["name1"] : '';
 		$danwei = isset($_POST["danwei"]) ? $_POST["danwei"] : '';
+		$title = isset($_POST["title"]) ? $_POST["title"] : '';
 		if($name<>$name1) {
 			$user_info = $this->proclass->getproclass2ById($name);
 			if (!empty($user_info)) {
@@ -266,7 +269,7 @@ class Proclass extends CI_Controller
 			}
 		}
 
-		$result = $this->proclass->proclass2_save_edit($coid,$uid,$name,$state,$pic,$price,$danwei);
+		$result = $this->proclass->proclass2_save_edit($coid,$uid,$name,$state,$pic,$price,$danwei,$title);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
 		} else {

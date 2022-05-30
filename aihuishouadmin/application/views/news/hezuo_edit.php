@@ -38,9 +38,10 @@
 					<div class="layui-upload-list">
 						<input type="hidden" name="gimg" value="<?php echo $bannersimg ?>" id="gimg" lay-verify="gimg" autocomplete="off"
 							   class="layui-input">
-						<img class="layui-upload-img" src="<?php echo $bannersimg ?>" style="width: 200px;height: 100px;" id="gimgimg" name="gimgimg">
+						<img class="layui-upload-img" src="<?php echo $bannersimg ?>" style="width: 100px;height: 100px;" id="gimgimg" name="gimgimg">
 						<p id="demoText"></p>
 					</div>
+																				<span style=" color: #CC0000">*图片像素建议为：200px*200px </span>
 				</div>
 			</div>
 			<input type="hidden" name="uid" id="uid" value="<?php echo $id ?>">

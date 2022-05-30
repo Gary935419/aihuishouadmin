@@ -233,17 +233,35 @@ class Orders_model extends CI_Model
 	public function getordergoods($id)
 	{
 		$id = $this->db->escape($id);
-		$sql = "SELECT * FROM `orders_goods` where ogid=$id";
+		$sql = "SELECT * FROM `orders_goods` as a,`orders` as b  where ogid=$id and a.oid=b.oid";
 		return $this->db->query($sql)->row_array();
 	}
 
 	//修改商品入库
-	public function order_save_edit($uid,$weight)
+	public function order_save_edit($uid,$weight,$addweight,$addtime,$ctid)
 	{
 		$uid = $this->db->escape($uid);
+		$ctid = $this->db->escape($ctid);
 		$weight = $this->db->escape($weight);
-		$sql = "UPDATE `orders_goods` SET weight=$weight WHERE ogid = $uid";
-		return $this->db->query($sql);
+		$addtime = $this->db->escape($addtime);
+// 		$addweight = $this->db->escape($addweight);
+		if(empty($addweight)){
+		  //  print_r(111);die;
+		    $sql = "UPDATE `orders_goods` SET weight=weight+$weight,og_price=og_price+($weight*ct_price) WHERE ogid = $uid";		    
+		}else{
+		  //  print_r(222);die;
+		    $sql = "UPDATE `orders_goods` SET weight=weight-$weight,og_price=og_price-($weight*ct_price) WHERE ogid = $uid";	
+		}
+		$this->db->query($sql);
+		
+		if(empty($addweight)){
+		  //  print_r(111);die;
+		    $sql1 = "UPDATE `orders_merchants` SET m_weight=m_weight+$weight WHERE ct_id = $ctid and datetime=$addtime";	    
+		}else{
+		  //  print_r(222);die;
+		    $sql1 = "UPDATE `orders_merchants` SET m_weight=m_weight-$weight WHERE ct_id = $ctid and datetime=$addtime";
+		}
+		return $this->db->query($sql1);
 	}
 
 

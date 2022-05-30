@@ -154,7 +154,7 @@
 				<li>
 					<a href="javascript:;">
 						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
-						<cite>信息管理</cite>
+						<cite>系统设置</cite>
 						<i class="iconfont nav_right">&#xe697;</i></a>
 					<ul class="sub-menu">
 						<li>
@@ -166,7 +166,7 @@
 						<li>
 							<a onclick="changeSrc('<?= RUN . '/news/news_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
-								<cite>新闻管理</cite>
+								<cite>信息管理</cite>
 							</a>
 						</li>
 						<li>
@@ -232,13 +232,21 @@
 				<li>
 					<a href="javascript:;">
 						<i class="iconfont left-nav-li" lay-tips="系统管理">&#xe6ae;</i>
-						<cite>库存管理</cite>
+						<cite>数据统计管理</cite>
 						<i class="iconfont nav_right">&#xe697;</i></a>
 					<ul class="sub-menu">
 						<li>
-							<a onclick="changeSrc('<?= RUN . '/stock/stock_list' ?>')">
+							<a onClick="changeSrc('<?= RUN . '/stock/stock_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
-								<cite>库存查看</cite>
+								<cite>库存管理</cite>
+							</a>
+						</li>
+					</ul>
+					<ul class="sub-menu">
+						<li>
+							<a onClick="changeSrc('<?= RUN . '/shop/shop_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>商家数据管理</cite>
 							</a>
 						</li>
 					</ul>

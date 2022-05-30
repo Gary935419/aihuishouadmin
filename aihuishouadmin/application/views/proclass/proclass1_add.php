@@ -54,6 +54,7 @@
 						<img class="layui-upload-img" style="width: 100px;height: 100px;display: none;" id="gimgimg" name="gimgimg">
 						<p id="demoText"></p>
 					</div>
+					<span style=" color: #CC0000">*图片像素建议为：250px*250px </span>
 				</div>
 			</div>
             <div class="layui-form-item">

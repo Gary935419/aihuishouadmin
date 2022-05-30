@@ -67,6 +67,7 @@
 						<img class="layui-upload-img" src="<?php echo $gimg ?>" style="width: 100px;height: 100px;" id="gimgimg" name="gimgimg">
 						<p id="demoText"></p>
 					</div>
+															<span style=" color: #CC0000">*图片像素建议为：430px*300px </span>
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -83,6 +84,15 @@
 						<option value="个" <?php if($danwei=='个'){echo 'selected';}?>>个</option>
 					</select>
 				</div>
+			</div>
+			<div class="layui-form-item">
+				<label for="L_pass" class="layui-form-label" style="width: 30%;">
+					<span class="x-red"></span>说明：
+				</label>
+				<div class="layui-input-inline" style="width: 300px;">
+                    <textarea placeholder="" id="title" name="title" class="layui-textarea"
+                              lay-verify="content"><?php echo $title; ?></textarea>
+                </div>
 			</div>
 			<input type="hidden" name="uid" id="uid" value="<?php echo $id ?>">
 			<input type="hidden" name="name1" id="name1" value="<?php echo $name ?>">

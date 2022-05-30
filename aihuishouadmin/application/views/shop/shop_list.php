@@ -18,7 +18,7 @@
 <div class="x-nav">
           <span class="layui-breadcrumb">
             <a>
-              <cite>订单管理</cite></a>
+              <cite>商品分类管理</cite></a>
           </span>
 </div>
 <div class="layui-fluid">
@@ -26,23 +26,15 @@
 		<div class="layui-col-md12">
 			<div class="layui-card">
 				<div class="layui-card-body ">
-					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/orders/orders_list' ?>">
+					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/shop/shop_list' ?>">
 						<div class="layui-inline layui-show-xs-block">
-							<input type="text" name="user_name" id="user_name" value="<?php echo $user_name1 ?>"
-								   placeholder="用户名" autocomplete="off" class="layui-input">
-						</div>
-						<div class="layui-inline layui-show-xs-block">
-							<select name="ostate" id="ostate">
-								<option value="0" <?php if($ostate==0){echo 'selected';}?>>已预约</option>
-								<option value="1" <?php if($ostate==1){echo 'selected';}?>>待回收</option>
-								<option value="2" <?php if($ostate==2){echo 'selected';}?>>已完成</option>
-								<option value="3" <?php if($ostate==3){echo 'selected';}?>>已取消</option>
+							<select name="month" id="month">
+								<?php
+								foreach ($dates as $value){ ?>
+									<option value="<?=$value;?>" <?php if($value==$month){echo 'selected';}?>><?=$value;?>月</option>
+								<? }?>
 							</select>
 						</div>
-						<div class="layui-input-inline layui-show-xs-block">
-							<input class="layui-input" placeholder="开始日期" value="<?php echo $start; ?>" name="start" id="start"></div>
-						<div class="layui-input-inline layui-show-xs-block">
-							<input class="layui-input" placeholder="截止日期" value="<?php echo $end; ?>" name="end" id="end"></div>
 						<div class="layui-inline layui-show-xs-block">
 							<button class="layui-btn" lay-submit="" lay-filter="sreach"><i
 										class="layui-icon">&#xe615;</i></button>
@@ -54,30 +46,34 @@
 						<thead>
 						<tr>
 							<th style="width: 5%">序号</th>
-							<th style="width: 10%">下单用户名</th>
-							<th style="width: 10%">用户手机号</th>
-							<th style="width: 20%">下单货物</th>
-							<th style="width: 10%">配送方式</th>
-							<th style="width: 10%">下单时间</th>
-							<th style="width: 10%">收货商家</th>
-							<th style="width: 10%">当前状态</th>
-							<th style="width: 10%">查看订单</th>
+							<th style="width: 10%">商家名称</th>
+							<th style="width: 10%">时间</th>
+							<th style="width: 7%">用户量</th>
+							<th style="width: 7%">目标用户量</th>
+							<th style="width: 7%">目标完成比</th>
+							<th style="width: 7%">总下单量</th>
+							<th style="width: 7%">人均下单次数</th>
+							<th style="width: 7%">用户均单价</th>
+							<th style="width: 7%">总分佣金额</th>
+							<th style="width: 7%">已提现金额</th>
+							<th style="width: 7%">总误差比例</th>
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
 							<?php foreach ($list as $num => $once): ?>
-								<tr id="p<?= $once['oid'] ?>" sid="<?= $once['oid'] ?>">
+								<tr>
 									<td><?= $num + 1 ?></td>
-									<td><?= $once['uname'] ?></td>
-									<td><?= $once['utel'] ?></td>
-									<td><?= $once['goodsname'] ?></td>
-									<td><?php echo $once['otype']==0 ? "自己送货":"上门取货" ?></td>
-									<td><?= $once['delivery_time'] ?></td>
-									<td><?= $once['muser'] ?></td>
-									<td>已下单</td>
-									<td class="td-manage">
-										<a href="#" onclick="xadmin.open('查看订单','<?= RUN . '/orders/order_show?id=' ?>'+<?= $once['oid'] ?>)">查看订单</a>
-									</td>
+									<td><?=$once['mename'];?></td>
+									<td><?=$once['time'];?></td>
+									<td><?=$once['yonghuliang'];?></td>
+									<td><?=$once['mubiao'];?></td>
+									<td><?=$once['mubiaobi'];?></td>
+									<td><?=$once['dingdanliang'];?></td>
+									<td><?=$once['renjunshu'];?></td>
+									<td><?=$once['renjunmoney'];?></td>
+									<td><?=$once['fandian'];?></td>
+									<td><?=$once['tixian'];?></td>
+									<td><?=$once['wucha'];?></td>
 								</tr>
 							<?php endforeach; ?>
 						<?php } else { ?>
@@ -87,11 +83,6 @@
 						<?php } ?>
 						</tbody>
 					</table>
-				</div>
-				<div class="layui-card-body ">
-					<div class="page">
-						<?= $pagehtml ?>
-					</div>
 				</div>
 
 			</div>
@@ -114,7 +105,7 @@
 			});
 </script>
 <script>
-	function qishou_delete(id) {
+	function couple_delete(id) {
 		layer.confirm('您是否确认删除？', {
 					title: '温馨提示',
 					btn: ['确认', '取消']
@@ -125,7 +116,7 @@
 						type: "post",
 						data: {"id": id},
 						dataType: "json",
-						url: "<?= RUN . '/orders/orders_delete' ?>",
+						url: "<?= RUN . '/promote/couple_delete' ?>",
 						success: function (data) {
 							if (data.success) {
 								$("#p" + id).remove();

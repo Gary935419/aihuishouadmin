@@ -33,7 +33,7 @@ class Merchants_model extends CI_Model
 		}
 		$start = ($pg - 1) * 10;
 		$stop = 10;
-		$sql = "SELECT * FROM `merchants` as a,`level` as b" . $sqlw . "and a.lid=b.lid order by meid desc LIMIT $start, $stop";
+		$sql = "SELECT * FROM `merchants` as a,`level` as b" . $sqlw . "and a.lid=b.lid order by morder desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
 	
@@ -56,7 +56,7 @@ class Merchants_model extends CI_Model
     }
 
     //会員save
-    public function merchants_save($mename,$account,$password,$contactname,$metel,$lid,$merchants_state,$add_time)
+    public function merchants_save($mename,$account,$password,$contactname,$metel,$lid,$laid,$merchants_state,$add_time,$morder,$zhibiaoliang)
 	//public function merchants_addsave($mename)
     {
 	    $mename = $this->db->escape($mename);
@@ -65,10 +65,14 @@ class Merchants_model extends CI_Model
         $contactname = $this->db->escape($contactname);
         $metel = $this->db->escape($metel);
         $lid = $this->db->escape($lid);
+        $laid = $this->db->escape($laid);
         $merchants_state = $this->db->escape($merchants_state);
         $add_time = $this->db->escape($add_time);
+        
+        $morder = $this->db->escape($morder);
+        $zhibiaoliang = $this->db->escape($zhibiaoliang);
 
-        $sql = "INSERT INTO `merchants` (mename,account,password,contactname,metel,lid,merchants_state,add_time,merchants_stop) VALUES ($mename,$account,$password,$contactname,$metel,$lid,$merchants_state,$add_time,0)";
+        $sql = "INSERT INTO `merchants` (mename,account,password,contactname,metel,lid,laid,merchants_state,add_time,merchants_stop,morder,mubiaoliang) VALUES ($mename,$account,$password,$contactname,$metel,$lid,$laid,$merchants_state,$add_time,0,$morder,$zhibiaoliang)";
         return $this->db->query($sql);
     }
 
@@ -83,7 +87,7 @@ class Merchants_model extends CI_Model
     }
 
 	//会員users_save_edit
-	public function merchants_save_edit($uid, $mename, $account, $password, $contactname,$metel,$lid,$laid,$merchants_state)
+	public function merchants_save_edit($uid, $mename, $account, $password, $contactname,$metel,$lid,$laid,$merchants_state,$morder,$zhibiaoliang)
 	//public function merchants_save_edit($uid, $mename,$laid)
 	{
 		$uid = $this->db->escape($uid);
@@ -95,8 +99,12 @@ class Merchants_model extends CI_Model
 		$lid = $this->db->escape($lid);
 		$laid = $this->db->escape($laid);
 		$merchants_state = $this->db->escape($merchants_state);
+		
+		$morder = $this->db->escape($morder);
+        $zhibiaoliang = $this->db->escape($zhibiaoliang);
 
-		$sql = "UPDATE `merchants` SET mename=$mename,account=$account,password=$password,contactname=$contactname,metel=$metel,lid=$lid,laid=$laid,merchants_state=$merchants_state WHERE meid = $uid";
+
+		$sql = "UPDATE `merchants` SET mename=$mename,account=$account,password=$password,contactname=$contactname,metel=$metel,lid=$lid,laid=$laid,merchants_state=$merchants_state,morder=$morder,mubiaoliang=$zhibiaoliang WHERE meid = $uid";
 
 		//$sql = "UPDATE `merchants` SET mename=$mename,laid=$laid WHERE meid = $uid";
 		return $this->db->query($sql);

@@ -46,9 +46,11 @@
 						<thead>
 						<tr>
 							<th style="width: 5%">序号</th>
-							<th style="width: 60%">信息名称</th>
+							<th style="width: 10%">信息名称</th>
+							<th style="width: 20%">信息链接</th>
+							<th style="width: 40%">内容</th>
 							<th style="width: 10%">添加时间</th>
-							<th style="width: 25%">操作</th>
+							<th style="width: 15%">操作</th>
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
@@ -56,14 +58,13 @@
 								<tr id="p<?= $once['nid'] ?>" sid="<?= $once['nid'] ?>">
 									<td><?= $num + 1 ?></td>
 									<td><?=  $once['ntitle'];?></td>
+									<td><?=  $once['url'];?></td>
+									<td><?=  $once['contents'];?></td>
 									<td><?= date("Y-m-d",$once['addtime']) ?></td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
 												onclick="xadmin.open('编辑','<?= RUN . '/news/news_edit?id=' ?>'+<?= $once['nid'] ?>,900,700)">
 											<i class="layui-icon">&#xe642;</i>编辑
-										</button>
-										<button class="layui-btn layui-btn-danger"
-												onclick="news_delete('<?= $once['nid'] ?>')"><i class="layui-icon">&#xe640;</i>删除
 										</button>
 									</td>
 								</tr>

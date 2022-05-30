@@ -64,6 +64,24 @@
                            autocomplete="off" class="layui-input">
                 </div>
             </div>
+            <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label" style="width: 30%;">
+                    <span class="x-red"></span>显示排序
+                </label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="morder" name="morder" lay-verify="morder"
+                           autocomplete="off" class="layui-input" value="100">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label" style="width: 30%;">
+                    <span class="x-red"></span>指标数量
+                </label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="zhibiaoliang" name="zhibiaoliang" lay-verify="zhibiaoliang"
+                           autocomplete="off" class="layui-input">
+                </div>
+            </div>
 			<div class="layui-form-item">
                 <label for="L_pass" class="layui-form-label" style="width: 30%;">
                     <span class="x-red">*</span>会员等级
@@ -78,6 +96,17 @@
                     </div>
                 </div>
             </div>
+            <div class="layui-form-item">
+				<label for="L_pass" class="layui-form-label" style="width: 30%;">
+					<span class="x-red">*</span>商家标签
+				</label>
+				<div class="layui-input-inline" style="width: 500px;">
+					<?php foreach ($lablelist as $num => $once): ?>
+						<input type="checkbox" name="laid[]" lay-skin="primary" title="<?= $once['ltitle'];?>"
+							   value="<?= $once['laid'];?>">
+					<?php endforeach; ?>
+				</div>
+			</div>
             <div class="layui-form-item">
                 <label for="L_pass" class="layui-form-label" style="width: 30%;">
                     <span class="x-red">*</span>状态

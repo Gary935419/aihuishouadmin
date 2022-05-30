@@ -45,6 +45,7 @@ class Merchants extends CI_Controller
 		$ridlist = $this->merchants->getRole();
 		$data['ridlist'] = $ridlist;
 		$data['level'] = $this->merchants->getgradename();
+		$data["lablelist"] = $this->merchants->getMerchantslables();
 		$this->display("merchants/merchants_add", $data);
 	}
 	
@@ -67,13 +68,19 @@ class Merchants extends CI_Controller
         $metel = isset($_POST["metel"]) ? $_POST["metel"] : '';
         $lid = isset($_POST["lid"]) ? $_POST["lid"] : '';
         $merchants_state = isset($_POST["merchants_state"]) ? $_POST["merchants_state"] : 1;
+        
+		$laid = isset($_POST["laid"]) ? $_POST["laid"] : '';
+		$laid =implode($laid,",");
+        $morder = isset($_POST["morder"]) ? $_POST["morder"] : 100;
+        $zhibiaoliang = isset($_POST["zhibiaoliang"]) ? $_POST["zhibiaoliang"] : 100;
+        
         $add_time = time();
         $user_info = $this->merchants->getmerchantsname($mename);
         if (!empty($user_info)) {
             echo json_encode(array('error' => true, 'msg' => "该商户名已经存在。"));
             return;
         }
-        $result = $this->merchants->merchants_save($mename,$account,$password,$contactname,$metel,$lid,$merchants_state,$add_time);
+        $result = $this->merchants->merchants_save($mename,$account,$password,$contactname,$metel,$lid,$laid,$merchants_state,$add_time,$morder,$zhibiaoliang);
 		//$result = $this->merchants->merchants_addsave($mename);
         if ($result) {
             echo json_encode(array('success' => true, 'msg' => "操作成功。"));
@@ -123,6 +130,9 @@ class Merchants extends CI_Controller
 		$data['laid'] = explode(",",$member_info['laid']);
 		$data['merchants_state'] = $member_info['merchants_state'];
 		
+		$data['morder'] = $member_info['morder'];
+		$data['zhibiaoliang'] = $member_info['mubiaoliang'];
+		
 		$data['meimg'] = $member_info['meimg'];
 		$data['merchantsid'] = $uid;
 
@@ -151,6 +161,9 @@ class Merchants extends CI_Controller
 
 		$laid = isset($_POST["laid"]) ? $_POST["laid"] : '';
 		$laid =implode($laid,",");
+		
+		$morder = isset($_POST["morder"]) ? $_POST["morder"] : 100;
+        $zhibiaoliang = isset($_POST["zhibiaoliang"]) ? $_POST["zhibiaoliang"] : 100;
 
 		$merchants_state = isset($_POST["merchants_state"]) ? $_POST["merchants_state"] : '1';
 
@@ -161,7 +174,7 @@ class Merchants extends CI_Controller
 				return;
 			}
 		}
-		$result = $this->merchants->merchants_save_edit($uid, $mename, $account, $password, $contactname,$metel,$lid,$laid,$merchants_state);
+		$result = $this->merchants->merchants_save_edit($uid, $mename, $account, $password, $contactname,$metel,$lid,$laid,$merchants_state,$morder,$zhibiaoliang);
 		//$result = $this->merchants->merchants_save_edit($uid,$mename,$laid);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));

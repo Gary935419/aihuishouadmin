@@ -74,6 +74,24 @@
                            autocomplete="off" value="<?php echo $metel ?>" class="layui-input">
                 </div>
             </div>
+            <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label" style="width: 30%;">
+                    <span class="x-red"></span>显示排序
+                </label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="morder" name="morder" lay-verify="morder"
+                           autocomplete="off" class="layui-input" value="<?php echo $morder ?>">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label" style="width: 30%;">
+                    <span class="x-red"></span>指标数量
+                </label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="zhibiaoliang" name="zhibiaoliang" lay-verify="zhibiaoliang"
+                           autocomplete="off" class="layui-input" value="<?php echo $zhibiaoliang ?>">
+                </div>
+            </div>
 			<div class="layui-form-item">
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
 					<span class="x-red">*</span>会员等级

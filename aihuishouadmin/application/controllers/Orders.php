@@ -84,9 +84,11 @@ class Orders extends CI_Controller
 		$uid = isset($_GET['id']) ? $_GET['id'] : 0;
 		$member_info = $this->orders->getordergoods($uid);
 		$data['id'] = $uid;
+		$data['ctid'] = $member_info['ct_id'];
 		$data['name'] = $member_info['ct_name'];
 		$data['weight'] = $member_info['weight'];
-
+		$data['danwei'] = $member_info['ct_danwei'];
+		$data['datetime'] = $member_info['delivery_date'];
 		$this->display("orders/order_edit", $data);
 	}
 
@@ -101,7 +103,11 @@ class Orders extends CI_Controller
 		}
 		$uid = isset($_POST["uid"]) ? $_POST["uid"] : '';
 		$weight = isset($_POST["weight"]) ? $_POST["weight"] : 0;
-		$result = $this->orders->order_save_edit($uid, $weight);
+		$addweight = $_POST["addweight"];
+		$datetime = $_POST["datetime"];
+		$ctid = $_POST["ctid"];
+
+		$result = $this->orders->order_save_edit($uid, $weight,$addweight,$datetime,$ctid);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
 		} else {

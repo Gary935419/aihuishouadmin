@@ -153,7 +153,7 @@ class Proclass_model extends CI_Model
 	}
 
 	//标签save
-	public function proclass2_save($coid,$name,$state,$pic,$price,$time,$danwei)
+	public function proclass2_save($coid,$name,$state,$pic,$price,$time,$danwei,$title)
 
 	{
 		$coid = $this->db->escape($coid);
@@ -163,8 +163,9 @@ class Proclass_model extends CI_Model
 		$price = $this->db->escape($price);
 		$time = $this->db->escape($time);
 		$danwei = $this->db->escape($danwei);
+		$title = $this->db->escape($title);
 
-		$sql = "INSERT INTO `class_two` (ct_name,ct_state,ct_img,ct_price,ct_addtime,co_id,ct_danwei) VALUES ($name,$state,$pic,$price,$time,$coid,$danwei)";
+		$sql = "INSERT INTO `class_two` (ct_name,ct_state,ct_img,ct_price,ct_addtime,co_id,ct_danwei,ct_title) VALUES ($name,$state,$pic,$price,$time,$coid,$danwei,$title)";
 		return $this->db->query($sql);
 	}
 
@@ -179,7 +180,7 @@ class Proclass_model extends CI_Model
 	}
 
 	//标签更新
-	public function proclass2_save_edit($coid,$uid,$name,$state,$pic,$price,$danwei)
+	public function proclass2_save_edit($coid,$uid,$name,$state,$pic,$price,$danwei,$title)
 	{
 		$coid = $this->db->escape($coid);
 		$uid = $this->db->escape($uid);
@@ -188,8 +189,9 @@ class Proclass_model extends CI_Model
 		$pic = $this->db->escape($pic);
 		$price = $this->db->escape($price);
 		$danwei = $this->db->escape($danwei);
+		$title = $this->db->escape($title);
 
-		$sql = "UPDATE `class_two` SET ct_name=$name,ct_state=$state,ct_img=$pic,ct_price=$price,co_id=$coid,ct_danwei=$danwei WHERE ct_id = $uid";
+		$sql = "UPDATE `class_two` SET ct_name=$name,ct_state=$state,ct_img=$pic,ct_price=$price,co_id=$coid,ct_danwei=$danwei,ct_title=$title WHERE ct_id = $uid";
 		return $this->db->query($sql);
 	}
 

@@ -64,14 +64,14 @@ class News_model extends CI_Model
 	}
 
 	//信息save
-	public function news_save($ntitle,$listimg,$contents,$addtime)
+	public function news_save($ntitle,$url,$contents,$addtime)
 	{
 		$ntitle = $this->db->escape($ntitle);
-		$listimg = $this->db->escape($listimg);
+		$url = $this->db->escape($url);
 		$contents = $this->db->escape($contents);
 		$addtime = $this->db->escape($addtime);
 
-		$sql = "INSERT INTO `news` (ntitle,listimg,contents,addtime) VALUES ($ntitle,$listimg,$contents,$addtime)";
+		$sql = "INSERT INTO `news` (ntitle,url,contents,addtime) VALUES ($ntitle,$url,$contents,$addtime)";
 		return $this->db->query($sql);
 	}
 
@@ -87,14 +87,14 @@ class News_model extends CI_Model
 	}
 
 	//信息users_save_edit
-	public function news_save_edit($uid,$ntitle,$gimg,$gcontent)
+	public function news_save_edit($uid,$ntitle,$url,$gcontent)
 	{
 		$uid = $this->db->escape($uid);
 		$ntitle = $this->db->escape($ntitle);
-		$listimg = $this->db->escape($gimg);
+		$url = $this->db->escape($url);
 		$contents = $this->db->escape($gcontent);
 
-		$sql = "UPDATE `news` SET ntitle=$ntitle,listimg=$listimg,contents=$contents WHERE nid = $uid";
+		$sql = "UPDATE `news` SET ntitle=$ntitle,url=$url,contents=$contents WHERE nid = $uid";
 		return $this->db->query($sql);
 	}
 

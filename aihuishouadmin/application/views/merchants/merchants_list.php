@@ -38,7 +38,7 @@
 					</form>
 				</div>
 				<button class="layui-btn layui-card-header" style="float: right;margin-top: -40px;margin-right: 20px;"
-						onclick="xadmin.open('添加','<?= RUN . '/merchants/merchants_add' ?>',900,600)"><i
+						onclick="xadmin.open('添加','<?= RUN . '/merchants/merchants_add' ?>')"><i
 							class="layui-icon"></i>添加
 				</button>
 				<div class="layui-card-body ">
@@ -47,13 +47,14 @@
 						<tr>
 							<th style="width: 5%">序号</th>
 							<th style="width: 10%">商家名称</th>
-							<th style="width: 10%">等级</th>
-							<th style="width: 10%">联系人</th>
-							<th style="width: 10%">联系电话</th>
-							<th style="width: 15%">地址</th>
-							<th style="width: 10%">当前余额</th>
-							<th style="width: 10%">当前状态</th>
-							<th style="width: 20%">操作</th>
+							<th style="width: 7%">等级</th>
+							<th style="width: 7%">联系人</th>
+							<th style="width: 7%">联系电话</th>
+							<th style="width: 22%">地址</th>
+							<th style="width: 7%">当前余额</th>
+							<th style="width: 7%">当前状态</th>
+							<th style="width: 7%">排序</th>
+							<th style="width: 13%">操作</th>
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
@@ -65,11 +66,12 @@
 									<td><?= $once['contactname'] ?></td>
 									<td><?= $once['metel'] ?></td>
 									<td><?= $once['meaddress'] ?></td>
-									<td>0</td>
+									<td><?= $once['zhuanqu_price'] ?></td>
 									<td><?php if ($once['merchants_state'] == 0) { echo "开通";}else{echo "关闭";}?></td>
+									<td><?= $once['morder'] ?></td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
-												onclick="xadmin.open('编辑','<?= RUN . '/merchants/merchants_edit?id=' ?>'+<?= $once['meid'] ?>,900,700)">
+												onclick="xadmin.open('编辑','<?= RUN . '/merchants/merchants_edit?id=' ?>'+<?= $once['meid'] ?>)">
 											<i class="layui-icon">&#xe642;</i>编辑
 										</button>
 										<button class="layui-btn layui-btn-danger"
