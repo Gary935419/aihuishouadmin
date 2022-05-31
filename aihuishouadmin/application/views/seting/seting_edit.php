@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+	<meta charset="UTF-8">
+	<title>我的管理后台-爱回收</title>
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport"
+		  content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi"/>
+	<link rel="stylesheet" href="<?= STA ?>/css/font.css">
+	<link rel="stylesheet" href="<?= STA ?>/css/xadmin.css">
+	<script type="text/javascript" src="<?= STA ?>/lib/layui/layui.js" charset="utf-8"></script>
+	<script type="text/javascript" src="<?= STA ?>/js/xadmin.js"></script>
+	<script type="text/javascript" src="<?= STA ?>/js/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="<?= STA ?>/js/jquery.validate.js"></script>
+	<script type="text/javascript" src="<?= STA ?>/js/upload/jquery_form.js"></script>
+</head>
+<body>
+ 
+    
+<div class="layui-fluid layui-card" style="padding-top: 66px;">
+	<div class="layui-row">
+		<form method="post" class="layui-form" action="" name="basic_validate" id="tab">
+				<div class="layui-form-item">
+					<label for="L_pass" class="layui-form-label" style="width: 20%;">
+						<span class="x-red">*</span>平台名称：
+					</label>
+					<div class="layui-input-inline" style="width: 60%;">
+						<input type="text" id="name" name="name" lay-verify="name"
+							   autocomplete="off" class="layui-input" value="<?=$list['name'];?>">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="L_pass" class="layui-form-label" style="width: 20%;">
+						<span class="x-red">*</span>客服电话：
+					</label>
+					<div class="layui-input-inline" style="width: 60%;">
+						<input type="text" id="tel" name="tel" lay-verify="tel"
+							   autocomplete="off" class="layui-input" value="<?=$list['customer_tel'];?>">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="L_pass" class="layui-form-label" style="width: 20%;">
+						<span class="x-red">*</span>关于我们(链接)：
+					</label>
+					<div class="layui-input-inline" style="width: 60%;">
+						<input type="text" id="aboutus" name="aboutus" lay-verify="aboutus"
+							   autocomplete="off" class="layui-input" value="<?=$list['aboutus'];?>">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="L_pass" class="layui-form-label" style="width: 20%;">
+						<span class="x-red">*</span>平台招募(链接)：
+					</label>
+					<div class="layui-input-inline" style="width: 60%;">
+						<input type="text" id="recruiting" name="recruiting" lay-verify="recruiting"
+							   autocomplete="off" class="layui-input" value="<?=$list['recruiting'];?>">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="L_pass" class="layui-form-label" style="width: 20%;">
+						<span class="x-red"></span>建议说明：
+					</label>
+					<div class="layui-input-inline" style="width: 60%;">
+						<textarea placeholder="" id="jianyi" name="jianyi" class="layui-textarea"
+								  lay-verify="jianyi"><?=$list['jianyi'];?></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="L_pass" class="layui-form-label" style="width: 20%;">
+						<span class="x-red"></span>订单备注：
+					</label>
+					<div class="layui-input-inline" style="width: 60%;">
+						<textarea placeholder="" id="beizhu" name="beizhu" class="layui-textarea"
+								  lay-verify="beizhu"><?=$list['beizhu'];?></textarea>
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label for="L_pass" class="layui-form-label" style="width: 20%;">
+						<span class="x-red"></span>温馨提示：
+					</label>
+					<div class="layui-input-inline" style="width: 60%;">
+						<textarea placeholder="" id="tishi" name="tishi" class="layui-textarea"
+								  lay-verify="tishi"><?=$list['tishi'];?></textarea>
+					</div>
+				</div>
+				<input type="hidden" id="uid" name="uid" value="<?=$list['sid'];?>">
+				<div class="layui-form-item">
+					<label for="L_repass" class="layui-form-label" style="width: 20%;">
+					</label>
+					<button class="layui-btn" lay-filter="add" lay-submit="">
+						确认提交
+					</button>
+				</div>
+		</form>
+	</div>
+</div>
+
+
+
+<script>
+	layui.use(['form', 'layer'],
+			function () {
+				var form = layui.form,
+						layer = layui.layer;
+				//自定义验证规则
+				form.verify({
+					ltitle: function (value) {
+						if ($('#ltitle').val() == "") {
+							return '请输入标签名。';
+						}
+					},
+				});
+
+				$("#tab").validate({
+
+					submitHandler: function (form) {
+						$.ajax({
+							cache: true,
+							type: "POST",
+							url: "<?= RUN . '/seting/seting_save' ?>",
+							data: $('#tab').serialize(),
+							async: false,
+							error: function (request) {
+								alert("error");
+							},
+							success: function (data) {
+								var data = eval("(" + data + ")");
+								if (data.success) {
+									layer.msg(data.msg);
+									setTimeout(function () {
+										cancel();
+									}, 2000);
+								} else {
+									layer.msg(data.msg);
+								}
+							}
+						});
+					}
+				});
+			});
+
+	function cancel() {
+		//关闭当前frame
+		xadmin.close();
+	}
+</script>
+</body>
+</html>

@@ -53,7 +53,7 @@
                            autocomplete="off" class="layui-input">
                 </div>
             </div>
-			<div class="layui-form-item">
+			<!--div class="layui-form-item">
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
 					<span class="x-red">*</span>地区设定
 				</label>
@@ -70,7 +70,7 @@
 						<option value="金州区">金州区</option>
 					</select>
 				</div>
-			</div>
+			</div-->
             <div class="layui-form-item">
                 <label for="L_pass" class="layui-form-label" style="width: 30%;">
                     <span class="x-red">*</span>状态
