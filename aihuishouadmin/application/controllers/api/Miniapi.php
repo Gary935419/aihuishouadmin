@@ -1069,7 +1069,7 @@ class Miniapi extends CI_Controller
 		}
 		$delivery_date = empty($_POST['delivery_date'])?'':$_POST['delivery_date'];
 
-		$datecheck = strtotime($delivery_date . " 16:00:00");
+		$datecheck = strtotime($delivery_date . " 15:00:00");
 		$datechecknew = strtotime($delivery_date . $delivery_time);
 		if ($datechecknew >= $datecheck){
 			$this->back_json(202, '请重新选择预约下单时间，不可超过每天的下午四点。');
@@ -1476,11 +1476,12 @@ class Miniapi extends CI_Controller
 		$date1 = date('Y-m-d',time());
 		$date2 = date('H:i',time());
 		$this->mini->ordergoodsupdatesum($oid,$sum_price,$date1,$date2);
-//		$orderone = $this->mini->getorderone($oid);
-//		$mid = $orderone['mid'];
-//		$MemberInfomid = $this->mini->getMemberInfomid($mid);
-//		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['wallet']);
-//		$this->mini->member_edit_wallet($mid,$membernewmoney);
+
+		$orderone = $this->mini->getorderone($oid);
+		$mid = $orderone['mid'];
+		$MemberInfomid = $this->mini->getMemberInfomid($mid);
+		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['wallet']);
+		$this->mini->member_edit_wallet($mid,$membernewmoney);
 
 		$this->back_json(200, '操作成功');
 	}
@@ -1500,6 +1501,7 @@ class Miniapi extends CI_Controller
 			$this->back_json(205, '数据错误oid！');
 		}
 		$oid = empty($_POST['oid'])?'':$_POST['oid'];
+		$this->mini->orders_goods_del($oid);
 		$ct_ids = empty($_POST['ct_ids'])?'':$_POST['ct_ids'];
 		if ($ct_ids != '[]'){
 			$ct_ids = json_decode($ct_ids,true);

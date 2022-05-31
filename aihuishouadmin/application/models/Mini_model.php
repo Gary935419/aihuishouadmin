@@ -378,7 +378,7 @@ class Mini_model extends CI_Model
 	public function getordersstatecanyu($mid)
 	{
 		$mid = $this->db->escape($mid);
-		$sqlw = " where mid = " . $mid;
+		$sqlw = " where mid = " . $mid . " and ostate < 3 ";
 		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
 		return $number;
@@ -541,7 +541,7 @@ class Mini_model extends CI_Model
 
 	public function getmerchantslistqishou($laidarr)
 	{
-		$sql = "SELECT * FROM `merchants` where meid IN $laidarr";
+		$sql = "SELECT * FROM `merchants` where meid IN " . $laidarr . " order by morder desc";
 		return $this->db->query($sql)->result_array();
 	}
 
@@ -918,6 +918,13 @@ class Mini_model extends CI_Model
 		$sql1 = "UPDATE `merchants` SET full_flg=0 WHERE meid = $meid";
 		$this->db->query($sql1);
 		$sql = "UPDATE `orders` SET ostate=2 WHERE meid = $meid and $datetime = $datetime";
+		return $this->db->query($sql);
+	}
+
+	public function orders_goods_del($oid)
+	{
+		$oid = $this->db->escape($oid);
+		$sql = "DELETE FROM orders_goods WHERE oid = $oid";
 		return $this->db->query($sql);
 	}
 }
