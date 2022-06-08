@@ -927,4 +927,20 @@ class Mini_model extends CI_Model
 		$sql = "DELETE FROM orders_goods WHERE oid = $oid";
 		return $this->db->query($sql);
 	}
+
+	public function merchantsordergoodslistnew1old($meid,$datetime)
+	{
+		$sqlw = " 1=1 and ostate=1 ";
+		if (!empty($meid)) {
+			$meid = $this->db->escape($meid);
+			$sqlw .= " and meid =" . $meid;
+		}
+		if (!empty($datetime)) {
+			$datetime = $this->db->escape($datetime);
+			$sqlw .= " and delivery_date =" . $datetime;
+		}
+		$sql = "SELECT * FROM `orders` where  ".$sqlw." order by oid desc ";
+		return $this->db->query($sql)->result_array();
+	}
+
 }

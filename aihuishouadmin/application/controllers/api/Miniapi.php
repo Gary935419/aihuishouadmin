@@ -6,6 +6,10 @@
  * 作成者        ： Gary
  * **********************************************************************
  */
+require_once 'vendor/autoload.php';
+use GuzzleHttp\Exception\RequestException;
+use WechatPay\GuzzleMiddleware\WechatPayMiddleware;
+use WechatPay\GuzzleMiddleware\Util\PemUtil;
 class Miniapi extends CI_Controller
 {
 	public function __construct()
@@ -259,6 +263,10 @@ class Miniapi extends CI_Controller
 			$status = 1;
 		}
 		$this->mini->member_address_add_save($mid,$longitude,$latitude,$province,$city,$area,$address,$name,$mobile,$status,$addtime);
+
+		if (!empty($_POST["a_id"])){
+			$this->mini->member_address_del($mid,$_POST["a_id"]);
+		}
 
 		$this->back_json(200, '操作成功');
 	}
@@ -1375,6 +1383,77 @@ class Miniapi extends CI_Controller
 			$sum_price = floatval($sum_price) + floatval($v['m_weight']) * floatval($v['price']);
 		}
 
+		$orderlistold = $this->mini->merchantsordergoodslistnew1old($meid,$datetime);
+
+		foreach ($orderlistold as $kk=>$vv){
+			$oid = $vv['oid'];
+			$orderone = $this->mini->getorderone($oid);
+			$mid = $orderone['mid'];
+			$sum_price1 = $orderone['sum_price'];
+			$MemberInfomid = $this->mini->getMemberInfomid($mid);
+			$membernewmoney = floatval($sum_price1) + floatval($MemberInfomid['wallet']);
+			$this->mini->member_edit_wallet($mid,$membernewmoney);
+
+			$isdir = $_SERVER['DOCUMENT_ROOT']."/cert/";//证书位置;绝对路径
+			$keypem = $isdir . 'apiclient_key.pem';
+			$certpem = $isdir . 'wechatpay_3CBA5A0DFCA8CB9765288493F21E57863296B3C3.pem';
+
+			// 商户相关配置
+			$merchantId = '1622453928'; // 商户号
+			$merchantSerialNumber = '3A86E55A5138C1A9868C2C114802A590576546B7'; // 商户API证书序列号
+			$PemUtil = new PemUtil();
+			$merchantPrivateKey = $PemUtil->loadPrivateKey($keypem); // 商户私钥
+			// 微信支付平台配置
+			$wechatpayCertificate = $PemUtil->loadCertificate($certpem); // 微信支付平台证书
+
+			// 构造一个WechatPayMiddleware
+			$wechatpayMiddleware = WechatPayMiddleware::builder()
+				->withMerchant($merchantId, $merchantSerialNumber, $merchantPrivateKey) // 传入商户相关配置
+				->withWechatPay([ $wechatpayCertificate ]) // 可传入多个微信支付平台证书，参数类型为array
+				->build();
+
+			// 将WechatPayMiddleware添加到Guzzle的HandlerStack中
+			$stack = GuzzleHttp\HandlerStack::create();
+			$stack->push($wechatpayMiddleware, 'wechatpay');
+
+			// 创建Guzzle HTTP Client时，将HandlerStack传入
+			$client = new GuzzleHttp\Client(['handler' => $stack]);
+
+			// 接下来，正常使用Guzzle发起API请求，WechatPayMiddleware会自动地处理签名和验签
+			try {
+				$resp = $client->request('POST', 'https://api.mch.weixin.qq.com/v3/transfer/batches', [
+					'json' => [ // JSON请求体
+						'appid' => 'wx8be053f4e70ec431',
+						'out_batch_no' => 'aihuishou'.time(),
+						'batch_name' => '用户提现',
+						'batch_remark' => '用户提现',
+						'total_amount' => $sum_price1 * 100,
+						'total_num' => 1,
+						'transfer_detail_list' => [
+							'0' => [ // JSON请求体
+								'out_detail_no' =>  'aihuishounew'.time(),
+								'transfer_amount' => $sum_price1 * 100,
+								'transfer_remark' => '用户提现',
+								'openid' => $MemberInfomid['openid']
+							]
+						]
+					],
+					'headers' => [ 'Accept' => 'application/json' ]
+				]);
+				if ($resp->getStatusCode() != 200){
+					$this->back_json(205, $resp->getStatusCode().' '.$resp->getReasonPhrase()."\n".$resp->getBody()."\n");
+				}
+			} catch (RequestException $e) {
+				// 进行错误处理
+				echo $e->getMessage()."\n";
+				if ($e->hasResponse()) {
+					echo $e->getResponse()->getStatusCode().' '.$e->getResponse()->getReasonPhrase()."\n";
+					echo $e->getResponse()->getBody();
+				}
+				return;
+			}
+		}
+
 		$this->mini->goods_edit_order_me_ostate($meid,$datetime);
 		$MemberInfomid = $this->mini->getmerchantsInfomeidnew($meid);
 		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['huishou_price']);
@@ -1477,51 +1556,7 @@ class Miniapi extends CI_Controller
 		$date2 = date('H:i',time());
 		$this->mini->ordergoodsupdatesum($oid,$sum_price,$date1,$date2);
 
-		$orderone = $this->mini->getorderone($oid);
-		$mid = $orderone['mid'];
-		$MemberInfomid = $this->mini->getMemberInfomid($mid);
-		$membernewmoney = floatval($sum_price) + floatval($MemberInfomid['wallet']);
-		$this->mini->member_edit_wallet($mid,$membernewmoney);
-
-		$re_openid = $MemberInfomid['openid'];
-		$total_amount = (100) * $sum_price;
-
-		$data=array(
-			'mch_appid'=>'wx8be053f4e70ec431',                            //商户账号appid
-			'mchid'=> '1622453928',                                       //商户号
-			'nonce_str'=>$this->createNoncestr(),                         //随机字符串
-			'partner_trade_no'=> date('YmdHis').rand(1000, 9999),  //商户订单号
-			'openid'=> $re_openid,                                        //用户openid
-			'check_name'=>'NO_CHECK',                                     //校验用户姓名选项,
-			'amount'=>$total_amount,                                      //金额
-			'desc'=> "用户提现",                                           //企业付款描述信息
-		);
-
-		//生成签名算法
-		$secrect_key="Aihuishou12345678987654321234567";                  //这个就是个API密码。
-		$data=array_filter($data);
-		ksort($data);
-		$str='';
-		foreach($data as $k=>$v) {
-			$str.=$k.'='.$v.'&';
-		}
-		$str.='key='.$secrect_key;
-		$data['sign']=md5($str);
-		//生成签名算法
-
-		$xml=$this->arraytoxml($data);
-		$url='https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers'; //调用接口
-		$res=$this->curl_post_ssl($url,$xml);
-		$return=$this->xmltoarray($res);
-		$res = $return['result_code'];
-//        $res = 'SUCCESS';
-//        $responseObj = simplexml_load_string($res, 'SimpleXMLElement', LIBXML_NOCDATA);
-//        $res= $responseObj->result_code; //SUCCESS 如果返回来SUCCESS,则发生成功，处理自己的逻辑
-		if ($res === 'SUCCESS'){
-			$this->back_json(200, '操作成功');
-		}else{
-			$this->back_json(205, '操作失败,您的商户余额不足！');
-		}
+		$this->back_json(200, '操作成功');
 	}
 
 	/**
