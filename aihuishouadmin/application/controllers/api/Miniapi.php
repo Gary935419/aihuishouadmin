@@ -560,13 +560,13 @@ class Miniapi extends CI_Controller
 		$lid = $member['lid'];
 		$levelInfo = $this->mini->getlevelInfo($lid);
 		//回收次数
-		$data['shujusum']['sum1'] = empty($this->mini->getordersstatecishu($meid,2))?0:$this->mini->getordersstatecishu($meid,2);
+		$data['shujusum']['sum1'] = empty($this->mini->getordersstatecishu($meid,2))?0.00:$this->mini->getordersstatecishu($meid,2);
 		//回收金额
-		$data['shujusum']['sum2'] = empty($member['huishou_price'])?0:$member['huishou_price'];
+		$data['shujusum']['sum2'] = empty($member['huishou_price'])?0.00:round($member['huishou_price'],2);
 		//赚取金额
-		$data['shujusum']['sum3'] = empty($member['huishou_price'])?0:$member['huishou_price'] * $levelInfo['lcontents'] / 100;
+		$data['shujusum']['sum3'] = empty($member['huishou_price'])?0.00:round($member['huishou_price'] * $levelInfo['lcontents'] / 100,2);
 		//提现金额
-		$data['shujusum']['sum4'] = empty($this->mini->getordersstatetixian_merchants($meid))?0:$this->mini->getordersstatetixian_merchants($meid);
+		$data['shujusum']['sum4'] = empty($this->mini->getordersstatetixian_merchants($meid))?0.00:$this->mini->getordersstatetixian_merchants($meid);
 		$this->back_json(200, '操作成功', $data);
 	}
 
@@ -1062,9 +1062,9 @@ class Miniapi extends CI_Controller
 		if (!isset($_POST['ct_ids']) || $_POST['ct_ids']=='[]') {
 			$order_status = 1;
 		}
-		if (!isset($_POST['note']) || empty($_POST['note'])) {
-			$this->back_json(202, '请填写订单备注！');
-		}
+//		if (!isset($_POST['note']) || empty($_POST['note'])) {
+//			$this->back_json(202, '请填写订单备注！');
+//		}
 		$note = empty($_POST['note'])?'':$_POST['note'];
 
 		if (!isset($_POST['delivery_time']) || empty($_POST['delivery_time'])) {
@@ -1270,14 +1270,14 @@ class Miniapi extends CI_Controller
 
 		$meid = $member['meid'];
 
-		$is_business = isset($_POST["is_business"]) && !empty($_POST["is_business"]) ? $_POST["is_business"] : $member['is_business'];
+		$is_business = ($_POST["is_business"] == 0 || $_POST["is_business"] == 1) ? $_POST["is_business"] : $member['is_business'];
 		$meaddress = isset($_POST["meaddress"]) && !empty($_POST["meaddress"]) ? $_POST["meaddress"] : $member['meaddress'];
 		$latitude = isset($_POST["latitude"]) && !empty($_POST["latitude"]) ? $_POST["latitude"] : $member['latitude'];
 		$longitude = isset($_POST["longitude"]) && !empty($_POST["longitude"]) ? $_POST["longitude"] : $member['longitude'];
 		$contactname = isset($_POST["contactname"]) && !empty($_POST["contactname"]) ? $_POST["contactname"] : $member['contactname'];
 		$metel = isset($_POST["metel"]) && !empty($_POST["metel"]) ? $_POST["metel"] : $member['metel'];
 		$mename = isset($_POST["mename"]) && !empty($_POST["mename"]) ? $_POST["mename"] : $member['mename'];
-		$meimg = isset($_POST["meimg"]) && !empty($_POST["meimg"]) ? $_POST["meimg"] : $member['meimg'];
+		$meimg = (isset($_POST["meimg"]) && !empty($_POST["meimg"]) && $_POST["meimg"] != 'undefined') ? $_POST["meimg"] : $member['meimg'];
 
 		$this->mini->merchants_editnew($meid,$is_business,$meaddress,$latitude,$longitude,$contactname,$metel,$mename,$meimg);
 		$this->back_json(200, '更新成功');

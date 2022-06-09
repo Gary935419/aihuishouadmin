@@ -72,7 +72,7 @@ class Merchants_model extends CI_Model
         $morder = $this->db->escape($morder);
         $zhibiaoliang = $this->db->escape($zhibiaoliang);
 
-        $sql = "INSERT INTO `merchants` (mename,account,password,contactname,metel,lid,laid,merchants_state,add_time,merchants_stop,morder,mubiaoliang) VALUES ($mename,$account,$password,$contactname,$metel,$lid,$laid,$merchants_state,$add_time,0,$morder,$zhibiaoliang)";
+        $sql = "INSERT INTO `merchants` (mename,account,password,contactname,metel,lid,laid,merchants_state,add_time,is_business,merchants_stop,morder,mubiaoliang) VALUES ($mename,$account,$password,$contactname,$metel,$lid,$laid,$merchants_state,$add_time,1,0,$morder,$zhibiaoliang)";
         return $this->db->query($sql);
     }
 

@@ -15,6 +15,7 @@ class Welcome extends CI_Controller
 		if (!isset($_SESSION['user_name'])) {
 			header("Location:" . RUN . '/login/logout');
 		}
+		$this->load->model('Welcome_model', 'welcome');
 		header("Content-type:text/html;charset=utf-8");
 	}
     /**
@@ -34,7 +35,22 @@ class Welcome extends CI_Controller
      */
     public function index()
     {
-		$data = array();
+
+        $data['yonghunum']=$this->welcome->getyonghunum();
+        $data['shangjianum']=$this->welcome->getshangjianum();
+        $data['qishounum']=$this->welcome->getqishounum();
+        
+        $data['dingdannum']=$this->welcome->getdingdannum();
+        $data['quhuonum']=$this->welcome->getquhuonum();
+        $data['zhongliangnum']=$this->welcome->getzhongliangnum();
+        $data['zongnum']=$this->welcome->getzongnum();
+        //$moneynum=$this->welcome->getUserAll();
+        
+        
+  
+		
+		
+		
         $this->load->view('welcome_message',$data);
     }
 }
