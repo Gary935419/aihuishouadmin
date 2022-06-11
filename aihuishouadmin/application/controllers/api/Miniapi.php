@@ -444,7 +444,7 @@ class Miniapi extends CI_Controller
 		$meid = isset($_POST["meid"]) ? $_POST["meid"] : '';
 		$merchantsinfo = $this->mini->getmerchantsInfomeidnew($meid);
 		if (empty($merchantsinfo)) {
-			$this->back_json(206, '数据错误！');
+			$merchantsinfo = array();
 		}
 		$getsettingone = $this->mini->getsettingone();
 		$sendyourself_arr = array();
@@ -481,6 +481,10 @@ class Miniapi extends CI_Controller
 		}
 		$a_id = isset($_POST["a_id"]) ? $_POST["a_id"] : '';
 		$addressinfo = $this->mini->getaddressInfoaid($a_id);
+		if (empty($addressinfo)){
+			$addressinfo['name'] = '';
+			$addressinfo['mobile'] = '';
+		}
 		$data['addressinfo'] = $addressinfo;
 		$this->back_json(200, '操作成功', $data);
 	}
