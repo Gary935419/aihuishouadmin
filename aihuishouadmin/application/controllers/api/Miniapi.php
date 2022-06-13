@@ -1080,9 +1080,10 @@ class Miniapi extends CI_Controller
 			$this->back_json(202, '请选择日期！');
 		}
 		$delivery_date = empty($_POST['delivery_date'])?'':$_POST['delivery_date'];
-
+		$delivery_date = date('Y').'-'.$delivery_date;
 		$datecheck = strtotime($delivery_date . " 15:00:00");
 		$datechecknew = strtotime($delivery_date . $delivery_time);
+
 		if ($datechecknew >= $datecheck){
 			$this->back_json(202, '请重新选择预约下单时间，不可超过每天的下午四点。');
 		}
@@ -1100,18 +1101,18 @@ class Miniapi extends CI_Controller
 		$utel = empty($_POST['utel'])?'':$_POST['utel'];
 		$otype = empty($_POST['otype'])?0:$_POST['otype'];
 		if($otype!=1){
-			if (!isset($_POST['muser']) || empty($_POST['muser'])) {
-				$this->back_json(202, '请填写商家名称！');
+			if (!isset($_POST['muser']) || empty($_POST['muser']) || $_POST['muser'] === 'undefined') {
+				$this->back_json(202, '请选择代收点！');
 			}
 			$muser = empty($_POST['muser'])?'':$_POST['muser'];
 
-			if (!isset($_POST['maddress']) || empty($_POST['maddress'])) {
-				$this->back_json(202, '请填写商家地址！');
+			if (!isset($_POST['maddress']) || empty($_POST['maddress']) || $_POST['maddress'] === 'undefined') {
+				$this->back_json(202, '请选择代收点！');
 			}
 			$maddress = empty($_POST['maddress'])?'':$_POST['maddress'];
 
-			if (!isset($_POST['meid']) || empty($_POST['meid'])) {
-				$this->back_json(202, '请选择商家！');
+			if (!isset($_POST['meid']) || empty($_POST['meid']) || $_POST['meid'] === 'undefined') {
+				$this->back_json(202, '请选择代收点！');
 			}
 			$meid = empty($_POST['meid'])?'':$_POST['meid'];
 		}else{
