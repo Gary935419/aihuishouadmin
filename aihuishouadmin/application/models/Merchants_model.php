@@ -41,7 +41,8 @@ class Merchants_model extends CI_Model
     public function merchants_delete($id)
     {
         $id = $this->db->escape($id);
-		$sql = "UPDATE `merchants` SET `merchants_stop` =  1 WHERE meid = $id";
+        $sql = "DELETE FROM merchants WHERE meid = $id";
+		//$sql = "delete `merchants` SET `merchants_stop` =  1 WHERE meid = $id";
         return $this->db->query($sql);
     }
 	

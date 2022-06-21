@@ -911,6 +911,13 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql);
 	}
 
+	public function merchandise_fullflg_update1($meid)
+	{
+		$meid = $this->db->escape($meid);
+		$sql = "UPDATE `merchants` SET full_flg=0 WHERE meid = $meid";
+		return $this->db->query($sql);
+	}
+
 	public function goods_edit_order_me_ostate($meid,$datetime)
 	{
 		$meid = $this->db->escape($meid);

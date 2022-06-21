@@ -395,6 +395,22 @@ class Miniapi extends CI_Controller
 			$sendyourself_arr[1]['value']="1";
 		}
 		$data['sendyourself_arr'] = $sendyourself_arr;
+
+		$sendyourself_arrtime = array();
+		$sendyourself_arrtime[0]['name']="明日15:00前";
+		$sendyourself_arrtime[0]['value']="1";
+		$sendyourself_arrtime[0]['checked']="true";
+		$now = date('Y-m-d',time()) . ' 15:00';
+		if (time() < strtotime($now)){
+			$sendyourself_arrtime = array();
+			$sendyourself_arrtime[0]['name']="明日15:00前";
+			$sendyourself_arrtime[0]['value']="1";
+			$sendyourself_arrtime[0]['checked']="true";
+			$sendyourself_arrtime[1]['name']="今日15:00前";
+			$sendyourself_arrtime[1]['value']="2";
+		}
+		$data['sendyourself_arrtime'] = $sendyourself_arrtime;
+
 		$data['member'] = $member;
 		$this->back_json(200, '操作成功', $data);
 	}
@@ -918,18 +934,13 @@ class Miniapi extends CI_Controller
 		$list1 = $this->mini->getbannerAll1();
 		$data["list1"] = $list1;
 		$listnotice = $this->mini->getnoticeAllnew();
-		$noticemsg = "";
 		if (empty($listnotice)){
-			$noticemsg = "暂无公告信息~~~";
-		}else{
-			foreach ($listnotice as $k=>$v){
-				$num = $k+1;
-				$noticemsg = $noticemsg.$num.".".$v['n_msg'];
-			}
+			$listnotice = "暂无公告信息~~~";
 		}
-		$data["noticemsg"] = $noticemsg;
+		$data["noticemsg"] = $listnotice;
 		$this->back_json(200, '操作成功', $data);
 	}
+
 	public function merchants_list(){
 		//验证loginCode是否传递
 		if (!isset($_POST['token']) || empty($_POST['token'])) {
@@ -1066,29 +1077,11 @@ class Miniapi extends CI_Controller
 		if (!isset($_POST['ct_ids']) || $_POST['ct_ids']=='[]') {
 			$order_status = 1;
 		}
-//		if (!isset($_POST['note']) || empty($_POST['note'])) {
-//			$this->back_json(202, '请填写订单备注！');
-//		}
 		$note = empty($_POST['note'])?'':$_POST['note'];
-
-		if (!isset($_POST['delivery_time']) || empty($_POST['delivery_time'])) {
-			$this->back_json(202, '请选择时间！');
-		}
-		$delivery_time = empty($_POST['delivery_time'])?'':$_POST['delivery_time'];
-
-		if (!isset($_POST['delivery_date']) || empty($_POST['delivery_date'])) {
-			$this->back_json(202, '请选择日期！');
-		}
-		$delivery_date = empty($_POST['delivery_date'])?'':$_POST['delivery_date'];
-		$delivery_date = date('Y').'-'.$delivery_date;
-		$datecheck = strtotime($delivery_date . " 15:00:00");
-		$datechecknew = strtotime($delivery_date . $delivery_time);
-
-		if ($datechecknew >= $datecheck){
-			$this->back_json(202, '请重新选择预约下单时间，不可超过每天的下午四点。');
-		}
-		if ($datechecknew <= time()){
-			$this->back_json(202, '请选择大于当前时间的日期信息。');
+		$yuyueotype = empty($_POST['yuyueotype'])?1:$_POST['yuyueotype'];
+		$delivery_date = date("Y-m-d",strtotime("+1 day"));
+		if ($yuyueotype == 2){
+			$delivery_date = date('Y-m-d',time());
 		}
 		if (!isset($_POST['uname']) || empty($_POST['uname'])) {
 			$this->back_json(202, '请选择联系人！');
@@ -1125,7 +1118,7 @@ class Miniapi extends CI_Controller
 		$addtime = time();
 		$mid = $member['mid'];
 		$sum_price = 0;
-		$oid = $this->mini->order_save($order_status,$ostate,$addtime,$sum_price,$note,$delivery_date,$delivery_time,$uname,$utel,$muser,$maddress,$mid,$meid,$otype);
+		$oid = $this->mini->order_save($order_status,$ostate,$addtime,$sum_price,$note,$delivery_date,'15:00',$uname,$utel,$muser,$maddress,$mid,$meid,$otype);
 
 		$ct_ids = empty($_POST['ct_ids'])?'':$_POST['ct_ids'];
 		if ($ct_ids != '[]'){
@@ -1750,6 +1743,24 @@ class Miniapi extends CI_Controller
 			$this->back_json(206, '当前已经是满仓状态！请勿重复点击！');
 		}
 		$this->mini->merchandise_fullflg_update($merchantsinfo['meid']);
+		$this->back_json(200, '操作成功');
+	}
+
+	public function merchandise_fullflg_update1(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$token = isset($_POST["token"]) ? $_POST["token"] : '';
+		$merchantsinfo = $this->mini->getmerchantsInfomeid($token);
+		if (empty($merchantsinfo)) {
+			$this->back_json(206, '请您先去授权商家登录！');
+		}
+
+		if ($merchantsinfo['full_flg'] == 0){
+			$this->back_json(206, '当前已经是正常状态！请勿重复点击！');
+		}
+		$this->mini->merchandise_fullflg_update1($merchantsinfo['meid']);
 		$this->back_json(200, '操作成功');
 	}
 }

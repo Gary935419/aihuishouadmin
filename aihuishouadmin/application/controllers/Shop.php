@@ -26,6 +26,7 @@ class Shop extends CI_Controller
 	{
 		$month = isset($_GET['month']) ? $_GET['month'] : date('Y-m', time());
 		//获取所有店铺信息
+		$list=array();
 		$merchants = $this->shop->getMerchantsAll();
 		foreach ($merchants as $key => $value) {
 			$meid = $value['meid'];
@@ -94,6 +95,8 @@ class Shop extends CI_Controller
 			$list[$key]['tixian']=$tixian;
 			$list[$key]['wucha']=$wucha;
 		}
+		
+
 		$data['list']=$list;
 
 		$years=date('Y', time());

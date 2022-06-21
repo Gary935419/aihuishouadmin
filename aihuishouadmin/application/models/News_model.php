@@ -263,5 +263,75 @@ class News_model extends CI_Model
 		$sql = "UPDATE `banners` SET bannername=$bannername,bannerimg=$bannersimg WHERE bid = $uid";
 		return $this->db->query($sql);
 	}
+	
+	
+	
+	//----------------------------notice修改信息详情-------------------------------------	
+		//获取信息页数
+	public function getnoticeAllPage($user_name)
+	{
+		$sqlw = " where 1=1 ";
+		$sql = "SELECT count(1) as number FROM `notice` " . $sqlw;
+
+		$number = $this->db->query($sql)->row()->number;
+		return ceil($number / 10) == 0 ? 1 : ceil($number / 10);
+	}
+
+	//获取信息
+	public function getnoticeAll($pg, $user_name)
+	{
+		$sqlw = " where 1=1 ";
+		if (!empty($user_name)) {
+			$sqlw .= " and ( ntitle like '%" . $user_name . "%' ) ";
+		}
+		$start = ($pg - 1) * 10;
+		$stop = 10;
+		$sql = "SELECT * FROM `notice` " . $sqlw . " order by n_id desc LIMIT $start, $stop";
+		return $this->db->query($sql)->result_array();
+	}
+
+
+	//信息delete
+	public function notice_delete($id)
+	{
+		$id = $this->db->escape($id);
+		$sql = "DELETE FROM notice WHERE n_id = $id";
+		return $this->db->query($sql);
+	}
+
+	//----------------------------添加信息------------------------------------
+	//信息save
+	public function notice_save($msg,$addtime)
+	{
+		$msg = $this->db->escape($msg);
+		$addtime = $this->db->escape($addtime);
+
+		$sql = "INSERT INTO `notice` (n_msg,n_addtime) VALUES ($msg,$addtime)";
+		return $this->db->query($sql);
+	}
+
+
+	//----------------------------修改信息详情-------------------------------------
+
+	//根据id获取信息信息
+	public function getnoticelist($id)
+	{
+		$id = $this->db->escape($id);
+		$sql = "SELECT * FROM `notice` where n_id=$id ";
+		return $this->db->query($sql)->row_array();
+	}
+
+	//信息users_save_edit
+	public function notice_save_edit($uid,$msg)
+	{
+		$uid = $this->db->escape($uid);
+		$msg =$this->db->escape($msg);;
+
+		$sql = "UPDATE `notice` SET n_msg=$msg WHERE n_id = $uid";
+		return $this->db->query($sql);
+	}
+	
+	
+	
 }
 

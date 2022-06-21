@@ -163,6 +163,12 @@
 								<cite>广告图片管理</cite>
 							</a>
 						</li>
+						<li>
+							<a onclick="changeSrc('<?= RUN . '/news/notice_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>首页消息管理</cite>
+							</a>
+						</li>
 						<!--li>
 							<a onclick="changeSrc('<?= RUN . '/news/news_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>

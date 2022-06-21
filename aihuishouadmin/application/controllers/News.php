@@ -369,4 +369,111 @@ class News extends CI_Controller
 			echo json_encode(array('error' => false, 'msg' => "操作失败"));
 		}
 	}
+	
+	
+	
+	
+	
+		/**-----------------------------------信息管理-----------------------------------------------------*/
+	/**
+	 * 信息列表页
+	 */
+	public function notice_list()
+	{
+		$user_name = isset($_GET['user_name']) ? $_GET['user_name'] : '';
+		$page = isset($_GET["page"]) ? $_GET["page"] : 1;
+		$allpage = $this->news->getnoticeAllPage($user_name);
+		$page = $allpage > $page ? $page : $allpage;
+		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
+		$data["page"] = $page;
+		$data["allpage"] = $allpage;
+		$data["list"] = $this->news->getnoticeAll($page, $user_name);
+		$data["user_name1"] = $user_name;
+		$this->display("news/notice_list", $data);
+	}
+
+	/**
+	 * 信息删除
+	 */
+	public function notice_delete()
+	{
+		$id = isset($_POST['id']) ? $_POST['id'] : 0;
+		if ($this->news->notice_delete($id)) {
+			echo json_encode(array('success' => true, 'msg' => "删除成功"));
+		} else {
+			echo json_encode(array('success' => false, 'msg' => "删除失败"));
+		}
+	}
+
+
+	/**
+	 * 信息添加页
+	 */
+	public function notice_add()
+	{
+		$data = array();
+		$ridlist = $this->news->getRole();
+		$data['ridlist'] = $ridlist;
+		$this->display("news/notice_add", $data);
+
+	}
+
+	/**
+	 * 信息添加页
+	 */
+	public function notice_save()
+	{
+		if (empty($_SESSION['user_name'])) {
+			echo json_encode(array('error' => false, 'msg' => "无法添加数据"));
+			return;
+		}
+
+		$msg = isset($_POST["msg"]) ? $_POST["msg"] : '';
+		$addtime = time();
+
+		$result = $this->news->notice_save($msg,$addtime);
+		if ($result) {
+			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
+		} else {
+			echo json_encode(array('error' => false, 'msg' => "操作失败"));
+		}
+	}
+
+	/**
+	 * 信息修改显示
+	 */
+	public function notice_edit()
+	{
+		$uid = isset($_GET['id']) ? $_GET['id'] : 0;
+		$data = array();
+		$ridlist = $this->news->getRole();
+		$data['ridlist'] = $ridlist;
+
+		$member_info = $this->news->getnoticelist($uid);
+		$data['id'] = $uid;
+		$data['msg'] = $member_info['n_msg'];
+		$this->display("news/notice_edit", $data);
+	}
+
+	/**
+	 * 信息修改提交
+	 */
+	public function notice_save_edit()
+	{
+		if (empty($_SESSION['user_name'])) {
+			echo json_encode(array('error' => false, 'msg' => "无法修改数据"));
+			return;
+		}
+		$uid = isset($_POST["uid"]) ? $_POST["uid"] : '';
+		$msg = isset($_POST["msg"]) ? $_POST["msg"] : '';
+		
+
+		$result = $this->news->notice_save_edit($uid, $msg);
+		if ($result) {
+			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
+		} else {
+			echo json_encode(array('error' => false, 'msg' => "操作失败"));
+		}
+	}
+	
 }
