@@ -134,6 +134,13 @@ class Orders extends CI_Controller
 		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
 		$data["page"] = $page;
 		$data["allpage"] = $allpage;
+		
+		$merchantsclass = $this->orders->getMerchantsclassAll();	
+        //获取商品分类
+		foreach ($merchantsclass as $key => $value) {
+	        $arr[$key] = $this->orders->getMerchantsaddAll($value['ct_id'],$meid, $start, $end);
+		}
+		
 		$data["list"] = $this->orders->getMerchantsOrdersAll($page, $meid, $start, $end);
 
 		$data["start"] = date("Y-m-d",$start);

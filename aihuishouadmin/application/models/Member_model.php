@@ -38,6 +38,13 @@ class Member_model extends CI_Model
 		return $this->db->query($sql)->result_array();
 	}
 
+	//获取用户信息
+	public function getMemberOrderAll($mid)
+	{
+		$sql = "SELECT * FROM `orders` where mid=$mid order by mid desc LIMIT 0,1";
+		return $this->db->query($sql)->row_array();
+	}
+
 	//会員delete
 	public function member_delete($id,$status)
 	{

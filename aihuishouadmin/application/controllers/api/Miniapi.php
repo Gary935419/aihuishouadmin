@@ -262,13 +262,17 @@ class Miniapi extends CI_Controller
 		if (empty($list)){
 			$status = 1;
 		}
+		$this->mini->member_address_delnew($mid);
 		$this->mini->member_address_add_save($mid,$longitude,$latitude,$province,$city,$area,$address,$name,$mobile,$status,$addtime);
 
-		if (!empty($_POST["a_id"])){
-			$this->mini->member_address_del($mid,$_POST["a_id"]);
-		}
+//		if (!empty($_POST["a_id"])){
+//			$this->mini->member_address_del($mid,$_POST["a_id"]);
+//		}
 
-		$this->back_json(200, '操作成功');
+		$addressinfo = $this->mini->member_address_one($mid);
+		$data = array();
+		$data['a_id'] = $addressinfo['a_id'];
+		$this->back_json(200, '操作成功', $data);
 	}
 
 	/**
@@ -397,17 +401,16 @@ class Miniapi extends CI_Controller
 		$data['sendyourself_arr'] = $sendyourself_arr;
 
 		$sendyourself_arrtime = array();
-		$sendyourself_arrtime[0]['name']="明日15:00前";
-		$sendyourself_arrtime[0]['value']="1";
-		$sendyourself_arrtime[0]['checked']="true";
+		$sendyourself_arrtime[1]['name']="明日15:00前";
+		$sendyourself_arrtime[1]['value']="1";
 		$now = date('Y-m-d',time()) . ' 15:00';
 		if (time() < strtotime($now)){
 			$sendyourself_arrtime = array();
-			$sendyourself_arrtime[0]['name']="明日15:00前";
-			$sendyourself_arrtime[0]['value']="1";
+			$sendyourself_arrtime[1]['name']="明日15:00前";
+			$sendyourself_arrtime[1]['value']="1";
+			$sendyourself_arrtime[0]['name']="今日15:00前";
+			$sendyourself_arrtime[0]['value']="0";
 			$sendyourself_arrtime[0]['checked']="true";
-			$sendyourself_arrtime[1]['name']="今日15:00前";
-			$sendyourself_arrtime[1]['value']="2";
 		}
 		$data['sendyourself_arrtime'] = $sendyourself_arrtime;
 
@@ -882,6 +885,7 @@ class Miniapi extends CI_Controller
 		foreach ($orderlist as $k=>$v){
 			$money = floatval($v['m_weight']) * floatval($v['price']);
 			$price = floatval($price) + floatval($money);
+			$orderlist[$k]['newprice'] = number_format($money,2);
 		}
 		$data['date'] = $datenew;
 		$data['price'] = $price;
@@ -1080,7 +1084,7 @@ class Miniapi extends CI_Controller
 		$note = empty($_POST['note'])?'':$_POST['note'];
 		$yuyueotype = empty($_POST['yuyueotype'])?1:$_POST['yuyueotype'];
 		$delivery_date = date("Y-m-d",strtotime("+1 day"));
-		if ($yuyueotype == 2){
+		if ($yuyueotype == 1){
 			$delivery_date = date('Y-m-d',time());
 		}
 		if (!isset($_POST['uname']) || empty($_POST['uname'])) {
@@ -1416,21 +1420,22 @@ class Miniapi extends CI_Controller
 
 			// 创建Guzzle HTTP Client时，将HandlerStack传入
 			$client = new GuzzleHttp\Client(['handler' => $stack]);
-
+			$sum_pricenew = floatval($sum_price1) * 100;
+			$number = 'aihuishou'.time().$kk;
 			// 接下来，正常使用Guzzle发起API请求，WechatPayMiddleware会自动地处理签名和验签
 			try {
 				$resp = $client->request('POST', 'https://api.mch.weixin.qq.com/v3/transfer/batches', [
 					'json' => [ // JSON请求体
 						'appid' => 'wx8be053f4e70ec431',
-						'out_batch_no' => 'aihuishou'.time(),
+						'out_batch_no' => $number,
 						'batch_name' => '用户提现',
 						'batch_remark' => '用户提现',
-						'total_amount' => $sum_price1 * 100,
+						'total_amount' => (int)$sum_pricenew,
 						'total_num' => 1,
 						'transfer_detail_list' => [
 							'0' => [ // JSON请求体
-								'out_detail_no' =>  'aihuishounew'.time(),
-								'transfer_amount' => $sum_price1 * 100,
+								'out_detail_no' =>  $number,
+								'transfer_amount' => (int)$sum_pricenew,
 								'transfer_remark' => '用户提现',
 								'openid' => $MemberInfomid['openid']
 							]

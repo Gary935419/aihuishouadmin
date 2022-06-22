@@ -68,7 +68,7 @@ class Mini_model extends CI_Model
 	public function getaddressInfoaidmoren($mid)
 	{
 		$mid = $this->db->escape($mid);
-		$sql = "SELECT * FROM `address` where mid = $mid and status=1";
+		$sql = "SELECT * FROM `address` where mid = $mid ";
 		return $this->db->query($sql)->row_array();
 	}
 	//根据token查看详情
@@ -226,11 +226,25 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql);
 	}
 
+	public function member_address_one($mid)
+	{
+		$mid = $this->db->escape($mid);
+		$sql = "SELECT * FROM `address` where mid = $mid";
+		return $this->db->query($sql)->row_array();
+	}
+
 	public function member_address_del($mid,$a_id)
 	{
 		$mid = $this->db->escape($mid);
 		$a_id = $this->db->escape($a_id);
 		$sql = "DELETE FROM address WHERE mid = $mid and a_id = $a_id";
+		return $this->db->query($sql);
+	}
+
+	public function member_address_delnew($mid)
+	{
+		$mid = $this->db->escape($mid);
+		$sql = "DELETE FROM address WHERE mid = $mid";
 		return $this->db->query($sql);
 	}
 
@@ -924,7 +938,7 @@ class Mini_model extends CI_Model
 		$datetime = $this->db->escape($datetime);
 		$sql1 = "UPDATE `merchants` SET full_flg=0 WHERE meid = $meid";
 		$this->db->query($sql1);
-		$sql = "UPDATE `orders` SET ostate=2 WHERE meid = $meid and $datetime = $datetime";
+		$sql = "UPDATE `orders` SET ostate=2 WHERE meid = $meid and delivery_date = $datetime";
 		return $this->db->query($sql);
 	}
 

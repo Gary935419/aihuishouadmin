@@ -52,7 +52,7 @@
 							<th style="width: 9%">用户姓名</th>
 							<th style="width: 9%">用户电话</th>
 							<th style="width: 9%">个人钱包</th>
-							<th style="width: 9%">注册时间</th>
+							<th style="width: 9%">用户id</th></th>
 							<th style="width: 9%">当前状态</th>
 							<th style="width: 9%">开通上门取货</th>
 							<th style="width: 9%">查看订单</th>
@@ -65,10 +65,11 @@
 								<tr id="p<?= $once['mid'] ?>" sid="<?= $once['mid'] ?>">
 									<td><?= $num + 1 ?></td>
 									<td><?= $once['nickname'] ?></td>
-									<td><?= $once['truename'] ?></td>
-									<td><?= $once['mobile'] ?></td>
+									<td><?= $once['name'] ?></td>
+									<td><?= $once['utel'] ?></td>
 									<td><?= $once['wallet'] ?></td>
-									<td><?php date("Y-m-d",$once['add_time']); ?></td>
+									<td><?= $once['openid'] ?></td>
+									<!--td><?php date("Y-m-d",$once['add_time']); ?></td-->
 									<td><?php echo $once['status']==1?"正常":"禁用" ?></td>
 									<td><?php echo $once['getpro']==0?"关闭":"开通" ?></td>
 									<td><a href="#" onclick="xadmin.open('地址','<?= RUN . '/member/userorder_list?id=' ?>'+<?= $once['mid'] ?>,1200,700)">查看订单</a></td>

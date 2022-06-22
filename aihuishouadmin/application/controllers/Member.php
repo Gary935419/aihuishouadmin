@@ -32,8 +32,14 @@ class Member extends CI_Controller
 		$data["pagehtml"] = $this->getpage($page, $allpage, $_GET);
 		$data["page"] = $page;
 		$data["allpage"] = $allpage;
-		$data["list"] = $this->member->getMemberAll($page, $user_name,$status);
+		$membersarr = $this->member->getMemberAll($page, $user_name,$status);
 
+		foreach ($membersarr as $key => $value){
+		    $arrs = $this->member->getMemberOrderAll($value['mid']);   
+		    $membersarr[$key]['name']=$arrs['uname'];
+		    $membersarr[$key]['utel']=$arrs['utel'];
+		}
+        $data['list']=$membersarr;
 		$data["user_name1"] = $user_name;
 		$data["status"] = $status;
 		$this->display("member/member_list", $data);

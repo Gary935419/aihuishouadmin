@@ -28,7 +28,7 @@ class Orders_model extends CI_Model
 		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
 
 		$number = $this->db->query($sql)->row()->number;
-		return ceil($number / 10) == 0 ? 1 : ceil($number / 10);
+		return ceil($number / 20) == 0 ? 1 : ceil($number / 20);
 	}
 
 	//获取订单信息
@@ -44,8 +44,8 @@ class Orders_model extends CI_Model
 		if (!empty($end)) {
 			$sqlw .= " and addtime<=$end";
 		}
-		$start = ($pg - 1) * 10;
-		$stop = 10;
+		$start = ($pg - 1) * 20;
+		$stop = 20;
 		$sql = "SELECT * FROM `orders` " . $sqlw . " order by addtime desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
@@ -103,6 +103,28 @@ class Orders_model extends CI_Model
 
 	//----------------------------获取商家订单列表-------------------------------------
 
+	//获取分类
+	public function getMerchantsclassAll()
+	{
+		$sql = "SELECT * FROM `class_two` ";
+		return $this->db->query($sql)->result_array();
+	}
+
+	//获取订单信息
+	public function getMerchantsaddAll($ctid, $meid,$start,$end)
+	{
+		$sqlw = " where ct_id=$ctid and meid=$meid ";
+		if (!empty($start)) {
+			$sqlw .= " and addtime>=$start";
+		}
+		if (!empty($end)) {
+			$sqlw .= " and addtime<=$end";
+		}
+		$sql = "SELECT sum(m_weight),sum(q_weight) FROM `orders_merchants` " . $sqlw . " order by addtime desc";
+		return $this->db->query($sql)->result_array();
+	}
+
+
 	//获取订单页数
 	public function getMerchantsOrderAllPage($meid,$start,$end)
 	{
@@ -115,7 +137,7 @@ class Orders_model extends CI_Model
 		}
 		$sql = "SELECT count(1) as number FROM `orders_merchants` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
-		return ceil($number / 10) == 0 ? 1 : ceil($number / 10);
+		return ceil($number / 20) == 0 ? 1 : ceil($number / 20);
 	}
 
 	//获取订单信息
@@ -128,8 +150,8 @@ class Orders_model extends CI_Model
 		if (!empty($end)) {
 			$sqlw .= " and addtime<=$end";
 		}
-		$start = ($pg - 1) * 10;
-		$stop = 10;
+		$start = ($pg - 1) * 20;
+		$stop = 20;
 		$sql = "SELECT * FROM `orders_merchants` " . $sqlw . " order by addtime desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
@@ -156,7 +178,7 @@ class Orders_model extends CI_Model
 		}
 		$sql = "SELECT count(1) as number FROM `orders_qishou` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
-		return ceil($number / 10) == 0 ? 1 : ceil($number / 10);
+		return ceil($number / 20) == 0 ? 1 : ceil($number / 20);
 	}
 
 	//获取司机订单信息
@@ -169,9 +191,11 @@ class Orders_model extends CI_Model
 		if (!empty($end)) {
 			$sqlw .= " and addtime<=$end";
 		}
-		$start = ($pg - 1) * 10;
-		$stop = 10;
+		$start = ($pg - 1) * 20;
+		$stop = 20;
 		$sql = "SELECT * FROM `orders_qishou` " . $sqlw . " order by addtime desc LIMIT $start, $stop";
+		//print_r($sql );
+		
 		return $this->db->query($sql)->result_array();
 	}
 

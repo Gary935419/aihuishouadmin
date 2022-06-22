@@ -54,6 +54,7 @@
 							<th style="width: 10%">当前状态</th>
 							<th style="width: 10%">回收量</th>
 							<th style="width: 10%">实际回收量</th>
+							<th style="width: 10%">拉货编号</th>
 							<th style="width: 10%">误差</th>
 							<th style="width: 10%">误差比例</th>
 							<th style="width: 10%">结算费用</th>
@@ -70,6 +71,7 @@
 									<td><?php if($once['omtype']==0){echo '待回收';}else{echo '已回收';}; ?></td>
 									<td><?= $once['m_weight'] ?></td>
 									<td><?= $once['q_weight'] ?></td>
+									<td><?= $once['ordernumber'] ?></td>
 									<td><?= $wucha ?></td>
 									<td><?= $wcl ?>%</td>
 
