@@ -775,6 +775,43 @@ class Miniapi extends CI_Controller
 		$this->back_json(200, '操作成功', $data);
 	}
 
+	public function merchants_order_listnew(){
+		//验证loginCode是否传递
+		if (!isset($_POST['token']) || empty($_POST['token'])) {
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$token = $_POST['token'];
+		$member = $this->mini->getMerchantsInfotoken($token);
+		if (empty($member)){
+			$this->back_json(205, '请您先去授权商家登录！');
+		}
+		$meid = $member['meid'];
+		$page = $_POST['page'];
+		$datenew = empty($_POST['date'])?date('Y-m-d',time()):$_POST['date'];
+		$testinfo = empty($_POST['testinfo'])?'':$_POST['testinfo'];
+		$orderlist = $this->mini->merchantsorderlistnew($meid,$page,$datenew,$testinfo);
+		foreach ($orderlist as $k=>$v){
+			$orderlist[$k]['addtime'] = date('Y-m-d H:i',$v['addtime']);
+			$uname=$v['uname'];
+			$utel=$v['utel'];
+			$memberinfoaddress = $this->mini->getMerchantsInfotorder($uname,$utel);
+			$orderlist[$k]['address'] = empty($memberinfoaddress['address'])?'':$memberinfoaddress['address'];
+
+			if ($v['ostate']==0){
+				$orderlist[$k]['ostate'] = "已预约";
+			}elseif ($v['ostate']==1){
+				$orderlist[$k]['ostate'] = "待回收";
+			}elseif ($v['ostate']==2){
+				$orderlist[$k]['ostate'] = "已完成";
+			}elseif ($v['ostate']==3){
+				$orderlist[$k]['ostate'] = "已取消";
+			}
+		}
+		$data['list'] = $orderlist;
+		$data['date'] = $datenew;
+		$this->back_json(200, '操作成功', $data);
+	}
+
 	public function qishou_order_list(){
 		//验证loginCode是否传递
 		if (!isset($_POST['token']) || empty($_POST['token'])) {

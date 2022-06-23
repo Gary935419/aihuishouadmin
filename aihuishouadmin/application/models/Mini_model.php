@@ -679,6 +679,26 @@ class Mini_model extends CI_Model
 		return $this->db->query($sql)->result_array();
 	}
 
+	public function merchantsorderlistnew($meid,$pg,$datenew,$testinfo)
+	{
+		$sqlw = " and 1=1 and ostate<3 ";
+		if (!empty($datenew)) {
+			$datenew = $this->db->escape($datenew);
+			$sqlw .= " and delivery_date = " . $datenew;
+		}
+		
+		if (!empty($testinfo)) {
+			$sqlw .= " and ( uname like '%" . $testinfo . "%' ) ";
+		}
+
+		$meid = $this->db->escape($meid);
+		$start = ($pg - 1) * 1000;
+		$stop = 1000;
+		$sql = "SELECT * FROM `orders` where meid = $meid ".$sqlw." order by addtime desc LIMIT $start, $stop";
+
+		return $this->db->query($sql)->result_array();
+	}
+
 	public function qishouorderlist($meid,$datetime,$pg)
 	{
 		$sqlw = " and 1=1 ";
