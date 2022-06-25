@@ -372,9 +372,9 @@ class Mini_model extends CI_Model
 	{
 		$meid = $this->db->escape($meid);
 		$delivery_date = $this->db->escape($delivery_date);
-		$sqlw = " where datetime = " . $delivery_date;
+		$sqlw = " where delivery_date = " . $delivery_date;
 		$sqlw .= " and meid = " . $meid;
-		$sql = "SELECT count(1) as number FROM `orders_merchants` " . $sqlw;
+		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
 		return $number;
 	}
@@ -686,7 +686,7 @@ class Mini_model extends CI_Model
 			$datenew = $this->db->escape($datenew);
 			$sqlw .= " and delivery_date = " . $datenew;
 		}
-		
+
 		if (!empty($testinfo)) {
 			$sqlw .= " and ( uname like '%" . $testinfo . "%' ) ";
 		}
@@ -714,7 +714,7 @@ class Mini_model extends CI_Model
 	}
 	public function qishouorderlist1($meid,$datetime)
 	{
-		$sqlw = " and 1=1 and q_weight=0 ";
+		$sqlw = " and 1=1 and q_weight = 0 and m_weight > 0 ";
 		if (!empty($datetime)) {
 			$datetime = $this->db->escape($datetime);
 			$sqlw .= " and datetime = " . $datetime;

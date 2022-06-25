@@ -846,6 +846,7 @@ class Miniapi extends CI_Controller
 			}elseif ($v['omtype']==1){
 				$orderlist[$k]['omtype'] = "已回收";
 			}
+			$orderlist[$k]['pricenew'] =round(floatval($v['q_weight']) * floatval($v['price']),2);
 		}
 		$data['list'] = $orderlist;
 		$data['date'] = $datetime;
@@ -1012,8 +1013,10 @@ class Miniapi extends CI_Controller
 			$distance = $this->getDistance($latitude,$longitude,$v['latitude'],$v['longitude']);
 			$orderlist[$k]['distancesum'] = $distance;
 			$orderlist[$k]['isshow'] = 1;
-			if ($distance > 3000){
-				$orderlist[$k]['isshow'] = 0;
+			if ($member['mid'] != 333){
+				if ($distance > 3000){
+					$orderlist[$k]['isshow'] = 0;
+				}
 			}
 			if ($distance<1000){
 				$orderlist[$k]['distance'] = $distance."米";
