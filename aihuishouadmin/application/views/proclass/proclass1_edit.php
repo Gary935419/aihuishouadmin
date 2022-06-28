@@ -44,6 +44,15 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label" style="width: 30%;">
+                    <span class="x-red">*</span>排序
+                </label>
+                <div class="layui-input-inline" style="width: 300px;">
+                    <input type="text" id="order" name="order" lay-verify="order"
+                           autocomplete="off" class="layui-input" value="<?php echo $order ?>">
+                </div>
+            </div>
+			<div class="layui-form-item">
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
 					<span class="x-red">*</span>图标
 				</label>

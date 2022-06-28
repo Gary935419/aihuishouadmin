@@ -26,46 +26,48 @@
 		<div class="layui-col-md12">
 			<div class="layui-card">
 				<div class="layui-card-body ">
-					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/proclass/proclass1_list' ?>">
+					<form class="layui-form layui-col-space5" method="get" action="<?= RUN, '/news/banners_list' ?>">
 						<div class="layui-inline layui-show-xs-block">
 							<input type="text" name="user_name" id="user_name" value="<?php echo $user_name1 ?>"
-								   placeholder="分类名" autocomplete="off" class="layui-input">
+								   placeholder="banner图名" autocomplete="off" class="layui-input">
 						</div>
 						<div class="layui-inline layui-show-xs-block">
 							<button class="layui-btn" lay-submit="" lay-filter="sreach"><i
-										class="layui-icon">&#xe615;</i></button>
+									class="layui-icon">&#xe615;</i></button>
 						</div>
 					</form>
 				</div>
 				<button class="layui-btn layui-card-header" style="float: right;margin-top: -40px;margin-right: 20px;"
-						onclick="xadmin.open('添加','<?= RUN . '/proclass/proclass1_add' ?>',900,500)"><i
-							class="layui-icon"></i>添加
+						onclick="xadmin.open('添加','<?= RUN . '/news/class_add' ?>',900,500)"><i
+						class="layui-icon"></i>添加
 				</button>
 				<div class="layui-card-body ">
 					<table class="layui-table layui-form">
 						<thead>
 						<tr>
 							<th style="width: 10%">序号</th>
-							<th style="width: 20%">分类名</th>
-							<th style="width: 20%">分类状态</th>
-							<th style="width: 20%">排序显示</th>
+							<th style="width: 20%">图片名称</th>
+							<th style="width: 20%">图片显示</th>
+							<th style="width: 30%">图片连接</th>							
 							<th style="width: 20%">操作</th>
 						</thead>
 						<tbody>
 						<?php if (isset($list) && !empty($list)) { ?>
 							<?php foreach ($list as $num => $once): ?>
-								<tr id="p<?= $once['co_id'] ?>" sid="<?= $once['co_id'] ?>">
+								<tr id="p<?= $once['cid'] ?>" sid="<?= $once['cid'] ?>">
 									<td><?= $num + 1 ?></td>
-									<td><?= $once['co_name'] ?></td>
-									<td><?php if($once['co_state']==1){echo '热门';}elseif($once['co_state']==2){echo '已开通';}else{echo '暂未开通';}; ?></td>
-									<td><?= $once['co_order'] ?></td>
+									<td><?= $once['classname'] ?></td>
+									<td>
+										<img class="layui-upload-img" src="<?php echo $once['classimg'] ?>" style="height: 50px;" >
+									</td>
+									<td><?= $once['classurl'] ?></td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"
-												onclick="xadmin.open('编辑','<?= RUN . '/proclass/proclass1_edit?id=' ?>'+<?= $once['co_id'] ?>,900,500)">
+												onclick="xadmin.open('编辑','<?= RUN . '/news/class_edit?id=' ?>'+<?= $once['cid'] ?>,900,500)">
 											<i class="layui-icon">&#xe642;</i>编辑
 										</button>
 										<button class="layui-btn layui-btn-danger"
-												onclick="proclass1_delete('<?= $once['co_id'] ?>')"><i class="layui-icon">&#xe640;</i>删除
+												onclick="class_delete('<?= $once['cid'] ?>')"><i class="layui-icon">&#xe640;</i>删除
 										</button>
 									</td>
 								</tr>
@@ -90,38 +92,38 @@
 </div>
 </body>
 <script>
-	function proclass1_delete(id) {
+	function class_delete(id) {
 		layer.confirm('您是否确认删除？', {
-					title: '温馨提示',
-					btn: ['确认', '取消']
-					// 按钮
-				},
-				function (index) {
-					$.ajax({
-						type: "post",
-						data: {"id": id},
-						dataType: "json",
-						url: "<?= RUN . '/proclass/proclass1_delete' ?>",
-						success: function (data) {
-							if (data.success) {
-								$("#p" + id).remove();
-								layer.alert(data.msg, {
-											title: '温馨提示',
-											icon: 6,
-											btn: ['确认']
-										},
-								);
-							} else {
-								layer.alert(data.msg, {
-											title: '温馨提示',
-											icon: 5,
-											btn: ['确认']
-										},
-								);
-							}
-						},
-					});
+				title: '温馨提示',
+				btn: ['确认', '取消']
+				// 按钮
+			},
+			function (index) {
+				$.ajax({
+					type: "post",
+					data: {"id": id},
+					dataType: "json",
+					url: "<?= RUN . '/news/class_delete' ?>",
+					success: function (data) {
+						if (data.success) {
+							$("#p" + id).remove();
+							layer.alert(data.msg, {
+									title: '温馨提示',
+									icon: 6,
+									btn: ['确认']
+								},
+							);
+						} else {
+							layer.alert(data.msg, {
+									title: '温馨提示',
+									icon: 5,
+									btn: ['确认']
+								},
+							);
+						}
+					},
 				});
+			});
 	}
 </script>
 </html>

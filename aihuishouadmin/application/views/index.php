@@ -170,6 +170,12 @@
 							</a>
 						</li>
 						<!--li>
+							<a onclick="changeSrc('<?= RUN . '/news/class_list' ?>')">
+								<i class="iconfont">&#xe6a7;</i>
+								<cite>首页产品分类</cite>
+							</a>
+						</li-->
+						<!--li>
 							<a onclick="changeSrc('<?= RUN . '/news/news_list' ?>')">
 								<i class="iconfont">&#xe6a7;</i>
 								<cite>系统信息管理</cite>

@@ -49,7 +49,7 @@
 							<th style="width: 10%">优惠卷名</th>
 							<th style="width: 10%">开始时间</th>
 							<th style="width: 10%">结束时间</th>
-							<th style="width: 10%">推荐地点</th>
+							<!--th style="width: 10%">推荐地点</th-->
 							<th style="width: 10%">赠送费用</th>
 							<th style="width: 10%">状态</th>
 							<th style="width: 15%">操作</th>
@@ -62,7 +62,7 @@
 									<td><?= $once['promote_name'] ?></td>
 									<td><?= date("Y-m-d",$once['promote_starttime']) ?></td>
 									<td><?= date("Y-m-d",$once['promote_endtime']) ?></td>
-									<td><?= $once['promote_area'] ?></td>
+									<!--td><?= $once['promote_area'] ?></td-->
 									<td><?= $once['promote_price'] ?></td>
 									<td><?php echo $once['promote_state']==0 ? "正常" : "停用"; ?></td>
 									<td class="td-manage">

@@ -33,7 +33,7 @@ class Proclass_model extends CI_Model
 		}
 		$start = ($pg - 1) * 10;
 		$stop = 10;
-		$sql = "SELECT * FROM `class_one` " . $sqlw . " order by co_id desc LIMIT $start, $stop";
+		$sql = "SELECT * FROM `class_one` " . $sqlw . " order by co_order desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
 
@@ -56,14 +56,15 @@ class Proclass_model extends CI_Model
 	}
 
 	//标签save
-	public function proclass1_save($name,$state,$pic,$time)
+	public function proclass1_save($name,$state,$pic,$time,$order)
 	{
 		$name = $this->db->escape($name);
 		$state = $this->db->escape($state);
 		$pic = $this->db->escape($pic);
 		$time = $this->db->escape($time);
+		$order = $this->db->escape($order);
 
-		$sql = "INSERT INTO `class_one` (co_name,co_state,co_img,co_addtime) VALUES ($name,$state,$pic,$time)";
+		$sql = "INSERT INTO `class_one` (co_name,co_state,co_img,co_addtime,co_order) VALUES ($name,$state,$pic,$time,$order)";
 		return $this->db->query($sql);
 	}
 
@@ -78,14 +79,15 @@ class Proclass_model extends CI_Model
 	}
 
 	//标签更新
-	public function proclass1_save_edit($uid, $name,$state,$pic)
+	public function proclass1_save_edit($uid, $name,$state,$pic,$order)
 	{
 		$uid = $this->db->escape($uid);
 		$name = $this->db->escape($name);
 		$state = $this->db->escape($state);
 		$pic = $this->db->escape($pic);
+		$order = $this->db->escape($order);
 
-		$sql = "UPDATE `class_one` SET co_name=$name,co_state=$state,co_img=$pic WHERE co_id = $uid";
+		$sql = "UPDATE `class_one` SET co_name=$name,co_state=$state,co_img=$pic,co_order=$order WHERE co_id = $uid";
 		return $this->db->query($sql);
 	}
 

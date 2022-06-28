@@ -79,10 +79,11 @@ class Proclass extends CI_Controller
 			return;
 		}
 		$state = isset($_POST["state"]) ? $_POST["state"] : 3;
+		$order = isset($_POST["order"]) ? $_POST["order"] : '';
 		$pic = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 		$time = time();
 
-		$result = $this->proclass->proclass1_save($name,$state,$pic,$time);
+		$result = $this->proclass->proclass1_save($name,$state,$pic,$time,$order);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
 		} else {
@@ -107,6 +108,7 @@ class Proclass extends CI_Controller
 		$data['name'] = $member_info['co_name'];
 		$data['state'] = $member_info['co_state'];
 		$data['gimg'] = $member_info['co_img'];
+		$data['order'] = $member_info['co_order'];
 		$this->display("proclass/proclass1_edit", $data);
 	}
 
@@ -124,6 +126,7 @@ class Proclass extends CI_Controller
 		$state = isset($_POST["state"]) ? $_POST["state"] : '';
 		$pic = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
 		$name1 = isset($_POST["name1"]) ? $_POST["name1"] : '';
+		$order = isset($_POST["order"]) ? $_POST["order"] : '';
 
 		if($name<>$name1) {
 			$user_info = $this->proclass->getproclass1ById($name);
@@ -133,7 +136,7 @@ class Proclass extends CI_Controller
 			}
 		}
 
-		$result = $this->proclass->proclass1_save_edit($uid,$name,$state,$pic);
+		$result = $this->proclass->proclass1_save_edit($uid,$name,$state,$pic,$order);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
 		} else {

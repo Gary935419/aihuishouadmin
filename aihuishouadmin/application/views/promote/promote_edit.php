@@ -55,7 +55,7 @@
 						   autocomplete="off" class="layui-input" value="<?=$price;?>">
 				</div>
 			</div>
-			<div class="layui-form-item">
+			<!--div class="layui-form-item">
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
 					<span class="x-red">*</span>地区设定
 				</label>
@@ -72,7 +72,7 @@
 						<option value="金州区" <?php echo $area == "金州区" ? 'selected' : '' ?>>金州区</option>
 					</select>
 				</div>
-			</div>
+			</div-->
 			<div class="layui-form-item">
 				<label for="L_pass" class="layui-form-label" style="width: 30%;">
 					<span class="x-red">*</span>状态

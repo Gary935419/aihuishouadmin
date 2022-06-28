@@ -49,6 +49,7 @@
 							<th style="width: 15%">所属一级分类</th>
 							<th style="width: 15%">二级分类名</th>
 							<th style="width: 15%">价格</th>
+							<th style="width: 15%">修改时间</th>
 							<th style="width: 15%">分类状态</th>
 							<th style="width: 20%">操作</th>
 						</thead>
@@ -60,6 +61,7 @@
 									<td><?= $once['co_name'] ?></td>
 									<td><?= $once['ct_name'] ?></td>
 									<td><?= $once['ct_price'] ?>/<?= $once['ct_danwei'] ?></td>
+									<td><?= date('Y-m-d H:i:s',$once['ct_addtime']) ?></td>
 									<td><?php if($once['ct_state']==1){echo '热门';}elseif($once['ct_state']==2){echo '已开通';}else{echo '暂未开通';}; ?></td>
 									<td class="td-manage">
 										<button class="layui-btn layui-btn-normal"

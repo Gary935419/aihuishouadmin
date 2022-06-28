@@ -118,7 +118,7 @@ class Mini_model extends CI_Model
 		$start = ($pg - 1) * 200;
 		$stop = 200;
 
-		$sql = "SELECT m.* FROM `class_one` m " . $sqlw . " LIMIT $start, $stop";
+		$sql = "SELECT m.* FROM `class_one` m " . $sqlw . " order by co_order desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
 	public function getclassonetypeAll($pg)
@@ -128,7 +128,7 @@ class Mini_model extends CI_Model
 		$start = ($pg - 1) * 200;
 		$stop = 200;
 
-		$sql = "SELECT * FROM `class_one` " . $sqlw . " LIMIT $start, $stop";
+		$sql = "SELECT * FROM `class_one` " . $sqlw . " order by co_order desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
 	public function getclasstwotypeAll($co_id)
