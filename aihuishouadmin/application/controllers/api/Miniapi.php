@@ -1190,7 +1190,7 @@ class Miniapi extends CI_Controller
 				$this->mini->order_goods_save($oid,$ct_name,$ct_id,$ct_img,$ct_price,$og_price,$weight,$ct_danwei);
 			}
 		}
-		$this->back_json(200, '操作成功');
+		$this->back_json(200, '下单成功，请将废品打包好送至所选回收站点。');
 	}
 
 	public function opinion_insert(){
@@ -1282,7 +1282,7 @@ class Miniapi extends CI_Controller
 		$order_status = 0;
 		$this->mini->order_save($order_status,$ostate,$addtime,$sum_price,$note,$delivery_date,$delivery_time,$uname,$utel,$muser,$maddress,$mid,$meid,$otype);
 
-		$this->back_json(200, '操作成功');
+		$this->back_json(200, '下单成功，请将废品打包好送至所选回收站点。');
 	}
 	/**
 	 * 计算两个经纬度距离
@@ -1401,9 +1401,8 @@ class Miniapi extends CI_Controller
 
 		$desc = empty($_POST['desc'])?'':$_POST['desc'];
 		$orderlist = $this->mini->merchantsordergoodslistnew1($meid,$datetime);
-
 		if (empty($orderlist)){
-			$this->back_json(205, '数据错误。');
+			$this->back_json(205, '请先添写回收重量，不要遗漏。');
 		}
 		$sum_price = 0;
 		foreach ($orderlist as $k=>$v){
@@ -1569,7 +1568,7 @@ class Miniapi extends CI_Controller
 		$oid = $_POST['oid'];
 		$orderlist = $this->mini->merchantsordergoodslistnew($oid);
 		if (empty($orderlist)){
-			$this->back_json(205, '数据错误。');
+			$this->back_json(205, '请先添写回收重量，不要遗漏。');
 		}
 		$sum_price = 0;
 		foreach ($orderlist as $k=>$v){

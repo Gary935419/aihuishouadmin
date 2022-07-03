@@ -370,11 +370,19 @@ class Mini_model extends CI_Model
 
 	public function getordersstate123($meid,$delivery_date)
 	{
+//		$meid = $this->db->escape($meid);
+//		$delivery_date = $this->db->escape($delivery_date);
+//		$sqlw = " where delivery_date = " . $delivery_date;
+//		$sqlw .= " and meid = " . $meid;
+//		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
+//		$number = $this->db->query($sql)->row()->number;
+//		return $number;
+
 		$meid = $this->db->escape($meid);
 		$delivery_date = $this->db->escape($delivery_date);
-		$sqlw = " where delivery_date = " . $delivery_date;
+		$sqlw = " where datetime = " . $delivery_date;
 		$sqlw .= " and meid = " . $meid;
-		$sql = "SELECT count(1) as number FROM `orders` " . $sqlw;
+		$sql = "SELECT count(1) as number FROM `orders_merchants` " . $sqlw;
 		$number = $this->db->query($sql)->row()->number;
 		return $number;
 	}
@@ -530,8 +538,8 @@ class Mini_model extends CI_Model
 	public function getmerchantslistindex()
 	{
 		$pg = 1;
-		$start = ($pg - 1) * 2;
-		$stop = 2;
+		$start = ($pg - 1) * 1000;
+		$stop = 1000;
 		$sql = "SELECT * FROM `merchants` where is_business = 1 and merchants_state = 0 order by add_time desc LIMIT $start, $stop";
 		return $this->db->query($sql)->result_array();
 	}
@@ -710,11 +718,12 @@ class Mini_model extends CI_Model
 		$start = ($pg - 1) * 1000;
 		$stop = 1000;
 		$sql = "SELECT * FROM `orders_merchants` where meid = $meid ".$sqlw." order by addtime desc LIMIT $start, $stop";
+
 		return $this->db->query($sql)->result_array();
 	}
 	public function qishouorderlist1($meid,$datetime)
 	{
-		$sqlw = " and 1=1 and q_weight = 0 and m_weight > 0 ";
+		$sqlw = " and 1=1 and omtype = 0 and q_weight = 0 and m_weight > 0 ";
 		if (!empty($datetime)) {
 			$datetime = $this->db->escape($datetime);
 			$sqlw .= " and datetime = " . $datetime;
@@ -823,7 +832,7 @@ class Mini_model extends CI_Model
 
 	public function merchantsordergoodslistnew1($meid,$datetime)
 	{
-		$sqlw = " 1=1 and omtype=0 ";
+		$sqlw = " 1=1 and omtype=0 and q_weight>0 ";
 		if (!empty($meid)) {
 			$meid = $this->db->escape($meid);
 			$sqlw .= " and meid =" . $meid;
@@ -838,7 +847,7 @@ class Mini_model extends CI_Model
 
 	public function merchantsordergoodslistnew($oid)
 	{
-		$sqlw = " 1=1 ";
+		$sqlw = " 1=1 and weight>0 ";
 		if (!empty($oid)) {
 			$oid = $this->db->escape($oid);
 			$sqlw .= " and oid =" . $oid;
