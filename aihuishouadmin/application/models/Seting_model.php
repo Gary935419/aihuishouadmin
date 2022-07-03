@@ -19,7 +19,7 @@ class Seting_model extends CI_Model
     }
  
     //角色save_edit
-    public function seting_save_edit($uid,$name,$tel,$aboutus,$recruiting,$jianyi,$beizhu,$tishi)
+    public function seting_save_edit($uid,$name,$tel,$aboutus,$recruiting,$jianyi,$beizhu,$tishi,$fxtxt,$fximg)
     {
         $uid = $this->db->escape($uid);
         $name = $this->db->escape($name);
@@ -30,8 +30,11 @@ class Seting_model extends CI_Model
         $jianyi = $this->db->escape($jianyi);
         $beizhu = $this->db->escape($beizhu);
         $tishi = $this->db->escape($tishi);
+        
+        $fxtxt = $this->db->escape($fxtxt);
+        $fximg = $this->db->escape($fximg);
 
-        $sql = "UPDATE `seting` SET name=$name,customer_tel=$tel,aboutus=$aboutus,recruiting=$recruiting,jianyi=$jianyi,beizhu=$beizhu,tishi=$tishi WHERE sid = $uid";
+        $sql = "UPDATE `seting` SET name=$name,customer_tel=$tel,aboutus=$aboutus,recruiting=$recruiting,jianyi=$jianyi,beizhu=$beizhu,tishi=$tishi,fenxiangtext=$fxtxt,fenxiangimg=$fximg WHERE sid = $uid";
         return $this->db->query($sql);
     }
 }

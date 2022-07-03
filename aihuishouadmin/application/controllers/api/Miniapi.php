@@ -413,7 +413,7 @@ class Miniapi extends CI_Controller
 			$sendyourself_arrtime[0]['checked']="true";
 		}
 		$data['sendyourself_arrtime'] = $sendyourself_arrtime;
-
+		$data['setarr'] = $this->mini->getsettinginfo();
 		$data['member'] = $member;
 		$this->back_json(200, '操作成功', $data);
 	}

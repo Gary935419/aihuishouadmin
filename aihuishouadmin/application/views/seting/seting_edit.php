@@ -85,6 +85,29 @@
 								  lay-verify="tishi"><?=$list['tishi'];?></textarea>
 					</div>
 				</div>
+				<div class="layui-form-item">
+					<label for="L_pass" class="layui-form-label" style="width: 20%;">
+						<span class="x-red"></span>分享说明：
+					</label>
+					<div class="layui-input-inline" style="width: 60%;">
+						<textarea placeholder="" id="fxtxt" name="fxtxt" class="layui-textarea"
+								  lay-verify="fxtxt"><?=$list['fenxiangtext'];?></textarea>
+					</div>
+				</div>
+			<div class="layui-form-item">
+				<label for="L_pass" class="layui-form-label" style="width: 20%;">
+					<span class="x-red">*</span>分享图片
+				</label>
+				<div class="layui-input-inline" style="width: 300px;">
+					<button type="button" class="layui-btn" id="upload1">上传图片</button>
+					<div class="layui-upload-list">
+						<input type="hidden" name="gimg" value="<?php echo $list['fenxiangimg'] ?>" id="gimg" lay-verify="gimg" autocomplete="off"
+							   class="layui-input">
+						<img class="layui-upload-img" src="<?php echo $list['fenxiangimg'] ?>" style="width: 100px;height: 100px;" id="gimgimg" name="gimgimg">
+						<p id="demoText"></p>
+					</div>
+				</div>
+			</div>
 				<input type="hidden" id="uid" name="uid" value="<?=$list['sid'];?>">
 				<div class="layui-form-item">
 					<label for="L_repass" class="layui-form-label" style="width: 20%;">
@@ -97,7 +120,70 @@
 	</div>
 </div>
 
+<script>
+	layui.use('upload', function(){
+		var $ = layui.jquery
+				,upload = layui.upload;
 
+		//普通图片上传
+		var uploadInst = upload.render({
+			elem: '#upload1'
+			,url: '<?= RUN . '/upload/pushFIle' ?>'
+			,before: function(obj){
+				//预读本地文件示例，不支持ie8
+				obj.preview(function(index, file, result){
+					$('#gimgimg').attr('src', result); //图片链接（base64）
+					var img = document.getElementById("gimgimg");
+					img.style.display="block";
+				});
+			}
+			,done: function(res){
+				if(res.code == 200){
+					$('#gimg').val(res.src); //图片链接（base64）
+					return layer.msg('上传成功');
+				}else {
+					return layer.msg('上传失败');
+				}
+			}
+			,error: function(){
+				//演示失败状态，并实现重传
+				var demoText = $('#demoText');
+				demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+				demoText.find('.demo-reload').on('click', function(){
+					uploadInst.upload();
+				});
+			}
+		});
+		//多图片上传
+		upload.render({
+			elem: '#uploads'
+			,url: '<?= RUN . '/upload/pushFIle' ?>'
+			,multiple: true
+			,before: function(obj){
+				//预读本地文件示例，不支持ie8
+				var timestamp = (new Date()).valueOf();
+				obj.preview(function(index, file, result){
+					$('#imgnew').append('<img id="avaterimg'+ timestamp +'" style="width:100px;height:100px;" src="'+ result +'" alt="'+ file.name +'" class="layui-upload-img"><p id="avaterimgp'+ timestamp +'" style="margin-top: -70px;margin-left: -43px;" class="layui-btn layui-btn-xs layui-btn-danger demo-delete" onclick="jusp('+ timestamp +')">删除</p>')
+				});
+			}
+			,done: function(res){
+				//上传完毕
+				if(res.code == 200){
+					var timestamp = (new Date()).valueOf();
+					$('#newinp').append('<input type="hidden" name="avater[]" id="avater'+ timestamp +'" value="'+ res.src +'">')
+					return layer.msg('上传成功');
+				}else {
+					return layer.msg('上传失败');
+				}
+			}
+		});
+	});
+	function jusp(index) {
+		$("#avater"+index).remove();
+		$("#avaterimg"+index).remove();
+		$("#avaterimgp"+index).remove();
+	}
+</script>
 
 <script>
 	layui.use(['form', 'layer'],

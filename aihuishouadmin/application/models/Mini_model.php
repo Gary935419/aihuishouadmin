@@ -967,7 +967,7 @@ class Mini_model extends CI_Model
 		$datetime = $this->db->escape($datetime);
 		$sql1 = "UPDATE `merchants` SET full_flg=0 WHERE meid = $meid";
 		$this->db->query($sql1);
-		$sql = "UPDATE `orders` SET ostate=2 WHERE meid = $meid and delivery_date = $datetime";
+		$sql = "UPDATE `orders` SET ostate=2 WHERE meid = $meid and ostate = 1 and delivery_date = $datetime";
 		return $this->db->query($sql);
 	}
 

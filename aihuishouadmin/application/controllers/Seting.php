@@ -50,7 +50,11 @@ class Seting extends CI_Controller
 		$beizhu = isset($_POST["beizhu"]) ? $_POST["beizhu"] : '';
 		$tishi = isset($_POST["recruiting"]) ? $_POST["tishi"] : '';
 		
-		$result = $this->seting->seting_save_edit($uid,$name,$tel,$aboutus,$recruiting,$jianyi,$beizhu,$tishi);
+		$fxtxt = isset($_POST["fxtxt"]) ? $_POST["fxtxt"] : '';
+		$fximg = isset($_POST["gimg"]) ? $_POST["gimg"] : '';
+		
+		
+		$result = $this->seting->seting_save_edit($uid,$name,$tel,$aboutus,$recruiting,$jianyi,$beizhu,$tishi,$fxtxt,$fximg);
 		if ($result) {
 			echo json_encode(array('success' => true, 'msg' => "操作成功。"));
 		} else {
